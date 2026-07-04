@@ -1,0 +1,246 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Lojas</h2>
+            <small>Total de lojas: <strong>{{ total_lojas }}</strong></small>
+        </div>
+
+        <a href="{% url 'lojas:nova' %}" class="btn btn-success btn-cancel">
+            <i class="fa-solid fa-plus"></i>
+            Nova Loja
+        </a>
+
+    </div>
+
+
+    <form method="GET">
+
+        <div class="row mb-3">
+
+            <div class="col-md-5">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar por nome..."
+                    name="busca"
+                    value="{{ busca }}">
+
+            </div>
+            <br>
+
+            <div class="col-md-3">
+
+                <select class="form-select" name="status">
+
+                    <option value="">Todos</option>
+
+                    <option value="ativas"
+                        {% if status == "ativas" %}
+                            selected
+                        {% endif %}
+                    >
+                        Ativas
+                    </option>
+
+                    <option value="inativas"
+                        {% if status == "inativas" %}
+                            selected
+                        {% endif %}
+                    >
+                        Inativas
+                    </option>
+
+                </select>
+
+            </div>
+            <br>
+
+            <div class="div-flex">
+
+                <button class="btn btn-primary w-100">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Buscar
+                </button>
+                <div class="col-md-2">
+
+                <a href="{% url 'lojas:lista' %}" class="btn btn-cancel w-100">
+                    Limpar
+                </a>
+
+            </div>
+
+            </div>
+
+            
+
+        </div>
+
+    </form>
+
+
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th width="180">Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for loja in lojas %}
+
+                    <tr>
+
+                        <td>{{ loja.nome }}</td>
+
+                        <td>{{ loja.telefone }}</td>
+
+                        <td>{{ loja.email }}</td>
+
+                        <td>
+
+                            {% if loja.ativa %}
+
+                                <span class="badge bg-success">
+                                    Ativa
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+                                    Inativa
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'lojas:detalhes' loja.pk %}"
+                               class="btn btn-sm btn-info">
+
+                                <i class="fa-solid fa-eye"></i>
+
+                            </a>
+
+                            <a href="{% url 'lojas:editar' loja.pk %}"
+                               class="btn btn-sm btn-warning">
+
+                                <i class="fa-solid fa-pen"></i>
+
+                            </a>
+
+                            <a href="#"
+                               class="btn btn-sm btn-danger">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="5" class="text-center">
+
+                            Nenhuma loja encontrada.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            {% if lojas.has_previous %}
+
+                <li class="page-item">
+
+                    <a class="page-link"
+                       href="?page={{ lojas.previous_page_number }}&busca={{ busca }}&status={{ status }}">
+
+                        Anterior
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+            {% for pagina in lojas.paginator.page_range %}
+
+                <li class="page-item {% if pagina == lojas.number %}active{% endif %}">
+
+                    <a class="page-link"
+                       href="?page={{ pagina }}&busca={{ busca }}&status={{ status }}">
+
+                        {{ pagina }}
+
+                    </a>
+
+                </li>
+
+            {% endfor %}
+
+            {% if lojas.has_next %}
+
+                <li class="page-item">
+
+                    <a class="page-link"
+                       href="?page={{ lojas.next_page_number }}&busca={{ busca }}&status={{ status }}">
+
+                        Próxima
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+</div>
+
+{% endblock %}

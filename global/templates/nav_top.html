@@ -1,0 +1,10 @@
+<ul class="nav-top">
+    {% for item in nav %}
+        <li>
+            <a href="/estoque/{{ item.url }}" 
+               onclick="window.open(this.href, 'novaJanela', 'width=800,height=600'); return false;">
+                {{ item.nome }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>

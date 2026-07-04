@@ -1,0 +1,135 @@
+{% extends "templates/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>
+        {% if object %}
+            Editar Loja
+        {% else %}
+            Nova Loja
+        {% endif %}
+    </h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- ================= LOJA ================= -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <strong>Dados da Loja</strong>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <label>Nome</label>
+                        {{ form.nome }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Slug</label>
+                        {{ form.slug }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Telefone</label>
+                        {{ form.telefone }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>WhatsApp</label>
+                        {{ form.whatsapp }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Email</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Logo</label>
+                        {{ form.logo }}
+                    </div>
+                    <br>
+                    <div class="col-md-12 mt-3">
+                        <label>
+                            Ativa
+                            {{ form.ativa }} 
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= ENDEREÇO ================= -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <strong>Endereço</strong>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label>CEP</label>
+                        {{ endereco_form.cep }}
+                    </div>
+
+                    <div class="col-md-8">
+                        <label>Logradouro</label>
+                        {{ endereco_form.logradouro }}
+                    </div>
+
+                    <div class="col-md-3 mt-2">
+                        <label>Número</label>
+                        {{ endereco_form.numero }}
+                    </div>
+
+                    <div class="col-md-9 mt-2">
+                        <label>Complemento</label>
+                        {{ endereco_form.complemento }}
+                    </div>
+
+                    <div class="col-md-4 mt-2">
+                        <label>Bairro</label>
+                        {{ endereco_form.bairro }}
+                    </div>
+
+                    <div class="col-md-4 mt-2">
+                        <label>Cidade</label>
+                        {{ endereco_form.cidade }}
+                    </div>
+
+                    <div class="col-md-4 mt-2">
+                        <label>Estado</label>
+                        {{ endereco_form.estado }}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= BOTÃO ================= -->
+        <div class="flex-buttons">
+            <button type="submit" class="btn btn-success">
+                Salvar
+            </button>
+
+            <a href="{% url 'lojas:lista' %}" class="btn btn-secondary btn-cancel">
+                Cancelar
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

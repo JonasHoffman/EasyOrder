@@ -1,0 +1,1 @@
+from .Lojas.index import *
