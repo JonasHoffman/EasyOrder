@@ -1,0 +1,72 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<h2>Categorias</h2>
+
+<a href="{% url 'categorias:nova' %}" class="btn btn-primary">
+    Nova Categoria
+</a>
+
+<hr>
+
+<table class="table table-hover">
+
+    <thead>
+        <tr>
+            <th>Imagem</th>
+            <th>Nome</th>
+            <th>Ordem</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for categoria in categorias %}
+
+        <tr>
+            <td>
+                {% if categoria.imagem %}
+                    <img src="{{ categoria.imagem.url }}" width="50">
+                {% endif %}
+            </td>
+
+            <td>{{ categoria.nome }}</td>
+            <td>{{ categoria.ordem }}</td>
+
+            <td>
+                {% if categoria.ativa %}
+                    <span class="text-success">Ativa</span>
+                {% else %}
+                    <span class="text-danger">Inativa</span>
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="{% url 'categorias:detalhe' categoria.id %}">👁</a>
+                <a href="{% url 'categorias:editar' categoria.id %}">✏</a>
+                <a href="{% url 'categorias:status' categoria.id %}">🔒</a>
+            </td>
+        </tr>
+
+        {% empty %}
+            <tr>
+                <td colspan="5">Nenhuma categoria cadastrada.</td>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

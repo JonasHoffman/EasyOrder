@@ -1,0 +1,27 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<h2>{{ categoria.nome }}</h2>
+
+{% if categoria.imagem %}
+    <img src="{{ categoria.imagem.url }}" width="120">
+{% endif %}
+
+<p><strong>Descrição:</strong> {{ categoria.descricao }}</p>
+<p><strong>Ordem:</strong> {{ categoria.ordem }}</p>
+
+<p>
+    <strong>Status:</strong>
+    {% if categoria.ativa %}
+        Ativa
+    {% else %}
+        Inativa
+    {% endif %}
+</p>
+
+<a href="{% url 'categorias:editar' categoria.id %}">
+    Editar
+</a>
+
+{% endblock %}
