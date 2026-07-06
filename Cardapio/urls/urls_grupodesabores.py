@@ -6,9 +6,9 @@ app_name = "grupos_sabores"
 
 urlpatterns = [
 
-    path("grupodesabores/",views_grupodesabores.listar,name="listar",),
-    path("grupodesabores/novo/",views_grupodesabores.novo,name="novo",),
-    path("grupodesabores/<int:id>/", views_grupodesabores.visualizar,name="visualizar",),
-    path("grupodesabores/<int:id>/editar/",views_grupodesabores.editar,name="editar",),
-    path("grupodesabores/<int:id>/status/",views_grupodesabores.alterar_status,name="status",),
+    path("",views_grupodesabores.listar,name="listar",),
+    path("novo/",views_grupodesabores.novo,name="novo",),
+    path("<int:id>/", views_grupodesabores.visualizar,name="visualizar",),
+    path("<int:id>/editar/",views_grupodesabores.editar,name="editar",),
+    path("<int:id>/status/",views_grupodesabores.alterar_status,name="status",),
 ]
