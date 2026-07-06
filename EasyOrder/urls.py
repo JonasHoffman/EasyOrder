@@ -23,7 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('lojas/', include('Lojas.urls')),
     path('cardapio/', include('Cardapio.urls')),
-    
+    path("cardapio/categorias/",include(("Cardapio.urls.urls_categorias", "categorias"), namespace="categorias"),),
+    path("cardapio/produto/",include(("Cardapio.urls.urls_produtos", "produtos"), namespace="produtos"),),
+    path("cardapio/grupodesabores/",include(("Cardapio.urls.urls_grupodesabores", "grupodesabores"), namespace="grupodesabores"),),
 ]
 
 if settings.DEBUG:
