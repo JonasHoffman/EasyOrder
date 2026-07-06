@@ -99,6 +99,7 @@ class GrupoDeSabores(models.Model):
         on_delete=models.CASCADE,
         related_name="grupos_sabores"
     )
+    descricao = models.TextField(blank=True)
 
     nome = models.CharField(max_length=60)
 
@@ -233,6 +234,12 @@ class ItemAdicional(models.Model):
 
     ativo = models.BooleanField(default=True)
 
+    imagem = models.ImageField(
+    upload_to="adicionais/",
+    blank=True,
+    null=True
+)
+
     ordem = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -240,6 +247,8 @@ class ItemAdicional(models.Model):
 
     def __str__(self):
         return self.nome
+    
+    
     
 class ProdutoGrupoAdicional(models.Model):
 

@@ -1,0 +1,28 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<h2>{{ produto.nome }}</h2>
+
+{% if produto.imagem %}
+    <img src="{{ produto.imagem.url }}" width="120">
+{% endif %}
+
+<p><strong>Categoria:</strong> {{ produto.categoria.nome }}</p>
+<p><strong>Preço:</strong> R$ {{ produto.preco }}</p>
+<p><strong>Descrição:</strong> {{ produto.descricao }}</p>
+
+<p>
+    <strong>Status:</strong>
+    {% if produto.disponivel %}
+        Disponível
+    {% else %}
+        Indisponível
+    {% endif %}
+</p>
+
+<a href="{% url 'produtos:editar' produto.id %}">
+    Editar
+</a>
+
+{% endblock %}

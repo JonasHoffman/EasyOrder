@@ -1,0 +1,31 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<h2>{{ grupo.nome }}</h2>
+
+<p>
+    <strong>Nome:</strong>
+    {{ grupo.nome }}
+</p>
+
+<p>
+    <strong>Ordem:</strong>
+    {{ grupo.ordem }}
+</p>
+
+<p>
+    <strong>Status:</strong>
+
+    {% if grupo.ativo %}
+        Ativo
+    {% else %}
+        Inativo
+    {% endif %}
+</p>
+
+<a href="{% url 'grupos_sabores:editar' grupo.id %}">
+    Editar
+</a>
+
+{% endblock %}
