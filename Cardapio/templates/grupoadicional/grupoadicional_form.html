@@ -1,0 +1,70 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div class="content-header">
+    <h2>
+        {% if form.instance.id %}
+            Editar Grupo de Adicionais
+        {% else %}
+            Novo Grupo de Adicionais
+        {% endif %}
+    </h2>
+</div>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+            <label>Nome</label>
+            {{ form.nome }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label>Ordem</label>
+            {{ form.ordem }}
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <label>Descrição</label>
+            {{ form.descricao }}
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Mínimo</label>
+            {{ form.minimo }}
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Máximo</label>
+            {{ form.maximo }}
+        </div>
+
+        <div class="col-md-2 mt-4">
+            {{ form.obrigatorio }}
+            <label>Obrigatório</label>
+        </div>
+
+        <div class="col-md-2 mt-4">
+            {{ form.ativo }}
+            <label>Ativo</label>
+        </div>
+
+    </div>
+
+    <br>
+
+    <button class="btn btn-success">
+        Salvar
+    </button>
+
+    <a href="{% url 'grupos_adicionais:listar' %}" class="btn btn-secondary">
+        Cancelar
+    </a>
+
+</form>
+
+{% endblock %}

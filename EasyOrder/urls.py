@@ -27,7 +27,10 @@ urlpatterns = [
     path("cardapio/produto/",include(("Cardapio.urls.urls_produtos", "produtos"), namespace="produtos"),),
     path("cardapio/grupodesabores/",include(("Cardapio.urls.urls_grupodesabores", "grupodesabores"), namespace="grupodesabores"),),
     path("cardapio/sabor/",include(("Cardapio.urls.urls_sabor", "sabor"), namespace="sabor"),),
-]   
+    path("cardapio/grupoadicional/",include(("Cardapio.urls.urls_grupoadicional", "grupoadicional"), namespace="grupoadicional"),),
+    path("cardapio/itemadicional/",include(("Cardapio.urls.urls_itemadicional", "sabor"), namespace="itemadicional"),),
+
+    ]  
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
