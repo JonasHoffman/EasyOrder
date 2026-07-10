@@ -1,0 +1,15 @@
+<ul>
+    {% for menu in menus %}
+        <li>
+            <div class='nav-itens'onclick="toggleSubmenu('submenu-{{ menu.id }}')">
+                {{ menu.nome }}
+            </div>
+
+            <ul id="submenu-{{ menu.id }}">
+                {% for sub in menu.subitens_permitidos %}
+                    <li><a href="{{ sub.url }}">{{ sub.nome }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>

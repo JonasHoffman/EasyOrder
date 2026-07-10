@@ -29,6 +29,8 @@ urlpatterns = [
     path("cardapio/sabor/",include(("Cardapio.urls.urls_sabor", "sabor"), namespace="sabor"),),
     path("cardapio/grupoadicional/",include(("Cardapio.urls.urls_grupoadicional", "grupoadicional"), namespace="grupoadicional"),),
     path("cardapio/itemadicional/",include(("Cardapio.urls.urls_itemadicional", "sabor"), namespace="itemadicional"),),
+    path("cardapio/painel_cardapio/",include(("Cardapio.urls.urls_painel_cardapio", "painel_cardapio"), namespace="painel_cardapio"),),
+
 
     ]  
 

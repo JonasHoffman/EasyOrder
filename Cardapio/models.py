@@ -52,6 +52,16 @@ class Produto(models.Model):
         on_delete=models.PROTECT,
         related_name="produtos"
     )
+    TIPO_PRODUTO = (
+    ("SIMPLES", "Produto Simples"),
+    ("COMBO", "Combo"),
+)
+
+    tipo = models.CharField(
+        max_length=10,
+        choices=TIPO_PRODUTO,
+        default="SIMPLES"
+    )
 
     nome = models.CharField(max_length=120)
 
@@ -91,6 +101,51 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class ProdutoComboGrupo(models.Model):
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name="grupos_combo"
+    )
+
+    nome = models.CharField(max_length=80)
+
+    obrigatorio = models.BooleanField(default=True)
+
+    minimo = models.PositiveSmallIntegerField(default=1)
+
+    maximo = models.PositiveSmallIntegerField(default=1)
+
+    ordem = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["ordem"]
+
+class ProdutoComboGrupoItem(models.Model):
+
+    grupo = models.ForeignKey(
+        ProdutoComboGrupo,
+        on_delete=models.CASCADE,
+        related_name="itens"
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE
+    )
+
+    quantidade = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=1
+    )
+
+    ordem = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["ordem"]
     
 class GrupoDeSabores(models.Model):
 

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Lojas',
     'Cardapio',
     'Usuarios',
+    'Interface',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "Interface.context_processors.menu_items",
+                "Interface.context_processors.nav_top",
             ],
         },
     },
