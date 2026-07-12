@@ -18,8 +18,8 @@ class SaborForm(forms.ModelForm):
 
         widgets = {
             "descricao": forms.Textarea(attrs={
-                "rows": 3
-            }),
+                "rows": 3,"placeholder":"Ingredientes ou observações",}),
+                "ordem": forms.NumberInput(attrs={"class": "form-control","placeholder":"Ex 0, quanto menor o numero, primeiro sera na ordem."}),
         }
 
     def __init__(self, *args, **kwargs):

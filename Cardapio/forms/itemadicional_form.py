@@ -23,12 +23,12 @@ class ItemAdicionalForm(forms.ModelForm):
 
             "nome": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Nome do adicional"
+                "placeholder": "Ex.: Bacon Crocante"
             }),
 
             "descricao": forms.Textarea(attrs={
                 "class": "form-control",
-                "rows": 3
+                "rows": 3,"placeholder": "Ex.: Descrição do adicional (opcional)"
             }),
 
             "preco": forms.NumberInput(attrs={

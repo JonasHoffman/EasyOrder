@@ -1,5 +1,6 @@
 from django.db import models
 from Lojas.models import Loja
+from django.utils import timezone
 # Create your models here.
 class Categoria(models.Model):
 
@@ -25,7 +26,7 @@ class Categoria(models.Model):
         null=True
     )
 
-    ordem = models.PositiveIntegerField(default=0)
+    ordem = models.PositiveIntegerField()
 
     ativa = models.BooleanField(default=True)
 
@@ -90,7 +91,7 @@ class Produto(models.Model):
 
     codigo = models.CharField(max_length=30, blank=True)
 
-    ordem = models.PositiveIntegerField(default=0)
+    ordem = models.PositiveIntegerField()
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -196,12 +197,12 @@ class Sabor(models.Model):
     valor_adicional = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default=0
+        null=True
     )
 
     ativo = models.BooleanField(default=True)
 
-    ordem = models.PositiveIntegerField(default=0)
+    ordem = models.PositiveIntegerField()
 
     class Meta:
         ordering = ["ordem", "nome"]
@@ -330,3 +331,62 @@ class ProdutoGrupoAdicional(models.Model):
 
     def __str__(self):
         return f"{self.produto} - {self.grupo}"
+    
+
+
+class Promocao(models.Model):
+
+    loja = models.ForeignKey(
+        Loja,
+        on_delete=models.CASCADE,
+        related_name="promocoes"
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name="promocoes"
+    )
+
+    nome = models.CharField(
+        max_length=120,
+        help_text="Ex.: Promoção da Semana"
+    )
+
+    descricao = models.TextField(
+        blank=True
+    )
+
+    preco_promocional = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    data_inicio = models.DateTimeField(
+        default=timezone.now
+    )
+
+    data_fim = models.DateTimeField()
+
+    ativa = models.BooleanField(
+        default=True
+    )
+
+    destaque = models.BooleanField(
+        default=True,
+        help_text="Exibir na seção Promoções do cardápio."
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-data_inicio"]
+
+    def __str__(self):
+        return f"{self.nome} - {self.produto}"

@@ -18,7 +18,7 @@ class GrupoDeSaboresForm(forms.ModelForm):
         widgets = {
             "nome": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Nome do grupo"
+                "placeholder": "Ex.: Pizzas Tradicionais"
             }),
 
             "ordem": forms.NumberInput(attrs={

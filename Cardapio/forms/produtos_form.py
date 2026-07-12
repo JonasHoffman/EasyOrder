@@ -22,10 +22,14 @@ class ProdutoForm(forms.ModelForm):
         ]
 
         widgets = {
-            "categoria": forms.Select(attrs={"class": "form-control"}),
-            "nome": forms.TextInput(attrs={"class": "form-control"}),
-            "descricao": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
-            "preco": forms.NumberInput(attrs={"class": "form-control"}),
-            "ordem": forms.NumberInput(attrs={"class": "form-control"}),
-            "tempo_preparo": forms.NumberInput(attrs={"class": "form-control"}),
+            "categoria": forms.Select(attrs={"class": "form-control","placeholder":"Escolha qual a categoria do seu produto"}),
+            "nome": forms.TextInput(attrs={"class": "form-control","placeholder":"Ex.: X-Burguer Especial"}),
+            "descricao": forms.Textarea(attrs={"class": "form-control", "rows": 3,"placeholder":"Ingredientes ou descrição do produto"}),
+            "preco": forms.NumberInput(attrs={"class": "form-control","placeholder":"Ex.: 29,90"}),
+            "ordem": forms.NumberInput(attrs={"class": "form-control","placeholder":"Ex 0, quanto menor o numero, primeiro sera na ordem."}),
+            "tempo_preparo": forms.NumberInput(attrs={"class": "form-control","placeholder":"Ex 20 Minutos"}),
         }
+
+        labels = {
+        "categoria": "Escolha a categoria do produto",
+    }

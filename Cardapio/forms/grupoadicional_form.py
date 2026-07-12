@@ -18,4 +18,8 @@ class GrupoAdicionalForm(forms.ModelForm):
 
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 3}),
+            "nome":forms.TextInput(attrs={
+
+                "placeholder": "Ex.: Molhos"
+            }),
         }

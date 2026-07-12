@@ -17,6 +17,6 @@ class CategoriaForm(forms.ModelForm):
         widgets = {
             "nome": forms.TextInput(attrs={"class": "form-control","placeholder":"Exemplo, Pizza, Refrigerante, Sobremesa..."}),
             "descricao": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
-            "ordem": forms.NumberInput(attrs={"class": "form-control"}),
+            "ordem": forms.NumberInput(attrs={"class": "form-control","placeholder":"Ex 0, quanto menor o numero, primeiro sera na ordem."}),
             "ativa": forms.CheckboxInput(),
         }

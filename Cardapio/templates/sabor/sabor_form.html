@@ -12,15 +12,17 @@
 
         <div class="col-md-6">
 
-            <label>Grupo</label>
+            <label>Adicionar o sabor em algum grupo ou criar novo</label>
 
             {{ form.grupo }}
+            
+            <a href="{% url "grupos_sabores:novo" %}">Criar novo grupo de sabores</a>
 
         </div>
-
+        <br>
         <div class="col-md-6">
 
-            <label>Nome</label>
+            <label>Nome do sabor</label>
 
             {{ form.nome }}
 
