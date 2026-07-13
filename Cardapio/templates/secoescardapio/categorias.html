@@ -1,0 +1,63 @@
+<div class="mb-5">
+
+    <h2 class="mb-3">
+        {{ secao.get_tipo_display }}
+    </h2>
+
+
+    <div class="row">
+
+        {% for categoria in secao.dados %}
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm h-100">
+
+
+                {% if categoria.imagem %}
+
+                <img 
+                    src="{{ categoria.imagem.url }}"
+                    class="card-img-top"
+                    style="height:150px; object-fit:cover;"
+                >
+
+                {% endif %}
+
+
+                <div class="card-body text-center">
+
+                    <h5>
+                        {{ categoria.nome }}
+                    </h5>
+
+
+                    {% if categoria.descricao %}
+
+                    <p class="text-muted">
+                        {{ categoria.descricao }}
+                    </p>
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+        <p>
+            Nenhuma categoria disponível.
+        </p>
+
+        {% endfor %}
+
+
+    </div>
+
+</div>

@@ -1,0 +1,54 @@
+<div class="mb-5">
+
+
+<h2>
+{{ secao.get_tipo_display }}
+</h2>
+
+
+<div class="row">
+
+
+{% for produto in secao.dados %}
+
+
+<div class="col-md-4 mb-3">
+
+
+<div class="card shadow-sm">
+
+
+<div class="card-body">
+
+
+<h5>
+{{ produto.nome }}
+</h5>
+
+
+<p>
+{{ produto.descricao }}
+</p>
+
+
+<strong>
+R$ {{ produto.preco }}
+</strong>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+{% endfor %}
+
+
+</div>
+
+
+</div>

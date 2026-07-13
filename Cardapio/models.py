@@ -390,3 +390,32 @@ class Promocao(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.produto}"
+    
+class EstruturaCardapio(models.Model):
+
+    TIPOS = (
+        ("banner", "Banner"),
+        ("promocoes", "Promoções"),
+        ("mais_vendidos", "Mais vendidos"),
+        ("categorias", "Categorias"),
+        ("combos", "Combos"),
+        ("novidades", "Novidades"),
+        ("recomendados", "Recomendados"),
+    )
+
+    loja = models.ForeignKey(
+        Loja,
+        on_delete=models.CASCADE
+    )
+
+    tipo = models.CharField(
+        max_length=30,
+        choices=TIPOS
+    )
+
+    ordem = models.PositiveIntegerField(default=0)
+
+    ativo = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["ordem"]

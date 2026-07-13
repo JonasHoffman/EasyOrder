@@ -30,6 +30,10 @@ urlpatterns = [
     path("cardapio/grupoadicional/",include(("Cardapio.urls.urls_grupoadicional", "grupoadicional"), namespace="grupoadicional"),),
     path("cardapio/itemadicional/",include(("Cardapio.urls.urls_itemadicional", "sabor"), namespace="itemadicional"),),
     path("cardapio/painel_cardapio/",include(("Cardapio.urls.urls_painel_cardapio", "painel_cardapio"), namespace="painel_cardapio"),),
+    path("cardapio/estrutura_cardapio/",include(("Cardapio.urls.urls_estruturacardapio", "estrutura_cardapio"), namespace="estrutura_cardapio"),),
+    path("cardapio/cardapio_cliente/",include(("Cardapio.urls.urls_cardapiocliente", "cardapio_cliente"), namespace="cardapio_cliente"),),
+
+
 
 
     ]  

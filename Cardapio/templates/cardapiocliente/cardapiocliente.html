@@ -1,0 +1,41 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+
+
+{% for secao in secoes %}
+
+
+    {% if secao.tipo == "banner" %}
+
+        {% include "secoescardapio/banner.html" %}
+
+
+    {% elif secao.tipo == "promocoes" %}
+
+        {% include "secoescardapio/promocoes.html" %}
+
+
+    {% elif secao.tipo == "categorias" %}
+
+        {% include "secoescardapio/categorias.html" %}
+
+
+    {% elif secao.tipo == "combos" %}
+
+        {% include "secoescardapio/combos.html" %}
+
+
+    {% endif %}
+
+
+{% endfor %}
+
+
+</div>
+
+
+{% endblock %}

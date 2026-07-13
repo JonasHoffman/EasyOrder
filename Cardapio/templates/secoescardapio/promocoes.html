@@ -1,0 +1,74 @@
+<div class="mb-5">
+
+
+<h2 class="mb-3">
+    {{ secao.get_tipo_display }}
+</h2>
+
+
+<div class="row">
+
+
+{% for promocao in secao.dados %}
+
+
+<div class="col-md-4 mb-3">
+
+
+<div class="card shadow-sm">
+
+
+{% if promocao.produto.imagem %}
+
+<img
+src="{{ promocao.produto.imagem.url }}"
+class="card-img-top"
+style="height:180px; object-fit:cover;"
+>
+
+{% endif %}
+
+
+
+<div class="card-body">
+
+
+<h5>
+{{ promocao.produto.nome }}
+</h5>
+
+
+<p>
+{{ promocao.descricao }}
+</p>
+
+
+<h5 class="text-success">
+
+R$ {{ promocao.preco_promocional }}
+
+</h5>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+{% empty %}
+
+<p>
+Nenhuma promoção disponível.
+</p>
+
+{% endfor %}
+
+
+</div>
+
+
+</div>
