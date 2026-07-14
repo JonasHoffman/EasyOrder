@@ -18,6 +18,18 @@
 
         {% include "secoescardapio/promocoes.html" %}
 
+    {% elif secao.tipo == "recomendados" %}
+
+        {% include "secoescardapio/recomendados.html" %}
+
+    {% elif secao.tipo == "novidades" %}
+
+        {% include "secoescardapio/novidades.html" %}
+
+    {% elif secao.tipo == "mais_vendidos" %}
+
+        {% include "secoescardapio/maisvendidos.html" %}
+
 
     {% elif secao.tipo == "categorias" %}
 

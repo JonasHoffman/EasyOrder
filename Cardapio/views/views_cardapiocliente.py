@@ -51,7 +51,7 @@ def cardapio_cliente(request):
         # Mais vendidos
         elif secao.tipo == "mais_vendidos":
 
-            secao.dados = Produto.objects.filter(
+            QUAL = secao.dados = Produto.objects.filter(
                 loja=loja,
                 disponivel=True,
                 destaque=True
@@ -59,6 +59,9 @@ def cardapio_cliente(request):
                 "ordem",
                 "nome"
             )
+            print(QUAL)
+
+
 
 
         # Combos
@@ -77,18 +80,19 @@ def cardapio_cliente(request):
         # Novidades
         elif secao.tipo == "novidades":
 
-            secao.dados = Produto.objects.filter(
+            quel = secao.dados = Produto.objects.filter(
                 loja=loja,
                 disponivel=True
             ).order_by(
                 "-created_at"
             )[:10]
+            print('nada ',quel)
 
 
         # Recomendados
         elif secao.tipo == "recomendados":
 
-            secao.dados = Produto.objects.filter(
+            quil = secao.dados = Produto.objects.filter(
                 loja=loja,
                 disponivel=True,
                 destaque=True
@@ -96,6 +100,7 @@ def cardapio_cliente(request):
                 "ordem",
                 "nome"
             )
+            print('nada 2',quil)
 
 
         # Banner (vamos criar o model depois)

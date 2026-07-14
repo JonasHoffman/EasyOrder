@@ -1,0 +1,229 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="mb-1">
+                Promoções
+            </h2>
+
+            <p class="text-muted mb-0">
+                Gerencie as promoções dos produtos do seu cardápio.
+            </p>
+
+        </div>
+
+        <a href="{% url 'promocoes:nova' %}" class="btn btn-success">
+
+            Nova Promoção
+
+        </a>
+
+    </div>
+
+    {% if promocoes %}
+
+    <div class="row">
+
+        {% for promocao in promocoes %}
+
+        <div class="col-lg-4 col-md-6 mb-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                {% if promocao.produto.imagem %}
+
+                <img
+                    src="{{ promocao.produto.imagem.url }}"
+                    class="card-img-top"
+                    style="height:220px;object-fit:cover;"
+                >
+
+                {% endif %}
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <h5 class="mb-2">
+
+                            {{ promocao.nome }}
+
+                        </h5>
+
+                        {% if promocao.ativa %}
+
+                        <span class="badge bg-success">
+
+                            Ativa
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-danger">
+
+                            Inativa
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <small class="text-muted">
+
+                        {{ promocao.produto.nome }}
+
+                    </small>
+
+                    <hr>
+
+                    <div class="mb-2">
+
+                        <small class="text-muted">
+
+                            Preço Original
+
+                        </small>
+
+                        <div>
+
+                            <del>
+
+                                R$ {{ promocao.produto.preco }}
+
+                            </del>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+
+                            Preço Promocional
+
+                        </small>
+
+                        <h4 class="text-success">
+
+                            R$ {{ promocao.preco_promocional }}
+
+                        </h4>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+
+                            Vigência
+
+                        </small>
+
+                        <div>
+
+                            {{ promocao.data_inicio|date:"d/m/Y H:i" }}
+
+                            <br>
+
+                            até
+
+                            <br>
+
+                            {{ promocao.data_fim|date:"d/m/Y H:i" }}
+
+                        </div>
+
+                    </div>
+
+                    {% if promocao.descricao %}
+
+                    <p class="text-muted mb-0">
+
+                        {{ promocao.descricao }}
+
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="card-footer bg-white">
+
+                    <div class="d-grid gap-2">
+
+                        <a
+                            href="{% url 'promocoes:editar' promocao.id %}"
+                            class="btn btn-outline-primary"
+                        >
+
+                            Editar
+
+                        </a>
+
+                        <a
+                            href="{% url 'promocoes:excluir' promocao.id %}"
+                            class="btn btn-outline-danger"
+                            onclick="return confirm('Deseja excluir esta promoção?')"
+                        >
+
+                            Excluir
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body text-center p-5">
+
+            <h4>
+
+                Nenhuma promoção cadastrada
+
+            </h4>
+
+            <p class="text-muted">
+
+                Crie sua primeira promoção para destacar produtos no cardápio.
+
+            </p>
+
+            <a
+                href="{% url 'promocoes:nova' %}"
+                class="btn btn-success"
+            >
+
+                Criar Promoção
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
