@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from Cardapio.models import Categoria
+from Cardapio.models import Categoria,Produto
 from Cardapio.forms.categorias_form import CategoriaForm
 from django.contrib.auth.decorators import login_required
 
@@ -82,3 +82,15 @@ def alterar_status_categoria(request, id):
 
     messages.success(request, "Status atualizado com sucesso!")
     return redirect("categorias:listar")
+
+
+
+def categoria_detalhe(request, slug):
+    categoria = get_object_or_404(Categoria, slug=slug)
+    produtos = Produto.objects.filter(categoria=categoria)
+
+    context = {
+        'categoria': categoria,
+        'produtos': produtos,
+    }
+    return render(request, 'categorias/categorias_detalhes_cardapio.html', context)

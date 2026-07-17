@@ -100,3 +100,19 @@ def alterar_status_produto(request, id):
 
     messages.success(request, "Status atualizado com sucesso!")
     return redirect("produtos:listar")
+
+# views.py
+
+def produto_detalhe(request, slug):
+    produto = get_object_or_404(Produto, slug=slug)
+    
+    # produtos relacionados da mesma categoria (opcional, mas fica legal)
+    relacionados = Produto.objects.filter(
+        categoria=produto.categoria
+    ).exclude(id=produto.id)[:4]
+
+    context = {
+        'produto': produto,
+        'relacionados': relacionados,
+    }
+    return render(request, 'delivery/produto_detalhe.html', context)

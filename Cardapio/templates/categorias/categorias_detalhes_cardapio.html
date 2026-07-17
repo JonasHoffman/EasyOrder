@@ -1,0 +1,41 @@
+{% extends 'templates/base.html' %}
+{% block content %}
+
+<div class="categoria-detalhe-container">
+
+    <a href="javascript:history.back()" class="voltar-link">
+        &larr; Voltar
+    </a>
+
+    <div class="categoria-header">
+        {% if categoria.imagem %}
+            <img src="{{ categoria.imagem.url }}" alt="{{ categoria.nome }}" class="categoria-banner">
+        {% endif %}
+        <h1 class="categoria-titulo">{{ categoria.nome }}</h1>
+        {% if categoria.descricao %}
+            <p class="categoria-descricao">{{ categoria.descricao }}</p>
+        {% endif %}
+    </div>
+
+    <div class="produtos-grid">
+        {% for produto in produtos %}
+            <a href="{% url 'produto_detalhe' produto.slug %}" class="produto-card">
+                {% if produto.imagem %}
+                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="produto-card-img">
+                {% endif %}
+                <div class="produto-card-body">
+                    <h5 class="produto-card-nome">{{ produto.nome }}</h5>
+                    {% if produto.descricao %}
+                        <p class="produto-card-descricao">{{ produto.descricao|truncatewords:12 }}</p>
+                    {% endif %}
+                    <span class="produto-card-preco">R$ {{ produto.preco }}</span>
+                </div>
+            </a>
+        {% empty %}
+            <p>Nenhum produto disponível nessa categoria.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

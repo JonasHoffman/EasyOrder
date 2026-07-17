@@ -1,0 +1,66 @@
+{% extends 'templates/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="produto-detalhe-container">
+
+    <a href="javascript:history.back()" class="voltar-link">
+        &larr; Voltar ao cardápio
+    </a>
+
+    <div class="produto-detalhe">
+        <div class="produto-imagem-wrapper">
+            {% if produto.imagem %}
+                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="produto-imagem-grande">
+            {% else %}
+                <div class="produto-sem-imagem">Sem imagem</div>
+            {% endif %}
+        </div>
+
+        <div class="produto-info">
+            <span class="produto-categoria-tag">{{ produto.categoria.nome }}</span>
+            <h1 class="produto-nome">{{ produto.nome }}</h1>
+            
+            {% if produto.descricao %}
+                <p class="produto-descricao">{{ produto.descricao }}</p>
+            {% endif %}
+
+            <div class="produto-preco-linha">
+                <span class="produto-preco">R$ {{ produto.preco }}</span>
+            </div>
+
+            <div class="produto-quantidade">
+                <label>Quantidade</label>
+                <div class="qtd-controle">
+                    <button type="button" class="qtd-btn" onclick="alterarQtd(-1)">-</button>
+                    <span id="qtdValor">1</span>
+                    <button type="button" class="qtd-btn" onclick="alterarQtd(1)">+</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn-adicionar-carrinho" 
+                    data-produto-id="{{ produto.id }}">
+                Adicionar ao carrinho — <span id="precoTotal">R$ {{ produto.preco }}</span>
+            </button>
+        </div>
+    </div>
+
+    {% if relacionados %}
+    <div class="produtos-relacionados">
+        <h3>Você também pode gostar</h3>
+        <div class="relacionados-grid">
+            {% for item in relacionados %}
+                <a href="{% url 'produto_detalhe' item.slug %}" class="relacionado-card">
+                    {% if item.imagem %}
+                        <img src="{{ item.imagem.url }}" alt="{{ item.nome }}">
+                    {% endif %}
+                    <span class="relacionado-nome">{{ item.nome }}</span>
+                    <span class="relacionado-preco">R$ {{ item.preco }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

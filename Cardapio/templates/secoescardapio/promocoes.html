@@ -1,74 +1,64 @@
 <div class="mb-5">
 
+    <h2 class="mb-3">
+        {{ secao.get_tipo_display }}
+    </h2>
 
-<h2 class="mb-3">
-    {{ secao.get_tipo_display }}
-</h2>
+    <div class="categorias-scroll">
 
+        {% for promocao in secao.dados %}
 
-<div class="row">
+        <div class="recomendado-card">
 
+            <div class="card shadow-sm">
 
-{% for promocao in secao.dados %}
+                {% if promocao.produto.imagem %}
 
+                <img
+                    src="{{ promocao.produto.imagem.url }}"
+                    alt="{{ promocao.produto.nome }}"
+                >
 
-<div class="col-md-4 mb-3">
+                {% endif %}
 
+                <div class="card-body">
 
-<div class="card shadow-sm">
+                    <h5 class="card-title">
+                        {{ promocao.produto.nome }}
+                    </h5>
 
+                    {% if promocao.descricao %}
 
-{% if promocao.produto.imagem %}
+                    <p class="card-text">
+                        {{ promocao.descricao }}
+                    </p>
 
-<img
-src="{{ promocao.produto.imagem.url }}"
-class="card-img-top"
-style="height:180px; object-fit:cover;"
->
+                    {% endif %}
 
-{% endif %}
+                    <div class="promocao-precos">
 
+                        <span class="preco-antigo">
+                            R$ {{ promocao.produto.preco }}
+                        </span>
 
+                        <strong class="preco-promocional">
+                            R$ {{ promocao.preco_promocional }}
+                        </strong>
 
-<div class="card-body">
+                    </div>
 
+                </div>
 
-<h5>
-{{ promocao.produto.nome }}
-</h5>
+            </div>
 
+        </div>
 
-<p>
-{{ promocao.descricao }}
-</p>
+        {% empty %}
 
+        <p>Nenhuma promoção disponível.</p>
 
-<h5 class="text-success">
+        {% endfor %}
 
-R$ {{ promocao.preco_promocional }}
-
-</h5>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-{% empty %}
-
-<p>
-Nenhuma promoção disponível.
-</p>
-
-{% endfor %}
-
-
-</div>
-
+    </div>
 
 </div>

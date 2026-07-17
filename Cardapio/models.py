@@ -1,7 +1,8 @@
 from django.db import models
 from Lojas.models import Loja
 from django.utils import timezone
-# Create your models here.
+from django.utils.text import slugify
+
 class Categoria(models.Model):
 
     loja = models.ForeignKey(
@@ -40,6 +41,11 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
     
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.nome)
+        super().save(*args, **kwargs)
+    
 class Produto(models.Model):
 
     loja = models.ForeignKey(
@@ -47,7 +53,7 @@ class Produto(models.Model):
         on_delete=models.CASCADE,
         related_name="produtos"
     )
-
+    slug = models.SlugField(max_length=170, unique=True, blank=True)
     categoria = models.ForeignKey(
         Categoria,
         on_delete=models.PROTECT,
@@ -102,6 +108,10 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.nome)
+        super().save(*args, **kwargs)
     
 class ProdutoComboGrupo(models.Model):
 
@@ -394,13 +404,13 @@ class Promocao(models.Model):
 class EstruturaCardapio(models.Model):
 
     TIPOS = (
-        ("banner", "Banner"),
-        ("promocoes", "Promoções"),
-        ("mais_vendidos", "Mais vendidos"),
-        ("categorias", "Categorias"),
-        ("combos", "Combos"),
-        ("novidades", "Novidades"),
-        ("recomendados", "Recomendados"),
+        ("banner", "BANNER"),
+        ("promocoes", "PROMOÇÕES"),
+        ("mais_vendidos", "MAIS VENDIDOS"),
+        ("categorias", "CATEGORIAS"),
+        ("combos", "COMBOS"),
+        ("novidades", "NOVIDADES"),
+        ("recomendados", "RECOMENDADOS"),
     )
 
     loja = models.ForeignKey(

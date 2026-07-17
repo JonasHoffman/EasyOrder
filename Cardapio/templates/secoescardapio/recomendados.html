@@ -1,54 +1,57 @@
 <div class="mb-5">
 
+    <h2 class="mb-3">
+        {{ secao.get_tipo_display }}
+    </h2>
 
-<h2>
-{{ secao.get_tipo_display }}
-</h2>
+    <div class="categorias-scroll">
 
+        {% for produto in secao.dados %}
 
-<div class="row">
+        <div class="recomendado-card">
 
+            <div class="card shadow-sm h-100">
 
-{% for produto in secao.dados %}
+                {% if produto.imagem %}
 
+                <img
+                    src="{{ produto.imagem.url }}"
+                    class="card-img-top"
+                    alt="{{ produto.nome }}"
+                >
 
-<div class="col-md-4 mb-3">
+                {% endif %}
 
+                <div class="card-body">
 
-<div class="card shadow-sm">
+                    <h5 class="card-title">
+                        {{ produto.nome }}
+                    </h5>
 
+                    {% if produto.descricao %}
 
-<div class="card-body">
+                    <p class="card-text">
+                        {{ produto.descricao }}
+                    </p>
 
+                    {% endif %}
 
-<h5>
-{{ produto.nome }}
-</h5>
+                    <strong class="d-block mt-2">
+                        R$ {{ produto.preco }}
+                    </strong>
 
+                </div>
 
-<p>
-{{ produto.descricao }}
-</p>
+            </div>
 
+        </div>
 
-<strong>
-R$ {{ produto.preco }}
-</strong>
+        {% empty %}
 
+        <p>Nenhum produto recomendado disponível.</p>
 
-</div>
+        {% endfor %}
 
-
-</div>
-
-
-</div>
-
-
-{% endfor %}
-
-
-</div>
-
+    </div>
 
 </div>

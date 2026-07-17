@@ -1,53 +1,44 @@
 {% extends "templates/base.html" %}
 
 {% block content %}
-
+<br>
 
 <div class="container">
 
-
 {% for secao in secoes %}
-
 
     {% if secao.tipo == "banner" %}
 
         {% include "secoescardapio/banner.html" %}
 
-
-    {% elif secao.tipo == "promocoes" %}
+    {% elif secao.tipo == "promocoes" and secao.dados %}
 
         {% include "secoescardapio/promocoes.html" %}
 
-    {% elif secao.tipo == "recomendados" %}
+    {% elif secao.tipo == "recomendados" and secao.dados %}
 
         {% include "secoescardapio/recomendados.html" %}
 
-    {% elif secao.tipo == "novidades" %}
+    {% elif secao.tipo == "novidades" and secao.dados %}
 
         {% include "secoescardapio/novidades.html" %}
 
-    {% elif secao.tipo == "mais_vendidos" %}
+    {% elif secao.tipo == "mais_vendidos" and secao.dados %}
 
         {% include "secoescardapio/maisvendidos.html" %}
 
-
-    {% elif secao.tipo == "categorias" %}
+    {% elif secao.tipo == "categorias" and secao.dados %}
 
         {% include "secoescardapio/categorias.html" %}
 
-
-    {% elif secao.tipo == "combos" %}
+    {% elif secao.tipo == "combos" and secao.dados %}
 
         {% include "secoescardapio/combos.html" %}
 
-
     {% endif %}
-
 
 {% endfor %}
 
-
 </div>
-
 
 {% endblock %}
