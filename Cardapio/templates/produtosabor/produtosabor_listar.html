@@ -1,0 +1,276 @@
+
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Sabores dos Produtos</h2>
+
+            <small>
+                Total de produtos:
+                <strong>{{ produtos|length }}</strong>
+            </small>
+
+        </div>
+
+        <div>
+
+            <a href="{% url 'produtos:listar' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Editar Produto
+            </a>
+            <a href="{% url 'produtosabor:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Adicionar Sabor
+
+            </a>
+        </div>
+       
+
+    </div>
+    <div class="card mb-3">
+
+    <div class="card-body">
+
+        <form method="get" class="row g-3 align-items-end">
+
+
+            <div class="col-md-3">
+
+                <label for="status" class="form-label">
+                    Status
+                </label>
+
+                <select
+                    name="status"
+                    id="status"
+                    class="form-select"
+                    onchange="this.form.submit()">
+
+                    <option value="todos"
+                        {% if status == "todos" %}selected{% endif %}>
+                        Todos
+                    </option>
+
+
+                    <option value="disponiveis"
+                        {% if status == "disponiveis" %}selected{% endif %}>
+                        Disponíveis
+                    </option>
+
+
+                    <option value="indisponiveis"
+                        {% if status == "indisponiveis" %}selected{% endif %}>
+                        Indisponíveis
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="form-check mt-4">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="sem_sabor"
+                        value="1"
+                        id="sem_sabor"
+                        onchange="this.form.submit()"
+                        {% if request.GET.sem_sabor %}
+                            checked
+                        {% endif %}>
+
+                    <label 
+                        class="form-check-label"
+                        for="sem_sabor">
+
+                        Nenhum sabor
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+        
+
+    </div>
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Produto
+                        </th>
+
+                        <th>
+                            Sabores
+                        </th>
+
+                        <th width="90">
+                            Qtde
+                        </th>
+                        <th width="120">
+                            Máximo
+                        </th>
+                        <th width="120">
+                            Status
+                        </th>
+
+                        <th width="180">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for produto in produtos %}
+
+                        <tr class="tr-list">
+
+                            <td>
+
+                                {{ produto.nome }}
+
+                            </td>
+
+                            <td>
+
+                                {% for item in produto.sabores.all %}
+
+                                    <span class="badge bg-secondary">
+
+                                        {{ item.sabor.nome }}
+
+                                    </span>
+
+                                {% empty %}
+
+                                    <span class="text-muted">
+
+                                        Nenhum sabor
+
+                                    </span>
+
+                                {% endfor %}
+
+                            </td>
+
+                            <td>
+
+                                {{ produto.sabores.count }}
+
+                            </td>
+                            <td>
+
+                                {{ produto.maximo_sabores }}
+
+                            </td>
+
+                            <td>
+
+                                {% if produto.disponivel %}
+
+                                    <span class="badge bg-success">
+
+                                        Disponível
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+
+                                        Indisponível
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="div-flex height-full tr-list">
+
+                                <a href="{% url 'produtosabor:editar' produto.id %}"
+                                   class="btn btn-sm btn-warning btn-icon"
+                                   title="Editar sabores">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="{% url 'produtosabor:status' produto.id %}"
+                                class="btn btn-sm btn-danger btn-icon"
+                                title="Alterar status">
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="6" class="text-center">
+
+                                Nenhum produto possui sabores cadastrados.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

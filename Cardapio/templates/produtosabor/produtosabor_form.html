@@ -1,0 +1,339 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div>
+
+    <div class="card">
+
+        <div class="card-header display-flex space-between">
+
+            <div>
+
+                <h2>
+                    {{ titulo }}
+                </h2>
+
+            </div>
+
+            <div>
+
+                <a href="{% url 'sabor:novo' %}"
+                   class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                    <i class="fa-solid fa-plus"></i>
+                    &nbsp;Criar Sabor
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if erro %}
+
+                <div class="alert alert-danger">
+
+                    {{ erro }}
+
+                </div>
+
+            {% endif %}
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="form-group mb-4">
+
+                    <label>
+
+                        Produto
+
+                    </label>
+
+                    {% if produto %}
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ produto.nome }}"
+                            readonly>
+
+                    {% else %}
+
+                        {{ form.produto }}
+
+                    {% endif %}
+
+                    {{ form.produto.errors }}
+
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+
+                    <h5>
+
+                        Selecionar sabores
+
+                    </h5>
+
+                    <small class="text-muted">
+
+                        Selecione os sabores disponíveis para este produto.
+
+                    </small>
+
+                </div>
+
+                <!-- CAMPO DE BUSCA -->
+                <div class="mb-4">
+
+                    <input
+                        type="text"
+                        id="buscar-sabor"
+                        class="form-control"
+                        placeholder="Pesquisar por  ingrediente...">
+
+                </div>
+                
+
+                <div class="list-group">
+
+                    {% for sabor in sabores_disponiveis %}
+
+                    <div
+                        class="list-group-item item-sabor"
+                        data-busca="
+                            {{ sabor.nome|lower }}
+                            {% for item in sabor.ingredientes.all %}
+                                {{ item.ingrediente.nome|lower }}
+                            {% endfor %}
+                        ">
+
+                        {% if sabor.possui_ingredientes %}
+
+                        <div class="d-flex align-items-center justify-content-between">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="form-check me-3">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="sabor"
+                                        value="{{ sabor.id }}"
+                                        id="sabor{{ sabor.id }}"
+                                        {% if sabor.selecionado %}
+                                            checked
+                                        {% endif %}>
+
+                                </div>
+
+                                <label
+                                    class="mb-0"
+                                    for="sabor{{ sabor.id }}">
+
+                                    <strong>
+
+                                        {{ sabor.nome }}
+
+                                    </strong>
+
+                                </label>
+
+                            </div>
+
+                            <div class="mt-2">
+
+                                <span class="badge bg-secondary me-1">
+
+                                    Ingredientes:
+
+                                </span>
+
+                                {% for item in sabor.ingredientes.all %}
+
+                                    {% if item.ativo %}
+
+                                        <span class="badge bg-secondary me-1">
+
+                                            {{ item.ingrediente.nome }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <label class="small text-muted">
+
+                                        Ordem
+
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        name="ordem_{{ sabor.id }}"
+                                        value="{{ sabor.ordem_produto|default:0 }}"
+                                        class="form-control form-control-sm"
+                                        style="width:80px;">
+
+                                </div>
+
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <label class="small text-muted d-block">
+
+                                        Ativo
+
+                                    </label>
+
+                                    <div class="form-check form-switch">
+
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="ativo_{{ sabor.id }}"
+                                            {% if sabor.selecionado %}
+                                                {% if sabor.ativo_produto %}
+                                                    checked
+                                                {% endif %}
+                                            {% else %}
+                                                checked
+                                            {% endif %}>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {% else %}
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <strong>
+
+                                    {{ sabor.nome }}
+
+                                </strong>
+
+                                <span class="badge bg-warning text-dark ms-2">
+
+                                    Sem ingredientes
+
+                                </span>
+
+                            </div>
+
+                            <a href="{% url 'saboringrediente:novo' sabor.id %}"
+                               class="btn btn-sm btn-sucess btn-cancel btn-outline-warning btn-backgroundcolor">
+
+                                Adicionar ingredientes
+
+                            </a>
+
+                        </div>
+
+                        {% endif %}
+                            </div>
+
+                    {% empty %}
+
+                        <div class="alert alert-info">
+
+                            Nenhum sabor cadastrado.
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <hr>
+
+                <button
+                    type="submit"
+                    class="btn btn-success btn-cancel btn-padrao">
+
+                    Salvar
+
+                </button>
+
+                <a href="{% url 'produtosabor:listar' %}"
+                   class="btn btn-secondary btn-cancel btn-padrao">
+
+                    Cancelar
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const campoBusca = document.getElementById("buscar-sabor");
+
+    if (!campoBusca) {
+        return;
+    }
+
+    const itens = document.querySelectorAll(".item-sabor");
+
+    campoBusca.addEventListener("keyup", function () {
+
+        const texto = this.value
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim();
+
+        itens.forEach(function(item){
+
+            const busca = item.dataset.busca
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+
+            if (busca.includes(texto)) {
+
+                item.style.display = "";
+
+            } else {
+
+                item.style.display = "none";
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

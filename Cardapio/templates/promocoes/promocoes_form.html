@@ -4,13 +4,13 @@
 
 {% block content %}
 
-<div class="container-fluid">
+<div>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
 
-            <h2 class="mb-1">
+            <h2>
                 {% if form.instance.pk %}
                     Editar Promoção
                 {% else %}
@@ -18,13 +18,11 @@
                 {% endif %}
             </h2>
 
-            <p class="text-muted mb-0">
-                Crie promoções para destacar produtos no seu cardápio.
-            </p>
-
         </div>
 
-        <a href="{% url 'promocoes:listar' %}" class="btn btn-outline-secondary">
+
+        <a href="{% url 'promocoes:listar' %}"
+           class="btn btn-outline-secondary">
 
             Voltar
 
@@ -32,35 +30,38 @@
 
     </div>
 
-    <div class="alert alert-info">
 
-        <strong>Como funciona?</strong>
+    <div class="alert alert-info py-2">
 
-        <br>
+        <strong>Como funciona:</strong>
 
         Escolha um produto, informe o preço promocional e o período da promoção.
-
         O desconto será calculado automaticamente.
 
     </div>
+
 
     <form method="POST">
 
         {% csrf_token %}
 
-        <div class="card shadow-sm border-0">
 
-            <div class="card-header bg-white">
+        <div class="card">
+
+
+            <div class="card-header">
 
                 <h5 class="mb-0">
 
-                    Informações da Promoção
+                    Dados da Promoção
 
                 </h5>
 
             </div>
 
+
             <div class="card-body">
+
 
                 <div class="mb-4">
 
@@ -74,73 +75,152 @@
 
                 </div>
 
+
+
                 <div class="mb-4">
 
                     <label class="form-label">
-
                         Produto
-
                     </label>
 
-                    {{ form.produto }}
 
-                </div>
+                    <div class="row">
 
-                <hr>
+                        
 
-                <div class="row mb-4">
 
-                    <div class="col-md-6">
+                        <div class="col-md-8">
 
-                        <div class="card bg-light">
+                            {{ form.produto }}
 
-                            <div class="card-body text-center">
+                        </div>
+                        <div class="col-md-4">
 
-                                <small class="text-muted">
-
-                                    Preço Original
-
-                                </small>
-
-                                <h3 id="preco-original">
-
-                                    R$ 0,00
-
-                                </h3>
-
-                            </div>
+                            <input
+                                type="text"
+                                id="buscar-produto"
+                                class="form-control"
+                                placeholder="Buscar produto..."
+                            >
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-6">
 
-                        <div class="card bg-light">
+                </div>
+                
 
-                            <div class="card-body text-center">
 
-                                <small class="text-muted">
 
-                                    Desconto
+                <div class="border-top pt-4 mt-4">
 
-                                </small>
 
-                                <h3 id="desconto">
+                    <div class="row mb-4">
 
-                                    0%
 
-                                </h3>
+                        <div class="col-md-4">
+
+
+                            <div class="card bg-light">
+
+                                <div class="card-body text-center">
+
+
+                                    <small class="text-muted">
+
+                                        Preço Original
+
+                                    </small>
+
+
+                                    <h3 id="preco-original">
+
+                                        R$ 0,00
+
+                                    </h3>
+
+
+                                </div>
 
                             </div>
 
+
                         </div>
+
+
+
+                        <div class="col-md-4">
+
+
+                            <div class="card bg-light">
+
+                                <div class="card-body text-center">
+
+
+                                    <small class="text-muted">
+
+                                        Desconto
+
+                                    </small>
+
+
+                                    <h3 id="desconto">
+
+                                        0%
+
+                                    </h3>
+
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="col-md-4">
+
+
+                            <div class="card bg-light">
+
+                                <div class="card-body text-center">
+
+
+                                    <small class="text-muted">
+
+                                        Preço Promoção
+
+                                    </small>
+
+
+                                    <h3 id="preco-final">
+
+                                        R$ 0,00
+
+                                    </h3>
+
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
 
                     </div>
 
+
                 </div>
+
+
+
 
                 <div class="mb-4">
+
 
                     <label class="form-label">
 
@@ -148,107 +228,175 @@
 
                     </label>
 
+
                     {{ form.preco_promocional }}
 
-                </div>
-
-                <hr>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-
-                            Início
-
-                        </label>
-
-                        {{ form.data_inicio }}
-
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-
-                            Fim
-
-                        </label>
-
-                        {{ form.data_fim }}
-
-                    </div>
 
                 </div>
 
-                <hr>
+
+
 
                 <div class="mb-4">
 
-                    <label class="form-label">
 
-                        Descrição
+                    <div class="row">
 
-                    </label>
 
-                    {{ form.descricao }}
+                        <div class="col-md-6 ">
+
+
+                            <label class="form-label">
+
+                                Data de Início
+
+                            </label>
+
+
+                            {{ form.data_inicio }}
+
+
+                        </div>
+
+
+
+                        <div class="col-md-6 ">
+
+
+                            <label class="form-label">
+
+                                Data de Término
+
+                            </label>
+
+
+                            {{ form.data_fim }}
+
+
+                        </div>
+
+
+                    </div>
+
 
                 </div>
 
-                <div class="form-check mb-2">
 
-                    {{ form.ativa }}
 
-                    <label class="form-check-label">
 
-                        Promoção ativa
+                <div class=" pt-4 ">
 
-                    </label>
+
+                    <div class="mb-4">
+
+
+                        <label class="form-label">
+
+                            Descrição
+
+                        </label>
+
+
+                        {{ form.descricao }}
+
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+
+
+                            <div class="form-check">
+
+
+                                {{ form.destaque }}
+
+
+                                <label class="form-check-label">
+
+                                    Destacar no cardápio
+
+                                </label>
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+
+                        <div class="col-md-6">
+
+
+                            <div class="form-check">
+
+
+                                {{ form.ativa }}
+
+
+                                <label class="form-check-label">
+
+                                    Promoção ativa
+
+                                </label>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        
+
+
+                    </div>
+
 
                 </div>
 
-                <div class="form-check">
-
-                    {{ form.destaque }}
-
-                    <label class="form-check-label">
-
-                        Destacar no cardápio
-
-                    </label>
-
-                </div>
 
             </div>
 
-            <div class="card-footer bg-white text-end">
 
-                <a
-                    href="{% url 'promocoes:listar' %}"
-                    class="btn btn-outline-secondary"
-                >
+
+            <div class="card-footer text-end">
+
+
+                <a href="{% url 'promocoes:listar' %}" 
+                class="btn btn-outline-secondary">
 
                     Cancelar
 
                 </a>
 
-                <button
+
+                <button 
                     type="submit"
-                    class="btn btn-success"
-                >
+                    class="btn btn-success">
 
                     Salvar Promoção
 
                 </button>
 
+
             </div>
+
 
         </div>
 
+
     </form>
 
+
 </div>
+
+
 
 <script src="{% static 'javascript/promocoes.js' %}"></script>
 

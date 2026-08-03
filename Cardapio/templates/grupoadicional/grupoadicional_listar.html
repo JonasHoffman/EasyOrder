@@ -2,230 +2,314 @@
 
 {% block content %}
 
-<h2>Grupos de Adicionais</h2>
+<div>
 
-<div class="mb-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
-    <a href="{% url 'grupos_adicionais:novo' %}" class="btn btn-primary">
-        Novo Grupo
-    </a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Grupos de Adicionais</h2>
+
+            <small>
+                Total de registros:
+                <strong>{{ total }}</strong>
+            </small>
+
+        </div>
+
+        <div>
+
+            <a href="{% url 'grupos_adicionais:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Novo Grupo
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-5">
+
+                    <label class="form-label">
+                        Buscar
+                    </label>
+
+                    <input
+                        type="text"
+                        name="busca"
+                        class="form-control"
+                        placeholder="Pesquisar..."
+                        value="{{ busca }}">
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-select">
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="ativo"
+                            {% if status == "ativo" %}selected{% endif %}>
+
+                            Ativos
+
+                        </option>
+
+                        <option value="inativo"
+                            {% if status == "inativo" %}selected{% endif %}>
+
+                            Inativos
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn btn-success w-100">
+
+                        Buscar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Nome
+                        </th>
+
+                        <th width="120">
+                            Obrigatório
+                        </th>
+
+                        <th width="100">
+                            Mínimo
+                        </th>
+
+                        <th width="100">
+                            Máximo
+                        </th>
+
+                        <th width="120">
+                            Status
+                        </th>
+
+                        <th width="180">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for grupo in grupos %}
+
+                        <tr class="tr-list">
+
+                            <td>
+
+                                {{ grupo.nome }}
+
+                            </td>
+
+                            <td>
+
+                                {% if grupo.obrigatorio %}
+
+                                    <span class="badge bg-primary">
+
+                                        Sim
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+
+                                        Não
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {{ grupo.minimo }}
+
+                            </td>
+
+                            <td>
+
+                                {{ grupo.maximo }}
+
+                            </td>
+
+                            <td>
+
+                                {% if grupo.ativo %}
+
+                                    <span class="badge bg-success">
+
+                                        Ativo
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+
+                                        Inativo
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="div-flex height-full tr-list">
+
+                                <a href="{% url 'grupos_adicionais:editar' grupo.id %}"
+                                   class="btn btn-sm btn-warning btn-icon"
+                                   title="Editar">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="{% url 'grupos_adicionais:status' grupo.id %}"
+                                   class="btn btn-sm btn-danger btn-icon"
+                                   title="Alterar status">
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="6" class="text-center">
+
+                                Nenhum grupo encontrado.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {% if grupos.has_other_pages %}
+
+        <nav class="mt-3">
+
+            <ul class="pagination">
+
+                {% if grupos.has_previous %}
+
+                    <li class="page-item">
+
+                        <a class="page-link"
+                           href="?page={{ grupos.previous_page_number }}&busca={{ busca }}&status={{ status }}">
+
+                            Anterior
+
+                        </a>
+
+                    </li>
+
+                {% endif %}
+
+                <li class="page-item active">
+
+                    <span class="page-link">
+
+                        {{ grupos.number }}
+
+                    </span>
+
+                </li>
+
+                {% if grupos.has_next %}
+
+                    <li class="page-item">
+
+                        <a class="page-link"
+                           href="?page={{ grupos.next_page_number }}&busca={{ busca }}&status={{ status }}">
+
+                            Próxima
+
+                        </a>
+
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </nav>
+
+    {% endif %}
 
 </div>
-
-<form method="GET" class="row mb-4">
-
-    <div class="col-md-5">
-
-        <input
-            type="text"
-            name="busca"
-            class="form-control"
-            placeholder="Pesquisar..."
-            value="{{ busca }}">
-
-    </div>
-
-    <div class="col-md-3">
-
-        <select
-            name="status"
-            class="form-control">
-
-            <option value="">Todos</option>
-
-            <option value="ativo"
-                {% if status == 'ativo' %}
-                    selected
-                {% endif %}
-            >
-                Ativos
-            </option>
-
-            <option value="inativo"
-                {% if status == 'inativo' %}
-                    selected
-                {% endif %}
-            >
-                Inativos
-            </option>
-
-        </select>
-
-    </div>
-
-    <div class="col-md-2">
-
-        <button class="btn btn-success w-100">
-            Buscar
-        </button>
-
-    </div>
-
-</form>
-
-<p>
-
-    Total de registros:
-    <strong>{{ total }}</strong>
-
-</p>
-
-<table class="table table-striped table-hover">
-
-    <thead>
-
-        <tr>
-
-            <th>Nome</th>
-
-            <th>Obrigatório</th>
-
-            <th>Mínimo</th>
-
-            <th>Máximo</th>
-
-            <th>Status</th>
-
-            <th width="180">
-                Ações
-            </th>
-
-        </tr>
-
-    </thead>
-
-    <tbody>
-
-        {% for grupo in grupos %}
-
-        <tr>
-
-            <td>{{ grupo.nome }}</td>
-
-            <td>
-
-                {% if grupo.obrigatorio %}
-                    Sim
-                {% else %}
-                    Não
-                {% endif %}
-
-            </td>
-
-            <td>{{ grupo.minimo }}</td>
-
-            <td>{{ grupo.maximo }}</td>
-
-            <td>
-
-                {% if grupo.ativo %}
-
-                    <span class="badge bg-success">
-                        Ativo
-                    </span>
-
-                {% else %}
-
-                    <span class="badge bg-danger">
-                        Inativo
-                    </span>
-
-                {% endif %}
-
-            </td>
-
-            <td>
-
-                <a
-                    href="{% url 'grupos_adicionais:editar' grupo.id %}"
-                    class="btn btn-warning btn-sm">
-
-                    Editar
-
-                </a>
-
-                <a
-                    href="{% url 'grupos_adicionais:status' grupo.id %}"
-                    class="btn btn-secondary btn-sm">
-
-                    {% if grupo.ativo %}
-                        Desativar
-                    {% else %}
-                        Ativar
-                    {% endif %}
-
-                </a>
-
-            </td>
-
-        </tr>
-
-        {% empty %}
-
-        <tr>
-
-            <td colspan="6">
-
-                Nenhum grupo encontrado.
-
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
-
-<nav>
-
-    <ul class="pagination">
-
-        {% if grupos.has_previous %}
-
-        <li class="page-item">
-
-            <a
-                class="page-link"
-                href="?page={{ grupos.previous_page_number }}&busca={{ busca }}&status={{ status }}">
-
-                Anterior
-
-            </a>
-
-        </li>
-
-        {% endif %}
-
-        <li class="page-item active">
-
-            <span class="page-link">
-
-                {{ grupos.number }}
-
-            </span>
-
-        </li>
-
-        {% if grupos.has_next %}
-
-        <li class="page-item">
-
-            <a
-                class="page-link"
-                href="?page={{ grupos.next_page_number }}&busca={{ busca }}&status={{ status }}">
-
-                Próxima
-
-            </a>
-
-        </li>
-
-        {% endif %}
-
-    </ul>
-
-</nav>
 
 {% endblock %}

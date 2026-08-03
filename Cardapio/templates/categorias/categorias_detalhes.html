@@ -1,27 +1,115 @@
 {% extends "templates/base.html" %}
+{% load static %}
 
 {% block content %}
 
-<h2>{{ categoria.nome }}</h2>
+<div>
 
-{% if categoria.imagem %}
-    <img src="{{ categoria.imagem.url }}" width="120">
-{% endif %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-<p><strong>Descrição:</strong> {{ categoria.descricao }}</p>
-<p><strong>Ordem:</strong> {{ categoria.ordem }}</p>
+        <div>
+            <h2>{{ categoria.nome }}</h2>
+            <small>Detalhes da categoria</small>
+        </div>
 
-<p>
-    <strong>Status:</strong>
-    {% if categoria.ativa %}
-        Ativa
-    {% else %}
-        Inativa
-    {% endif %}
-</p>
+        <div class="div-flex">
 
-<a href="{% url 'categorias:editar' categoria.id %}">
-    Editar
-</a>
+            <a href="{% url 'categorias:editar' categoria.id %}"
+               class="btn btn-warning btn-padrao btn-sucess btn-cancel ">
+
+                <i class="fa-solid fa-pen align-center "></i>
+                &nbsp;Editar
+
+            </a>
+
+            <a href="{% url 'categorias:listar' %}"
+               class="btn btn-warning btn-padrao btn-sucess btn-cancel">
+
+                <i class="fa-solid fa-arrow-left align-center"></i>
+                &nbsp;Voltar
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="row align-center">
+
+                <div class="col-md-3 text-center">
+
+                    {% if categoria.imagem %}
+
+                        <img src="{{ categoria.imagem.url }}"
+                             class="img-fluid rounded border"
+                             style="max-width: 180px;">
+
+                    {% else %}
+
+                        <div class="border rounded p-5 text-muted">
+                            Sem imagem
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="col-md-9 content-center">
+
+                    <table class="table table-borderless mb-0">
+
+                        <tr>
+                            <th width="180">Nome</th>
+                            <td>{{ categoria.nome }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Descrição</th>
+                            <td>
+                                {{ categoria.descricao|default:"-" }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Ordem</th>
+                            <td>{{ categoria.ordem }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Status</th>
+                            <td>
+
+                                {% if categoria.ativa %}
+
+                                    <span class="badge bg-success">
+                                        Ativa
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Inativa
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

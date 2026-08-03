@@ -1,0 +1,20 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    {% if etapa == "sabores" %}
+
+        {% include "sabor/sabor_escolher.html" %}
+
+    {% elif etapa == "personalizar" %}
+
+        {% include "ingredientes/ingredientes_personalizacao.html" %}
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

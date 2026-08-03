@@ -7,13 +7,18 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def listar_categorias(request):
-
+    status = request.GET.get("status", "todas")
     categorias = Categoria.objects.filter(
         loja=request.user.perfil.loja
     ).order_by("ordem", "nome")
+    if status == "ativas":
+        categorias = categorias.filter(ativa=True)
+    elif status == "inativas":
+        categorias = categorias.filter(ativa=False)
 
     return render(request, "categorias/categorias_listar.html", {
-        "categorias": categorias
+        "categorias": categorias,
+         "status": status,
     })
 
 @login_required
@@ -50,8 +55,13 @@ def editar_categoria(request, id):
 
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            categoria = form.save(commit=False)
 
+            if request.POST.get("remover_imagem"):
+                categoria.imagem.delete(save=False)
+                categoria.imagem = None
+
+            categoria.save()
             messages.success(request, "Categoria atualizada com sucesso!")
             return redirect("categorias:listar")
 
@@ -75,7 +85,12 @@ def detalhe_categoria(request, id):
 
 @login_required
 def alterar_status_categoria(request, id):
-    categoria = get_object_or_404(Categoria, id=id)
+
+    categoria = get_object_or_404(
+        Categoria,
+        id=id,
+        loja=request.user.perfil.loja
+    )
 
     categoria.ativa = not categoria.ativa
     categoria.save()
@@ -86,7 +101,12 @@ def alterar_status_categoria(request, id):
 
 
 def categoria_detalhe(request, slug):
-    categoria = get_object_or_404(Categoria, slug=slug)
+    categoria = get_object_or_404(
+    Categoria,
+    slug=slug,
+    ativa=True,
+    loja__ativa=True
+)
     produtos = Produto.objects.filter(categoria=categoria)
 
     context = {

@@ -2,10 +2,12 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.contrib.auth.decorators import login_required
 from Cardapio.forms.sabor_form import SaborForm
 from Cardapio.models import GrupoDeSabores, Sabor
 
+
+@login_required
 def listar_sabores(request):
 
     loja = request.user.perfil.loja
@@ -48,7 +50,11 @@ def listar_sabores(request):
         loja=loja,
         ativo=True
     )
-
+    for sabor in sabores:
+        sabor.tem_ingredientes = sabor.ingredientes.filter(
+            ativo=True
+        ).exists()
+        
     context = {
         "sabores": sabores,
         "grupos": grupos,
@@ -60,7 +66,7 @@ def listar_sabores(request):
         "sabor/sabor_listar.html",
         context,
     )
-
+@login_required
 def novo_sabor(request):
 
     loja = request.user.perfil.loja
@@ -100,7 +106,7 @@ def novo_sabor(request):
             "titulo": "Novo Sabor"
         },
     )
-
+@login_required
 def editar_sabor(request, id):
 
     loja = request.user.perfil.loja
@@ -121,15 +127,24 @@ def editar_sabor(request, id):
         )
 
         if form.is_valid():
+                sabor = form.save(commit=False)
+    
+                if request.POST.get("remover_imagem"):
+                    if sabor.imagem:
+                        sabor.imagem.delete(save=False)
+                    sabor.imagem = None
+    
+                sabor.save()
+    
+                messages.success(
+                                request,
+                                "Sabor atualizado com sucesso."
+                            )
+                return redirect("sabor:listar")
 
-            form.save()
+            
 
-            messages.success(
-                request,
-                "Sabor atualizado com sucesso."
-            )
-
-            return redirect("sabor:listar")
+            
 
     else:
 
@@ -143,30 +158,31 @@ def editar_sabor(request, id):
         "sabor/sabor_form.html",
         {
             "form": form,
-            "titulo": "Editar Sabor"
+            "titulo": "Editar Sabor",
+            "sabor": sabor,
         },
     )
 
-def excluir_sabor(request, id):
+@login_required
+def detalhe(request, id):
 
     loja = request.user.perfil.loja
 
     sabor = get_object_or_404(
         Sabor,
         id=id,
-        loja=loja
+        loja=loja,
     )
 
-    sabor.delete()
-
-    messages.success(
+    return render(
         request,
-        "Sabor excluído com sucesso."
+        "sabor/sabor_detalhe.html",
+        {
+            "sabor": sabor,
+        },
     )
 
-    return redirect("sabor:listar")
-
-
+@login_required
 def alterar_status_sabor(request, id):
 
     loja = request.user.perfil.loja

@@ -1,0 +1,93 @@
+{% if carrinho|length %}
+
+    {% for item in carrinho %}
+
+    <div 
+        class="d-flex align-items-center mb-3"
+        data-chave="{{ item.chave }}"
+    >
+
+        {% if item.produto.imagem %}
+        <img 
+            src="{{ item.produto.imagem.url }}"
+            alt="{{ item.produto.nome }}"
+            style="width:56px;height:56px;object-fit:cover;border-radius:8px;"
+            class="me-2"
+        >
+        {% endif %}
+
+
+        <div class="flex-grow-1">
+
+            <div class="fw-semibold">
+                {{ item.produto.nome }}
+            </div>
+
+
+            <div class="text-muted small">
+                {{ item.quantidade }}x 
+                R$ {{ item.preco_total|floatformat:2 }}
+            </div>
+
+
+            {% if item.ingredientes_removidos %}
+
+            <div class="small text-danger">
+
+                Sem:
+
+                {% for item_ingrediente in item.ingredientes_removidos %}
+
+                    {{ item_ingrediente.ingrediente.nome }}
+
+                    {% if not forloop.last %}, {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+            {% if item.adicionais %}
+                <div class="small text-success">
+                    Adicionais:
+
+                    {% for adicional in item.adicionais %}
+                        {{ adicional.nome }}
+                        {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+
+
+        <div class="text-end">
+
+            <div class="fw-semibold">
+                R$ {{ item.subtotal|floatformat:2 }}
+            </div>
+
+
+            <button 
+                class="btn btn-sm btn-link text-danger p-0 btn-remover-carrinho"
+                data-chave="{{ item.chave }}"
+            >
+                remover
+            </button>
+
+        </div>
+
+    </div>
+
+
+    {% endfor %}
+
+{% else %}
+
+    <p class="text-muted text-center py-4">
+        Seu carrinho está vazio.
+    </p>
+
+{% endif %}

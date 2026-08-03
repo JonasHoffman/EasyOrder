@@ -1,72 +1,200 @@
 {% extends "templates/base.html" %}
+{% load static %}
 
 {% block content %}
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
+<div>
 
-<h2>Categorias</h2>
-
-<a href="{% url 'categorias:novo' %}" class="btn btn-primary">
-    Nova Categoria
-</a>
-
-<hr>
-
-<table class="table table-hover">
-
-    <thead>
-        <tr>
-            <th>Imagem</th>
-            <th>Nome</th>
-            <th>Ordem</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        {% for categoria in categorias %}
-
-        <tr>
-            <td>
-                {% if categoria.imagem %}
-                    <img src="{{ categoria.imagem.url }}" width="50">
-                {% endif %}
-            </td>
-
-            <td>{{ categoria.nome }}</td>
-            <td>{{ categoria.ordem }}</td>
-
-            <td>
-                {% if categoria.ativa %}
-                    <span class="text-success">Ativa</span>
-                {% else %}
-                    <span class="text-danger">Inativa</span>
-                {% endif %}
-            </td>
-
-            <td>
-                <a href="{% url 'categorias:detalhe' categoria.id %}">👁</a>
-                <a href="{% url 'categorias:editar' categoria.id %}">✏</a>
-                <a href="{% url 'categorias:status' categoria.id %}">🔒</a>
-            </td>
-        </tr>
-
-        {% empty %}
-            <tr>
-                <td colspan="5">Nenhuma categoria cadastrada.</td>
-            </tr>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
         {% endfor %}
+    {% endif %}
 
-    </tbody>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-</table>
+        <div>
+            <h2>Categorias</h2>
+            <small>
+                Total de categorias:
+                <strong>{{ categorias|length }}</strong>
+            </small>
+        </div>
+
+        <div>
+            <a href="{% url 'produtos:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Novo Produto
+
+            </a>
+
+            <a href="{% url 'categorias:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Nova Categoria
+
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Filtro -->
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-3">
+
+                    <label for="status" class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-select"
+                        onchange="this.form.submit()">
+
+                        <option value="todas"
+                            {% if status == "todas" %}selected{% endif %}>
+                            Todas
+                        </option>
+
+                        <option value="ativas"
+                            {% if status == "ativas" %}selected{% endif %}>
+                            Ativas
+                        </option>
+
+                        <option value="inativas"
+                            {% if status == "inativas" %}selected{% endif %}>
+                            Inativas
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+                        <th width="70">Imagem</th>
+                        <th>Nome</th>
+                        <th width="100">Ordem</th>
+                        <th width="120">Status</th>
+                        <th width="180">Ações</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for categoria in categorias %}
+
+                        <tr class="tr-list">
+
+                            <td>
+
+                                {% if categoria.imagem %}
+
+                                    <img src="{{ categoria.imagem.url }}"
+                                         width="50"
+                                         height="50"
+                                         class="rounded object-fit-cover">
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>{{ categoria.nome }}</td>
+
+                            <td>{{ categoria.ordem }}</td>
+
+                            <td>
+
+                                {% if categoria.ativa %}
+
+                                    <span class="badge bg-success">
+                                        Ativa
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Inativa
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="div-flex height-full tr-list">
+
+                                <a href="{% url 'categorias:detalhe' categoria.id %}"
+                                   class="btn btn-sm btn-warning btn-icon">
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                </a>
+
+                                <a href="{% url 'categorias:editar' categoria.id %}"
+                                   class="btn btn-sm btn-warning btn-icon">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="{% url 'categorias:status' categoria.id %}"
+                                   class="btn btn-sm btn-danger btn-icon">
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="5" class="text-center">
+
+                                Nenhuma categoria encontrada.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

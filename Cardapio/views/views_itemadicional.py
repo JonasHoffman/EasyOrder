@@ -1,19 +1,26 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from Cardapio.forms.itemadicional_form import ItemAdicionalForm
-from ..models import ItemAdicional
+from Cardapio.models import ItemAdicional
 
 
-
+@login_required
 def listar_item_adicional(request):
+
+    loja = request.user.perfil.loja
 
     busca = request.GET.get("busca", "")
     status = request.GET.get("status", "")
 
-    itens = ItemAdicional.objects.select_related("grupo").all()
+    itens = ItemAdicional.objects.filter(
+        grupo__loja=loja
+    ).select_related(
+        "grupo"
+    )
 
     if busca:
         itens = itens.filter(
@@ -27,7 +34,10 @@ def listar_item_adicional(request):
     elif status == "inativo":
         itens = itens.filter(ativo=False)
 
-    itens = itens.order_by("ordem", "nome")
+    itens = itens.order_by(
+        "ordem",
+        "nome"
+    )
 
     total = itens.count()
 
@@ -37,70 +47,91 @@ def listar_item_adicional(request):
 
     itens = paginator.get_page(page)
 
-    context = {
-        "itens": itens,
-        "busca": busca,
-        "status": status,
-        "total": total,
-    }
-
     return render(
         request,
         "itemadicional/itemadicional_listar.html",
-        context,
+        {
+            "itens": itens,
+            "busca": busca,
+            "status": status,
+            "total": total,
+        },
     )
 
 
+@login_required
 def novo_item_adicional(request):
+
     if request.method == "POST":
+
         form = ItemAdicionalForm(
             request.POST,
-            request.FILES
+            request.FILES,
+            
         )
 
         if form.is_valid():
+
             form.save()
+
             messages.success(
                 request,
                 "Item adicional cadastrado com sucesso!"
             )
-            return redirect("item_adicional:listar")
+
+            return redirect(
+                "item_adicional:listar"
+            )
 
     else:
-        form = ItemAdicionalForm()
+
+        form = ItemAdicionalForm(
+        )
 
     return render(
         request,
         "itemadicional/itemadicional_form.html",
         {
             "form": form
-        },
+        }
     )
 
 
+@login_required
 def editar_item_adicional(request, id):
+
     item = get_object_or_404(
         ItemAdicional,
-        id=id
+        id=id,
     )
 
     if request.method == "POST":
+
         form = ItemAdicionalForm(
             request.POST,
             request.FILES,
-            instance=item
+            instance=item,
         )
 
         if form.is_valid():
+
             form.save()
+
             messages.success(
                 request,
                 "Item adicional atualizado com sucesso!"
             )
-            return redirect("item_adicional:listar")
+
+            return redirect(
+                "item_adicional:listar"
+            )
 
     else:
-        form = ItemAdicionalForm(instance=item)
+
+        form = ItemAdicionalForm(
+            instance=item,
+            
+        )
 
     return render(
         request,
@@ -108,17 +139,21 @@ def editar_item_adicional(request, id):
         {
             "form": form,
             "item": item,
-        },
+        }
     )
 
 
+@login_required
 def excluir_item_adicional(request, id):
+
     item = get_object_or_404(
         ItemAdicional,
-        id=id
+        id=id,
+        grupo__loja=request.user.perfil.loja
     )
 
     if request.method == "POST":
+
         item.delete()
 
         messages.success(
@@ -126,21 +161,18 @@ def excluir_item_adicional(request, id):
             "Item adicional excluído com sucesso!"
         )
 
-        return redirect("item_adicional:listar")
-
-    return render(
-        request,
-        "itemadicional/itemadicional_listar.html",
-        {
-            "item": item
-        },
+    return redirect(
+        "item_adicional:listar"
     )
 
 
+@login_required
 def alterar_status_item_adicional(request, id):
+
     item = get_object_or_404(
         ItemAdicional,
-        id=id
+        id=id,
+        grupo__loja=request.user.perfil.loja
     )
 
     item.ativo = not item.ativo
@@ -151,4 +183,6 @@ def alterar_status_item_adicional(request, id):
         "Status atualizado com sucesso!"
     )
 
-    return redirect("item_adicional:listar")
+    return redirect(
+        "item_adicional:listar"
+    )

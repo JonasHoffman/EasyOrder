@@ -1,9 +1,18 @@
 from django import forms
 from Cardapio.models import Categoria
+from django.core.exceptions import ValidationError
+from Cardapio.utils import validar_imgs
+
+
+
 
 
 class CategoriaForm(forms.ModelForm):
-
+    imagem = forms.ImageField(
+        validators=[validar_imgs],
+        required=False
+    )
+    
     class Meta:
         model = Categoria
         fields = [
@@ -19,4 +28,7 @@ class CategoriaForm(forms.ModelForm):
             "descricao": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "ordem": forms.NumberInput(attrs={"class": "form-control","placeholder":"Ex 0, quanto menor o numero, primeiro sera na ordem."}),
             "ativa": forms.CheckboxInput(),
+            "imagem": forms.FileInput(attrs={
+                "class": "form-control"
+            }),
         }

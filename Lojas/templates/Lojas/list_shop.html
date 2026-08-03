@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -12,7 +12,7 @@
             <small>Total de lojas: <strong>{{ total_lojas }}</strong></small>
         </div>
 
-        <a href="{% url 'lojas:nova' %}" class="btn btn-success btn-cancel">
+        <a href="{% url 'lojas:nova' %}" class="btn btn-success btn-cancel btn-backgroundcolor">
             <i class="fa-solid fa-plus"></i>
             Nova Loja
         </a>
@@ -34,8 +34,8 @@
                     value="{{ busca }}">
 
             </div>
-            <br>
-
+        <br>  
+        
             <div class="col-md-3">
 
                 <select class="form-select" name="status">
@@ -59,19 +59,19 @@
                     </option>
 
                 </select>
-
+                
             </div>
             <br>
 
             <div class="div-flex">
 
-                <button class="btn btn-primary w-100">
+                <button class="btn btn-padrao  ">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     Buscar
                 </button>
                 <div class="col-md-2">
 
-                <a href="{% url 'lojas:lista' %}" class="btn btn-cancel w-100">
+                <a href="{% url 'lojas:lista' %}" class="btn btn-cancel btn-padrao ">
                     Limpar
                 </a>
 
@@ -137,24 +137,24 @@
 
                         </td>
 
-                        <td>
+                        <td class="div-flex">
 
                             <a href="{% url 'lojas:detalhes' loja.pk %}"
-                               class="btn btn-sm btn-info">
+                               class="btn btn-sm btn-info btn-icon">
 
                                 <i class="fa-solid fa-eye"></i>
 
                             </a>
 
                             <a href="{% url 'lojas:editar' loja.pk %}"
-                               class="btn btn-sm btn-warning">
+                               class="btn btn-sm btn-warning btn-icon">
 
                                 <i class="fa-solid fa-pen"></i>
 
                             </a>
 
                             <a href="#"
-                               class="btn btn-sm btn-danger">
+                               class="btn btn-sm btn-danger btn-icon ">
 
                                 <i class="fa-solid fa-trash"></i>
 

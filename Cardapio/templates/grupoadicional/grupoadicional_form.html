@@ -2,69 +2,162 @@
 
 {% block content %}
 
-<div class="content-header">
-    <h2>
-        {% if form.instance.id %}
-            Editar Grupo de Adicionais
-        {% else %}
-            Novo Grupo de Adicionais
-        {% endif %}
-    </h2>
-</div>
+<div>
 
-<form method="POST">
+    <div class="card">
 
-    {% csrf_token %}
+        <div class="card-header display-flex space-between">
 
-    <div class="row">
+            <div>
 
-        <div class="col-md-6 mb-3">
-            <label>Nome</label>
-            {{ form.nome }}
+                <h2>
+
+                    {% if form.instance.id %}
+                        Editar Grupo de Adicionais
+                    {% else %}
+                        Novo Grupo de Adicionais
+                    {% endif %}
+
+                </h2>
+
+            </div>
+
         </div>
 
-        <div class="col-md-6 mb-3">
-            <label>Ordem</label>
-            {{ form.ordem }}
-        </div>
+        <div class="card-body">
 
-        <div class="col-md-12 mb-3">
-            <label>Descrição</label>
-            {{ form.descricao }}
-        </div>
+            <form method="POST">
 
-        <div class="col-md-4 mb-3">
-            <label>Mínimo</label>
-            {{ form.minimo }}
-        </div>
+                {% csrf_token %}
 
-        <div class="col-md-4 mb-3">
-            <label>Máximo</label>
-            {{ form.maximo }}
-        </div>
+                <div class="mb-3">
 
-        <div class="col-md-2 mt-4">
-            {{ form.obrigatorio }}
-            <label>Obrigatório</label>
-        </div>
+                    <label>
 
-        <div class="col-md-2 mt-4">
-            {{ form.ativo }}
-            <label>Ativo</label>
+                        {{ form.nome.label }}
+
+                    </label>
+
+                    {{ form.nome }}
+                    {{ form.nome.errors }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+
+                        {{ form.descricao.label }}
+
+                    </label>
+
+                    {{ form.descricao }}
+                    {{ form.descricao.errors }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+
+                        {{ form.minimo.label }}
+
+                    </label>
+
+                    {{ form.minimo }}
+                    {{ form.minimo.errors }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+
+                        {{ form.maximo.label }}
+
+                    </label>
+
+                    {{ form.maximo }}
+                    {{ form.maximo.errors }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+
+                        {{ form.ordem.label }}
+
+                    </label>
+
+                    {{ form.ordem }}
+                    {{ form.ordem.errors }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <div>
+
+                        <label
+                            class="form-check-label label-sincronizado"
+                            for="{{ form.obrigatorio.id_for_label }}">
+
+                            {{ form.obrigatorio.label }}
+
+                        </label>
+
+                        {{ form.obrigatorio }}
+
+                    </div>
+
+                    {{ form.obrigatorio.errors }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <div>
+
+                        <label
+                            class="form-check-label label-sincronizado"
+                            for="{{ form.ativo.id_for_label }}">
+
+                            {{ form.ativo.label }}
+
+                        </label>
+
+                        {{ form.ativo }}
+
+                    </div>
+
+                    {{ form.ativo.errors }}
+
+                </div>
+
+                <hr>
+
+                <button
+                    type="submit"
+                    class="btn btn-success btn-cancel btn-padrao">
+
+                    Salvar
+
+                </button>
+
+                <a href="{% url 'grupos_adicionais:listar' %}"
+                   class="btn btn-secondary btn-cancel btn-padrao">
+
+                    Cancelar
+
+                </a>
+
+            </form>
+
         </div>
 
     </div>
 
-    <br>
-
-    <button class="btn btn-success">
-        Salvar
-    </button>
-
-    <a href="{% url 'grupos_adicionais:listar' %}" class="btn btn-secondary">
-        Cancelar
-    </a>
-
-</form>
+</div>
 
 {% endblock %}

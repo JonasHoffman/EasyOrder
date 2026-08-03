@@ -1,6 +1,8 @@
 from django.db.models import Q
 from Interface.models import MenuItem, NavTop
 from Usuarios.models import PermissaoView
+from Cardapio.carrinho import Cart
+
 
 
 def menu_items(request):
@@ -32,3 +34,8 @@ def menu_items(request):
 
 def nav_top(request):
     return {'nav': NavTop.objects.all()}
+
+# delivery/context_processors.py
+
+def carrinho(request):
+    return {'carrinho': Cart(request)}

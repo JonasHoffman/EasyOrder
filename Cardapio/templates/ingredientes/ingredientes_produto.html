@@ -1,0 +1,96 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Ingredientes do Produto</h2>
+            <small>Total de ingredientes:
+                <strong>{{ ingrediente|length }}</strong>
+            </small>
+        </div>
+        <div>
+            <a href="{% url 'ingredientes:novo' %}"
+            class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Criar ingrediente
+
+            </a>
+            
+
+            </a>
+        </div>
+    </div>
+
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <table class="table table-hover">
+
+        <thead>
+
+            <tr>
+
+                <th>Ingrediente</th>
+
+                <th>Possui</th>
+
+                <th>Pode remover</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for ingrediente in ingredientes %}
+
+            <tr>
+
+                <td>
+
+                    {{ ingrediente.nome }}
+
+                </td>
+
+                <td>
+
+                    <input
+                        type="checkbox"
+                        name="ingredientes"
+                        value="{{ ingrediente.id }}"
+                        {% if ingrediente.selecionado %}checked{% endif %}
+                    >
+
+                </td>
+
+                <td>
+
+                    <input
+                        type="checkbox"
+                        name="removivel_{{ ingrediente.id }}"
+                        {% if ingrediente.removivel %}checked{% endif %}
+                    >
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <button type="submit" class="btn btn-success">
+
+        Salvar Ingredientes
+
+    </button>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>{{ sabor.nome }}</h2>
+            <small>Detalhes do sabor</small>
+        </div>
+
+        <div class="div-flex">
+
+            <a href="{% url 'sabor:editar' sabor.id %}"
+               class="btn btn-warning btn-padrao btn-sucess btn-cancel">
+
+                <i class="fa-solid fa-pen align-center"></i>
+                &nbsp;Editar
+
+            </a>
+
+            <a href="{% url 'sabor:listar' %}"
+               class="btn btn-warning btn-padrao btn-sucess btn-cancel">
+
+                <i class="fa-solid fa-arrow-left align-center"></i>
+                &nbsp;Voltar
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="row align-center">
+
+                <div class="col-md-3 text-center">
+
+                    {% if sabor.imagem %}
+
+                        <img src="{{ sabor.imagem.url }}"
+                             class="img-fluid rounded border"
+                             style="max-width: 180px;">
+
+                    {% else %}
+
+                        <div class="border rounded p-5 text-muted">
+                            Sem imagem
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="col-md-9 content-center">
+
+                    <table class="table table-borderless mb-0">
+
+                        <tr>
+                            <th width="220">Nome</th>
+                            <td>{{ sabor.nome }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Grupo</th>
+                            <td>{{ sabor.grupo.nome }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Valor adicional</th>
+                            <td>R$ {{ sabor.valor_adicional }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Descrição</th>
+                            <td>{{ sabor.descricao|default:"-" }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Ordem</th>
+                            <td>{{ sabor.ordem }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Status</th>
+                            <td>
+
+                                {% if sabor.ativo %}
+
+                                    <span class="badge bg-success">
+                                        Ativo
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Inativo
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

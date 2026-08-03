@@ -19,7 +19,7 @@
 
     <div class="produtos-grid">
         {% for produto in produtos %}
-            <a href="{% url 'produto_detalhe' produto.slug %}" class="produto-card">
+            <a href="{% url 'produtos:produto_detalhe' produto.slug %}" class="produto-card">
                 {% if produto.imagem %}
                     <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="produto-card-img">
                 {% endif %}

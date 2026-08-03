@@ -1,55 +1,156 @@
+{% load static %}
+
 <div class="mb-5">
 
     <h2 class="mb-3">
         {{ secao.get_tipo_display }}
     </h2>
 
-    <div class="categorias-scroll">
 
-        {% for categoria in secao.dados %}
+    <div class="categorias-container">
 
-        <div class="categoria-card">
 
-            <a href="{% url 'categorias:categoria_detalhe' categoria.slug %}" class="card-link">
-                <div class="card shadow-sm h-100">
+        <button class="categorias-btn prev">
+            ❮
+        </button>
 
-                    {% if categoria.imagem %}
 
-                    <img
-                        src="{{ categoria.imagem.url }}"
-                        class="card-img-top"
-                        alt="{{ categoria.nome }}"
-                    >
+        <div class="categorias-scroll">
 
-                    {% endif %}
 
-                    <div class="card-body">
+            <div class="categorias-track">
 
-                        <h5 class="card-title">
-                            {{ categoria.nome }}
-                        </h5>
 
-                        {% if categoria.descricao %}
+                {% for categoria in secao.dados %}
 
-                        <p class="card-text">
-                            {{ categoria.descricao }}
-                        </p>
 
-                        {% endif %}
+                <div class="categoria-card">
 
-                    </div>
+                    <a href="{% url 'categorias:categoria_detalhe' categoria.slug %}" 
+                       class="card-link">
+
+
+                        <div class="card shadow-sm h-100">
+
+
+                            {% if categoria.imagem %}
+
+                            <img
+                                src="{{ categoria.imagem.url }}"
+                                class="card-img-top"
+                                alt="{{ categoria.nome }}"
+                            >
+
+                            {% endif %}
+
+
+
+                            <div class="card-body">
+
+
+                                <h5 class="card-title">
+
+                                    {{ categoria.nome }}
+
+                                </h5>
+
+
+
+                                {% if categoria.descricao %}
+
+                                <p class="card-text">
+
+                                    {{ categoria.descricao }}
+
+                                </p>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </a>
+
 
                 </div>
-            </a>
+
+
+                {% endfor %}
+
+
+
+
+                <!-- DUPLICAÇÃO PARA LOOP INFINITO -->
+
+                {% for categoria in secao.dados %}
+
+
+                <div class="categoria-card">
+
+
+                    <a href="{% url 'categorias:categoria_detalhe' categoria.slug %}" 
+                       class="card-link">
+
+
+                        <div class="card shadow-sm h-100">
+
+
+                            {% if categoria.imagem %}
+
+                            <img
+                                src="{{ categoria.imagem.url }}"
+                                class="card-img-top"
+                                alt="{{ categoria.nome }}"
+                            >
+
+                            {% endif %}
+
+
+
+                            <div class="card-body">
+
+                                <h5 class="card-title">
+
+                                    {{ categoria.nome }}
+
+                                </h5>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </a>
+
+
+                </div>
+
+
+                {% endfor %}
+
+
+
+            </div>
+
 
         </div>
 
-        {% empty %}
 
-        <p>Nenhuma categoria disponível.</p>
 
-        {% endfor %}
+        <button class="categorias-btn next">
+
+            ❯
+
+        </button>
+
 
     </div>
+
 
 </div>

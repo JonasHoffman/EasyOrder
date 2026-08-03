@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-<div class="container mt-4">
+<div class="">
 
     <h2>
         {% if object %}
@@ -26,13 +26,33 @@
                 <div class="row">
 
                     <div class="col-md-6">
-                        <label>Nome</label>
+                        <label>Nome Fantasia</label>
                         {{ form.nome }}
                     </div>
 
                     <div class="col-md-6">
+                        <label>Razão Social</label>
+                        {{ form.razao_social }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>CNPJ</label>
+                        {{ form.cnpj }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
                         <label>Slug</label>
                         {{ form.slug }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Inscrição Estadual</label>
+                        {{ form.inscricao_estadual }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Inscrição Municipal</label>
+                        {{ form.inscricao_municipal }}
                     </div>
 
                     <div class="col-md-6 mt-2">
@@ -51,14 +71,36 @@
                     </div>
 
                     <div class="col-md-6 mt-2">
+                        <label>Responsável</label>
+                        {{ form.responsavel }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Site</label>
+                        {{ form.site }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Instagram</label>
+                        {{ form.instagram }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <label>Facebook</label>
+                        {{ form.facebook }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
                         <label>Logo</label>
                         {{ form.logo }}
                     </div>
+
                     <br>
+
                     <div class="col-md-12 mt-3">
                         <label>
                             Ativa
-                            {{ form.ativa }} 
+                            {{ form.ativa }}
                         </label>
                     </div>
 
@@ -119,11 +161,11 @@
 
         <!-- ================= BOTÃO ================= -->
         <div class="flex-buttons">
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success btn-cancel btn-padrao">
                 Salvar
             </button>
 
-            <a href="{% url 'lojas:lista' %}" class="btn btn-secondary btn-cancel">
+            <a href="{% url 'lojas:lista' %}" class="btn btn-secondary btn-cancel btn-padrao">
                 Cancelar
             </a>
         </div>
@@ -131,5 +173,7 @@
     </form>
 
 </div>
+
+<script src="{% static 'javascript/cadastroloja.js' %}"></script>
 
 {% endblock %}

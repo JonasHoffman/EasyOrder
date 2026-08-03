@@ -1,0 +1,240 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+
+        <div>
+
+            <h2>
+
+                Grupos de Adicionais por Produto
+
+            </h2>
+
+
+            <small>
+
+                Total cadastrados:
+                <strong>{{ grupos.count }}</strong>
+
+            </small>
+
+
+        </div>
+
+
+
+        <div>
+
+
+            <a href="{% url 'produto_grupo_adicional:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+
+                <i class="fa-solid fa-plus"></i>
+
+                &nbsp;Novo Vínculo
+
+
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <div class="card">
+
+
+        <div class="table-responsive">
+
+
+            <table class="table table-hover align-middle mb-0">
+
+
+                <thead>
+
+
+                    <tr>
+
+
+                        <th>
+
+                            Produto
+
+                        </th>
+
+
+
+                        <th>
+
+                            Grupo de Adicional
+
+                        </th>
+
+
+
+                        <th width="150">
+
+                            Ações
+
+                        </th>
+
+
+                    </tr>
+
+
+                </thead>
+
+
+
+                <tbody>
+
+
+
+                    {% for item in grupos %}
+
+
+
+                    <tr>
+
+
+                        <td>
+
+
+                            {{ item.produto.nome }}
+
+
+                        </td>
+
+
+
+                        <td>
+
+
+                            {{ item.grupo.nome }}
+
+
+                        </td>
+
+
+
+
+                        <td class="div-flex height-full">
+
+
+                            <a href="{% url 'produto_grupo_adicional:editar' item.id %}"
+                               class="btn btn-sm btn-warning btn-icon"
+                               title="Editar">
+
+
+                                <i class="fa-solid fa-pen"></i>
+
+
+                            </a>
+
+
+
+
+                            <form method="POST"
+                                  action="{% url 'produto_grupo_adicional:excluir' item.id %}"
+                                  style="display:inline;">
+
+
+                                {% csrf_token %}
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-sm btn-danger btn-icon"
+                                    title="Excluir"
+                                    onclick="return confirm('Deseja excluir este vínculo?');">
+
+
+                                    <i class="fa-solid fa-trash"></i>
+
+
+                                </button>
+
+
+                            </form>
+
+
+
+                        </td>
+
+
+
+                    </tr>
+
+
+
+                    {% empty %}
+
+
+
+                    <tr>
+
+
+                        <td colspan="3"
+                            class="text-center">
+
+
+                            Nenhum grupo de adicional vinculado.
+
+
+
+                        </td>
+
+
+                    </tr>
+
+
+
+                    {% endfor %}
+
+
+
+                </tbody>
+
+
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+{% endblock %}

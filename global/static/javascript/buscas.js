@@ -10,16 +10,19 @@ document.addEventListener('DOMContentLoaded', function () {
         if (termo.length < 2) {
             box.innerHTML = '';
             box.style.display = 'none';
+            console.log(termo)
             return;
         }
 
         // debounce: espera 300ms sem digitar antes de buscar
         timeoutId = setTimeout(() => {
             fetch(`/cardapio/buscar/?q=${encodeURIComponent(termo)}`)
+                
                 .then(res => res.json())
                 .then(data => renderSugestoes(data.resultados))
                 .catch(err => console.error('Erro na busca:', err));
         }, 300);
+        
     });
 
     function renderSugestoes(resultados) {

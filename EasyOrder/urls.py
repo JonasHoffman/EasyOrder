@@ -34,6 +34,16 @@ urlpatterns = [
     path("cardapio/cardapio_cliente/",include(("Cardapio.urls.urls_cardapiocliente", "cardapio_cliente"), namespace="cardapio_cliente"),),
     path("cardapio/promocoes/",include(("Cardapio.urls.urls_promocoes", "promocoes"), namespace="promocoes"),),
     path("cardapio/buscar/",include(("Cardapio.urls.urls_buscas", "buscas"), namespace="buscas"),),
+    path("cardapio/carrinho/",include(("Cardapio.urls.urls_carrinho", "carrinho"), namespace="carrinho"),),
+    path("cardapio/ingredientes/",include(("Cardapio.urls.urls_ingredientes", "ingredientes"), namespace="ingredientes"),),
+    path("cardapio/produtosabor/",include(("Cardapio.urls.urls_produtosabor", "produtosabor"), namespace="produtosabor"),),
+    path("cardapio/saboringrediente/",include(("Cardapio.urls.urls_saboringrediente", "saboringrediente"), namespace="saboringrediente"),),
+    path("cardapio/produtogrupoadicional/",include(("Cardapio.urls.urls_produtogrupoadicional", "produtogrupoadicional"), namespace="produtogrupoadicional"),),
+
+
+
+
+
 
 
 

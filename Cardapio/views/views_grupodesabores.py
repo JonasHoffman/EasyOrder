@@ -14,11 +14,18 @@ def listar(request):
 
     loja = request.user.perfil.loja
 
+    status = request.GET.get("status", "todos")
+
     busca = request.GET.get("busca", "")
 
     grupos = GrupoDeSabores.objects.filter(
-        loja=loja
-    )
+    loja=request.user.perfil.loja
+)
+    
+    if status == "ativos":
+        grupos = grupos.filter(ativo=True)
+    elif status == "inativos":
+        grupos = grupos.filter(ativo=False)
 
     if busca:
         grupos = grupos.filter(
@@ -38,6 +45,7 @@ def listar(request):
             "grupos": grupos,
             "busca": busca,
             "total": paginator.count,
+            "status": status,
         },
     )
 

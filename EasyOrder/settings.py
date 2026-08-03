@@ -68,6 +68,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 "Interface.context_processors.menu_items",
                 "Interface.context_processors.nav_top",
+                "Interface.context_processors.carrinho",
+
+                
             ],
         },
     },

@@ -1,0 +1,120 @@
+{% extends "templates/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div>
+    
+
+    <h2>
+
+        {{ titulo }} - {{ sabor.nome }}
+        
+    </h2>
+
+    <hr>
+    <div class="col-md-4">
+
+        <strong>
+            Ingredientes vinculados
+        </strong>
+
+        <br>
+
+        {{ ingredientes_selecionados|length }}
+
+    </div>
+    <br>
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Buscar ingrediente
+
+            </label>
+
+            <input
+                type="text"
+                id="buscarIngrediente"
+                class="form-control"
+                placeholder="Digite para pesquisar...">
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-body"
+                 style="max-height: 500px; overflow-y: auto;">
+
+                {% for ingrediente in ingredientes %}
+
+                    <div class="form-check ingrediente-item mb-2"
+                         data-nome="{{ ingrediente.nome|lower }}">
+
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            name="ingredientes"
+                            value="{{ ingrediente.id }}"
+                            id="ingrediente{{ ingrediente.id }}"
+
+                            {% if ingrediente.id in ingredientes_selecionados %}
+                                checked
+                            {% endif %}>
+
+                        <label
+                            class="form-check-label"
+                            for="ingrediente{{ ingrediente.id }}">
+
+                            {{ ingrediente.nome }}
+
+                        </label>
+
+                    </div>
+
+                {% empty %}
+
+                    <p class="text-muted">
+
+                        Nenhum ingrediente cadastrado.
+
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <div class="mt-3">
+
+            <button
+                type="submit"
+                class="btn btn-success">
+
+                Salvar
+
+            </button>
+
+            <a href="{% url 'saboringrediente:listar' sabor.id %}"
+               class="btn btn-secondary">
+
+                Cancelar
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script src="{% static 'javascript/saboringrediente.js' %}"></script>
+
+{% endblock %}

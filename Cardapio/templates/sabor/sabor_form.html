@@ -2,96 +2,130 @@
 
 {% block content %}
 
-<h2>{{ titulo }}</h2>
+<h2 class="mb-4">{{ titulo }}</h2>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
 
     {% csrf_token %}
 
-    <div class="row">
+    <div class="mb-3 linha-form">
+        <label class="label-form" for="{{ form.grupo.id_for_label }}">
+            {{ form.grupo.label }}
+        </label>
 
-        <div class="col-md-6">
-
-            <label>Adicionar o sabor em algum grupo ou criar novo</label>
+        <div>
 
             {{ form.grupo }}
-            
-            <a href="{% url "grupos_sabores:novo" %}">Criar novo grupo de sabores</a>
+            {{ form.grupo.errors }}
 
-        </div>
-        <br>
-        <div class="col-md-6">
-
-            <label>Nome do sabor</label>
-
-            {{ form.nome }}
+            <a href="{% url 'grupos_sabores:novo' %}"
+               class="d-block mt-2">
+                Criar novo grupo de sabores
+            </a>
 
         </div>
 
     </div>
 
-    <br>
+    <div class="mb-3 linha-form">
+        <label class="label-form" for="{{ form.nome.id_for_label }}">
+            {{ form.nome.label }}
+        </label>
 
-    <label>Descrição</label>
+        {{ form.nome }}
+        {{ form.nome.errors }}
+    </div>
 
-    {{ form.descricao }}
+    <div class="mb-3 linha-form">
+        <label class="label-form" for="{{ form.descricao.id_for_label }}">
+            {{ form.descricao.label }}
+        </label>
 
-    <br>
+        {{ form.descricao }}
+        {{ form.descricao.errors }}
+    </div>
 
-    <div class="row">
+    <div class="mb-3 linha-form">
 
-        <div class="col-md-4">
+        <label class="label-form label-sincronizado">
+            {{ form.imagem.label }}
+        </label>
 
-            <label>Valor adicional</label>
+        {% if sabor and sabor.imagem %}
 
-            {{ form.valor_adicional }}
+            <div class="mb-2 display-flex align-center">
 
-        </div>
+                <a href="{{ sabor.imagem.url }}" target="_blank">
+                    {{ sabor.imagem.name }}
+                </a>
 
-        <div class="col-md-4">
+                &nbsp;&nbsp;&nbsp;&nbsp;
 
-            <label>Ordem</label>
+                <div class="form-check mt-2">
 
-            {{ form.ordem }}
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="remover_imagem"
+                        id="remover_imagem">
 
-        </div>
+                    <label
+                        class="form-check-label"
+                        for="remover_imagem">
+                        Apagar imagem atual
+                    </label>
 
-        <div class="col-md-4">
+                </div>
 
-            <label>Imagem</label>
+            </div>
 
-            {{ form.imagem }}
+            <label class="form-label mt-2">
+                Alterar imagem:
+            </label>
 
-        </div>
+        {% endif %}
+
+        <input
+            type="file"
+            name="{{ form.imagem.html_name }}"
+            id="{{ form.imagem.id_for_label }}"
+            class="form-control"
+            accept="image/*">
+
+        {{ form.imagem.errors }}
 
     </div>
 
-    <br>
+    <div class="mb-3 linha-form">
+        <label class="label-form">
+            {{ form.valor_adicional.label }}
+        </label>
 
-    <label>
+        {{ form.valor_adicional }}
+        {{ form.valor_adicional.errors }}
+    </div>
+
+    <div class="mb-3 linha-form">
+        <label class="label-form">
+            {{ form.ordem.label }}
+        </label>
+
+        {{ form.ordem }}
+        {{ form.ordem.errors }}
+    </div>
+
+    <div class="mb-3 linha-form">
+        <label class="label-form label-sincronizado">
+            {{ form.ativo.label }}
+        </label>
 
         {{ form.ativo }}
+        {{ form.ativo.errors }}
+    </div>
 
-        Ativo
-
-    </label>
-
-    <br><br>
-
-    <button class="btn btn-success">
-
+    <button class="btn btn-success" type="submit">
         Salvar
-
     </button>
-
-    <a
-        href="{% url 'sabor:listar' %}"
-        class="btn btn-secondary"
-    >
-
-        Cancelar
-
-    </a>
 
 </form>
 

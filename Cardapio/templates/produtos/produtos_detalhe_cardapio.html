@@ -38,10 +38,12 @@
                 </div>
             </div>
 
-            <button type="button" class="btn-adicionar-carrinho" 
-                    data-produto-id="{{ produto.id }}">
-                Adicionar ao carrinho — <span id="precoTotal">R$ {{ produto.preco }}</span>
-            </button>
+            <a
+                href="{% url 'produtos:personalizar_produto' produto.slug %}"
+                class="btn btn-primary btn-adicionar-carrinho"
+            >
+                Adicionar ao carrinho
+            </a>
         </div>
     </div>
 
@@ -50,7 +52,7 @@
         <h3>Você também pode gostar</h3>
         <div class="relacionados-grid">
             {% for item in relacionados %}
-                <a href="{% url 'produto_detalhe' item.slug %}" class="relacionado-card">
+                <a href="{% url 'produtos:produto_detalhe' item.slug %}" class="relacionado-card">
                     {% if item.imagem %}
                         <img src="{{ item.imagem.url }}" alt="{{ item.nome }}">
                     {% endif %}
@@ -62,5 +64,8 @@
     </div>
     {% endif %}
 
+    
+
 </div>
+
 {% endblock %}

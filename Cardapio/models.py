@@ -89,6 +89,9 @@ class Produto(models.Model):
 
     destaque = models.BooleanField(default=False)
 
+    possui_sabores = models.BooleanField(
+    default=False)
+
     permite_multiplos_sabores = models.BooleanField(default=False)
 
     maximo_sabores = models.PositiveSmallIntegerField(default=1)
@@ -219,6 +222,10 @@ class Sabor(models.Model):
 
     def __str__(self):
         return self.nome
+
+    @property
+    def possui_ingredientes(self):
+        return self.ingredientes.filter(ativo=True).exists()
     
 class ProdutoSabor(models.Model):
 
@@ -251,6 +258,124 @@ class ProdutoSabor(models.Model):
 
     def __str__(self):
         return f"{self.produto} - {self.sabor}"
+
+class Ingrediente(models.Model):
+
+    loja = models.ForeignKey(
+        Loja,
+        on_delete=models.CASCADE,
+        related_name="ingredientes"
+    )
+
+    nome = models.CharField(max_length=80)
+
+    ativo = models.BooleanField(default=True)
+
+    ordem = models.PositiveIntegerField(default=0)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["ordem", "nome"]
+
+    def __str__(self):
+        return self.nome
+
+
+class ProdutoIngrediente(models.Model):
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name="ingredientes"
+    )
+
+    ingrediente = models.ForeignKey(
+        Ingrediente,
+        on_delete=models.CASCADE,
+        related_name="produto_ingredientes"
+    )
+
+    permite_remocao = models.BooleanField(default=True)
+
+    ordem = models.PositiveIntegerField(default=0)
+
+    ativo = models.BooleanField(default=True)
+
+    observacao = models.CharField(
+    max_length=80,
+    blank=True
+)   
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["ordem"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["produto", "ingrediente"],
+                name="produto_ingrediente_unico"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.produto} - {self.ingrediente}"
+
+class SaborIngrediente(models.Model):
+
+    sabor = models.ForeignKey(
+        Sabor,
+        on_delete=models.CASCADE,
+        related_name="ingredientes"
+    )
+
+    ingrediente = models.ForeignKey(
+        Ingrediente,
+        on_delete=models.CASCADE,
+        related_name="sabores_ingredientes"
+    )
+
+    permite_remocao = models.BooleanField(
+        default=True
+    )
+
+    ordem = models.PositiveIntegerField(
+        default=0
+    )
+
+    ativo = models.BooleanField(
+        default=True
+    )
+
+    observacao = models.CharField(
+        max_length=80,
+        blank=True
+    )
+
+    criado_em = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    atualizado_em = models.DateTimeField(
+        auto_now=True
+    )
+
+
+    class Meta:
+
+        ordering = ["ordem"]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["sabor", "ingrediente"],
+                name="sabor_ingrediente_unico"
+            )
+        ]
+
+
+    def __str__(self):
+        return f"{self.sabor} - {self.ingrediente}"
     
 class GrupoAdicional(models.Model):
 

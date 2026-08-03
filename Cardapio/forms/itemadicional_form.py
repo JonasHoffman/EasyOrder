@@ -45,12 +45,12 @@ class ItemAdicionalForm(forms.ModelForm):
             }),
 
             "ativo": forms.CheckboxInput(attrs={
-                "class": "form-check-input"
+                "class": "form-check-input "
             }),
         }
 
         labels = {
-            "grupo": "Grupo",
+            "grupo": "Grupo de adicionais",
             "nome": "Nome",
             "descricao": "Descrição",
             "preco": "Preço",

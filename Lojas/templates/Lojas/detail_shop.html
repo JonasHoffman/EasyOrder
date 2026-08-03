@@ -5,7 +5,7 @@
 <div class="card">
 
     <div class="card-header">
-        <h2>{{ loja.nome_fantasia }}</h2>
+        <h2>Informações {{ loja.nome }}</h2>
     </div>
 
     <div class="card-body">
@@ -13,9 +13,10 @@
         <h3>Informações Gerais</h3>
 
         <table class="table">
+
             <tr>
-                <th>Nome Fantasia</th>
-                <td>{{ loja.nome_fantasia }}</td>
+                <th class="div-metade">Nome Fantasia</th>
+                <td>{{ loja.nome }}</td>
             </tr>
 
             <tr>
@@ -29,22 +30,57 @@
             </tr>
 
             <tr>
+                <th>Inscrição Estadual</th>
+                <td>{{ loja.inscricao_estadual|default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Inscrição Municipal</th>
+                <td>{{ loja.inscricao_municipal|default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Responsável</th>
+                <td>{{ loja.responsavel|default:"-" }}</td>
+            </tr>
+
+            <tr>
                 <th>Email</th>
-                <td>{{ loja.email }}</td>
+                <td>{{ loja.email|default:"-" }}</td>
             </tr>
 
             <tr>
                 <th>Telefone</th>
-                <td>{{ loja.telefone }}</td>
+                <td>{{ loja.telefone|default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>WhatsApp</th>
+                <td>{{ loja.whatsapp|default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Site</th>
+                <td>{{ loja.site|default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Instagram</th>
+                <td>{{ loja.instagram|default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Facebook</th>
+                <td>{{ loja.facebook|default:"-" }}</td>
             </tr>
 
             <tr>
                 <th>Status</th>
                 <td>
-                    {% if loja.ativo %}
-                        <span class="badge badge-success">Ativa</span>
+                    {% if loja.ativa %}
+                        <span class="badge bg-success">Ativa</span>
                     {% else %}
-                        <span class="badge badge-danger">Inativa</span>
+                        <span class="badge bg-danger">Inativa</span>
                     {% endif %}
                 </td>
             </tr>
@@ -55,54 +91,62 @@
 
         <h3>Endereço</h3>
 
+        {% if loja.endereco %}
+
         <table class="table">
 
             <tr>
-                <th>CEP</th>
-                <td>{{ loja.cep }}</td>
+                <th class="div-metade">CEP</th>
+                <td>{{ loja.endereco.cep }}</td>
             </tr>
 
             <tr>
-                <th>Endereço</th>
-                <td>{{ loja.endereco }}</td>
+                <th>Logradouro</th>
+                <td>{{ loja.endereco.logradouro }}</td>
             </tr>
 
             <tr>
                 <th>Número</th>
-                <td>{{ loja.numero }}</td>
+                <td>{{ loja.endereco.numero }}</td>
             </tr>
 
             <tr>
                 <th>Complemento</th>
-                <td>{{ loja.complemento }}</td>
+                <td>{{ loja.endereco.complemento|default:"-" }}</td>
             </tr>
 
             <tr>
                 <th>Bairro</th>
-                <td>{{ loja.bairro }}</td>
+                <td>{{ loja.endereco.bairro }}</td>
             </tr>
 
             <tr>
                 <th>Cidade</th>
-                <td>{{ loja.cidade }}</td>
+                <td>{{ loja.endereco.cidade }}</td>
             </tr>
 
             <tr>
                 <th>Estado</th>
-                <td>{{ loja.estado }}</td>
+                <td>{{ loja.endereco.estado }}</td>
             </tr>
 
         </table>
+
+        {% else %}
+
+        <p class="text-muted">Nenhum endereço cadastrado.</p>
+
+        {% endif %}
 
     </div>
 
     <div class="card-footer">
 
-        <a href="{% url 'lojas:lista' %}" class="btn btn-secondary">
+        <a href="{% url 'lojas:lista' %}" class="btn btn-secondary btn-cancel btn-padrao">
             Voltar
         </a>
 
-        <a href="{% url 'lojas:editar' loja.id %}" class="btn btn-primary">
+        <a href="{% url 'lojas:editar' loja.id %}" class="btn btn-primary btn-cancel btn-padrao">
             Editar
         </a>
 

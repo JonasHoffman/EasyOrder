@@ -1,0 +1,234 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Ingredientes</h2>
+
+            <small>
+                Total cadastrados:
+                <strong>{{ total }}</strong>
+            </small>
+
+        </div>
+
+        <div>
+
+            <a href="{% url 'ingredientes:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Novo Ingrediente
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-5">
+
+                    <label for="busca" class="form-label">
+                        Buscar
+                    </label>
+
+                    <input
+                        type="text"
+                        name="busca"
+                        id="busca"
+                        class="form-control"
+                        placeholder="Buscar ingrediente..."
+                        value="{{ request.GET.busca }}">
+
+                </div>
+
+                <div class="col-md-5">
+
+                    <label for="status" class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-select">
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="ativo"
+                            {% if request.GET.status == "ativo" %}
+                                selected
+                            {% endif %}>
+                            Ativos
+                        </option>
+
+                        <option value="inativo"
+                            {% if request.GET.status == "inativo" %}
+                                selected
+                            {% endif %}>
+                            Inativos
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100">
+
+                        Buscar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Nome</th>
+
+                        <th width="100">
+                            Ordem
+                        </th>
+
+                        <th width="120">
+                            Status
+                        </th>
+
+                        <th width="180">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for ingrediente in ingredientes %}
+
+                    <tr>
+
+                        <td>
+                            {{ ingrediente.nome }}
+                        </td>
+
+                        <td>
+                            {{ ingrediente.ordem }}
+                        </td>
+
+                        <td>
+
+                            {% if ingrediente.ativo %}
+
+                                <span class="badge bg-success">
+                                    Ativo
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+                                    Inativo
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td class="div-flex height-full">
+
+                            
+
+                            <a href="{% url 'ingredientes:editar' ingrediente.id %}"
+                               class="btn btn-sm btn-warning btn-icon"
+                               title="Editar">
+
+                                <i class="fa-solid fa-pen"></i>
+
+                            </a>
+
+                            <form action="{% url 'ingredientes:excluir' ingrediente.id %}"
+                                  method="post"
+                                  style="display:inline;">
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-sm btn-danger btn-icon"
+                                    title="Excluir"
+                                    onclick="return confirm('Deseja realmente excluir este ingrediente?');">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="4" class="text-center">
+
+                            Nenhum ingrediente encontrado.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

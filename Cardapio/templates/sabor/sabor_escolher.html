@@ -1,0 +1,54 @@
+<form method="post">
+
+    {% csrf_token %}
+
+    <input
+        type="hidden"
+        name="etapa"
+        value="sabores"
+    >
+
+    <h2>
+
+        {{ produto.nome }}
+
+    </h2>
+
+    <h4>
+
+        Escolha os sabores
+
+    </h4>
+
+    {% for sabor in sabores %}
+
+        <div>
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="sabores"
+                    value="{{ sabor.id }}"
+                >
+
+                {{ sabor.nome }}
+
+            </label>
+
+        </div>
+
+    {% endfor %}
+
+    <br>
+
+    <button
+        class="btn btn-primary"
+        type="submit"
+    >
+
+        Continuar
+
+    </button>
+
+</form>

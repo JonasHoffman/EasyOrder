@@ -28,7 +28,30 @@ class Endereco(models.Model):
 class Loja(models.Model):
     nome = models.CharField(
         max_length=150,
-        verbose_name="Nome"
+        verbose_name="Nome Fantasia"
+    )
+
+    razao_social = models.CharField(
+        max_length=200,
+        verbose_name="Razão Social"
+    )
+
+    cnpj = models.CharField(
+        max_length=18,
+        unique=True,
+        verbose_name="CNPJ"
+    )
+
+    inscricao_estadual = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="Inscrição Estadual"
+    )
+
+    inscricao_municipal = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="Inscrição Municipal"
     )
 
     slug = models.SlugField(
@@ -60,9 +83,18 @@ class Loja(models.Model):
     endereco = models.OneToOneField(
         Endereco,
         on_delete=models.CASCADE,
-        related_name="loja",null=True
+        related_name="loja",
+        null=True,
+        blank=True
     )
+    responsavel = models.CharField(max_length=150, blank=True)
 
+    site = models.URLField(blank=True)
+
+    instagram = models.CharField(max_length=100, blank=True)
+
+    facebook = models.CharField(max_length=100, blank=True)
+    
     ativa = models.BooleanField(
         default=True
     )
@@ -82,4 +114,3 @@ class Loja(models.Model):
 
     def __str__(self):
         return self.nome
-    

@@ -1,5 +1,6 @@
 from django import forms
 from Cardapio.models import Produto
+from Cardapio.utils.validar_imgs import validar_imagem
 
 
 class ProdutoForm(forms.ModelForm):
@@ -15,6 +16,7 @@ class ProdutoForm(forms.ModelForm):
             "imagem",
             "disponivel",
             "destaque",
+            "possui_sabores",
             "permite_multiplos_sabores",
             "maximo_sabores",
             "tempo_preparo",
@@ -33,3 +35,11 @@ class ProdutoForm(forms.ModelForm):
         labels = {
         "categoria": "Escolha a categoria do produto",
     }
+    def clean_imagem(self):
+
+        imagem = self.cleaned_data.get("imagem")
+
+        if imagem:
+            validar_imagem(imagem)
+
+        return imagem

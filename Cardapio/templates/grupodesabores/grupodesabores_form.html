@@ -2,13 +2,38 @@
 
 {% block content %}
 
-<h2>{{ titulo }}</h2>
+<h2 class="mb-4">{{ titulo }}</h2>
 
 <form method="post">
 
     {% csrf_token %}
 
-    {{ form.as_p }}
+    <div class="mb-3 linha-form">
+        <label class="label-form" for="{{ form.nome.id_for_label }}">
+            {{ form.nome.label }}
+        </label>
+
+        {{ form.nome }}
+        {{ form.nome.errors }}
+    </div>
+
+    <div class="mb-3 linha-form">
+        <label class="label-form" for="{{ form.ordem.id_for_label }}">
+            {{ form.ordem.label }}
+        </label>
+
+        {{ form.ordem }}
+        {{ form.ordem.errors }}
+    </div>
+
+    <div class="mb-3 linha-form">
+        <label class="label-form label-sincronizado">
+            {{ form.ativo.label }}
+        </label>
+
+        {{ form.ativo }}
+        {{ form.ativo.errors }}
+    </div>
 
     <button type="submit" class="btn btn-success">
         Salvar

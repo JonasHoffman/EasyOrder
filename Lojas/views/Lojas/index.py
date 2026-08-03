@@ -3,8 +3,11 @@ from Lojas.models import Loja
 from Lojas.forms import LojaForm, EnderecoForm
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 
+@login_required
 def lista_lojas(request):
 
     busca = request.GET.get("busca", "")
@@ -40,25 +43,21 @@ def lista_lojas(request):
 
     return render(request, "lojas/list_shop.html", context)
 
+@login_required
 def nova_loja(request):
     if request.method == "POST":
         form = LojaForm(request.POST, request.FILES)
         endereco_form = EnderecoForm(request.POST)
-        form = LojaForm(request.POST, request.FILES)
-        endereco_form = EnderecoForm(request.POST)
+        
 
-        print("Loja válida:", form.is_valid())
-        print("Endereço válido:", endereco_form.is_valid())
-
-        print("Erros Loja:", form.errors)
-        print("Erros Endereço:", endereco_form.errors)
-
+       
         if form.is_valid() and endereco_form.is_valid():
-            endereco = endereco_form.save()
+            with transaction.atomic():
+                endereco = endereco_form.save()
 
-            loja = form.save(commit=False)
-            loja.endereco = endereco
-            loja.save()
+                loja = form.save(commit=False)
+                loja.endereco = endereco
+                loja.save()
 
             return redirect("lojas:lista")
 
@@ -73,7 +72,7 @@ def nova_loja(request):
 
     return render(request, "lojas/new_shop.html", context)
 
-
+@login_required
 def editar_loja(request, pk):
     loja = get_object_or_404(Loja, pk=pk)
 
@@ -102,7 +101,7 @@ def editar_loja(request, pk):
 
     return render(request, "lojas/new_shop.html", context)
 
-
+@login_required
 def detalhe_loja(request, pk):
     loja = get_object_or_404(Loja, pk=pk)
 

@@ -1,0 +1,114 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<h2>
+
+Editar ingrediente
+
+</h2>
+
+<hr>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Ingrediente
+
+        </label>
+
+        <input
+            type="text"
+            class="form-control"
+            value="{{ item.ingrediente.nome }}"
+            disabled>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Ordem
+
+        </label>
+
+        <input
+            type="number"
+            name="ordem"
+            class="form-control"
+            value="{{ item.ordem }}">
+
+    </div>
+
+
+    <div class="form-check mb-2">
+
+        <input
+            class="form-check-input"
+            type="checkbox"
+            name="permite_remocao"
+            id="remover"
+
+            {% if item.permite_remocao %}
+                checked
+            {% endif %}>
+
+        <label
+            class="form-check-label"
+            for="remover">
+
+            Permite remoção pelo cliente
+
+        </label>
+
+    </div>
+
+
+    <div class="form-check mb-4">
+
+        <input
+            class="form-check-input"
+            type="checkbox"
+            name="ativo"
+            id="ativo"
+
+            {% if item.ativo %}
+                checked
+            {% endif %}>
+
+        <label
+            class="form-check-label"
+            for="ativo">
+
+            Ativo
+
+        </label>
+
+    </div>
+
+
+    <button
+        class="btn btn-primary">
+
+        Salvar
+
+    </button>
+
+    <a
+        href="{% url 'saboringrediente:listar' item.sabor.id %}"
+        class="btn btn-secondary">
+
+        Cancelar
+
+    </a>
+
+</form>
+
+{% endblock %}

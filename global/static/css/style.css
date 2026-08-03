@@ -32,6 +32,24 @@ a:hover {
    LAYOUT PRINCIPAL
 ========================= */
 
+.nav-top{
+    height: 40px;
+    width: 100px;
+}
+.nav-topic{
+    height: 40px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.nav-topic a {
+    display: block;
+    text-align: center;
+    color: #000;
+    
+}
+
 .content-all {
     width: 100%;
     height: 100%;
@@ -52,14 +70,17 @@ a:hover {
     flex-direction: column;
     width: 100%;
     height: 100%;
+   
 }
 
 .content-header {
     height: 7%;
-    background-color: rgb(211, 12, 2);
+    background-color: rgb(221, 223, 250);
     padding :0.8%;
     padding-left: 3%;
     display: flex;
+    justify-content: flex-start;
+    gap: 600px;
 
 }
 
@@ -91,14 +112,18 @@ a:hover {
     display: flex;
     justify-content: space-between;
     height: 100%;
-    border: 15px solid #fcf7f7;
+    /* border: 15px solid #fcf7f7; */
     width: 100%;
     background-color: #ffffff;
+    min-height: 94vh;
+    padding-left: 10px;
+    padding-top: 10px;
 }
 
 .content-footer-header{
     width: 100%;
     height: 100%;
+    margin-right: 3%;
 }
 
 /* =========================
@@ -143,7 +168,7 @@ a:hover {
 input,
 select,
 textarea {
-    width: 100%;
+    
     padding: 9px 12px;
     font-size: 14px;
 
@@ -184,7 +209,7 @@ button,
 .btn {
     height: 40px;
     padding: 0 14px;
-
+    
     font-size: 14px;
     border-radius: 6px;
 
@@ -200,6 +225,8 @@ button,
 button:hover,
 .btn:hover {
     background: #f5f5f5;
+    text-decoration: underline;
+    color: black;
 }
 
 button:disabled,
@@ -211,14 +238,14 @@ button:disabled,
 /* BOTÃO PRINCIPAL */
 .btn-save,
 button[type="submit"] {
-    background: #55608f;
+    background: #b8bccf;
     color: #fff;
     border: none;
 }
 
 .btn-save:hover,
 button[type="submit"]:hover {
-    background: #3f4a75;
+    background: #c24253;
 }
 
 
@@ -1269,4 +1296,393 @@ NOVOS GLOBAIS
     font-weight: bold;
     color: #e63946;
     font-size: 15px;
+}
+
+ul{
+    margin-bottom: 0px;
+}
+
+.background-nocolor{
+    background-color: white;
+}
+.mb-6{
+    padding: 16px 16px 24px;
+}
+
+.grid-cardapio{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+}
+
+.card-cardapio{
+    border: 1px solid #EBEBEB;
+    border-radius: 8px;
+    padding: 0 8px;
+    transition: all .2s;
+
+
+
+    
+}
+
+.div-card-cardapio{
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.item-card-cardapio{
+    padding: 10px;
+}
+
+
+.img-card-cardapio{
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: .2s;
+    cursor: pointer;
+    width: 120px;
+    height: 120px;
+    
+
+    
+    
+}
+
+.img-card-cardapio img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .3s ease;
+}
+.card-cardapio:hover .img-card-cardapio img {
+    transform: scale(1.08);
+    
+}
+.card-cardapio {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card-cardapio:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+}
+
+.text-card-cardapio{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.img-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f3f3;
+    color: #999;
+    border: 1px dashed #ccc;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.categorias-container {
+
+    position:relative;
+
+    width:100%;
+
+    overflow:hidden;
+
+}
+
+
+
+.categorias-scroll {
+
+    width:100%;
+
+    overflow:hidden;
+
+}
+
+
+
+.categorias-track {
+
+
+    display:flex;
+
+    gap:16px;
+
+    width:max-content;
+
+
+    animation: deslizar-categorias 35s linear infinite;
+
+
+}
+
+
+
+
+.categorias-scroll:hover .categorias-track {
+
+    animation-play-state:running;
+
+}
+
+
+
+.categoria-card {
+
+
+    flex:0 0 230px;
+
+
+}
+
+
+
+.categoria-card .card {
+
+
+    border:none;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    transition:.2s;
+
+    cursor:pointer;
+
+
+}
+
+
+
+.categoria-card .card:hover {
+
+
+    transform:translateY(-4px);
+
+    box-shadow:0 .5rem 1rem rgba(0,0,0,.15);
+
+
+}
+
+
+
+.categoria-card img {
+
+
+    width:100%;
+
+    height:150px;
+
+    object-fit:cover;
+
+
+}
+
+
+
+.categoria-card .card-body {
+
+
+    text-align:center;
+
+
+}
+
+
+
+.categoria-card .card-title {
+
+
+    margin-bottom:.4rem;
+
+    font-size:1rem;
+
+    font-weight:600;
+
+
+}
+
+
+
+.categoria-card .card-text {
+
+
+    font-size:.9rem;
+
+    color:#6c757d;
+
+
+}
+
+
+
+
+
+/* Movimento infinito */
+
+
+
+
+
+
+
+
+/* Botões */
+
+
+.categorias-btn {
+
+
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:white;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+
+    cursor:pointer;
+
+    z-index:5;
+
+
+}
+
+
+
+.categorias-btn.prev {
+
+
+    left:10px;
+
+
+}
+
+
+
+.categorias-btn.next {
+
+
+    right:10px;
+
+
+}
+
+
+
+
+@media(max-width:768px){
+
+
+    .categoria-card {
+
+        flex:0 0 180px;
+
+    }
+
+
+    .categoria-card img {
+
+
+        height:120px;
+
+
+    }
+
+
+}
+
+.btn-backgroundcolor{
+    background-color: rgb(221, 223, 250);
+}
+
+.btn-backgroundcolor:hover{
+    color: black;
+}
+
+.btn-padrao{
+    min-width: 100px;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin: auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    
+}
+
+.btn-icon i {
+    line-height: 1;
+}
+
+.div-metade{
+    width: 40%;
+
+}
+
+.label-sincronizado{
+    width: 10%;
+}
+
+.align-center{
+    align-items: center;
+}
+.height-full{
+    height: 100%;
+}
+
+.tr-list{
+    height: 67px;
+}
+
+.form-check{
+    align-self: center;
+}
+
+.justify-content-center{
+    justify-content: center;
+}
+.form-check-input{
+    margin-bottom: 6px;
+}
+
+.form-check-label{
+    margin-top: 7px;
+    margin-left: 3px;
+}
+
+.space-between{
+    justify-content: space-between;
+}
+.flex-colum{
+    flex-direction: row;
+    display: flex;
 }

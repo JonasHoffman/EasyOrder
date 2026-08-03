@@ -29,6 +29,7 @@ def nova(request):
 
     loja = request.user.perfil.loja
 
+
     if request.method == "POST":
 
         form = PromocaoForm(
@@ -36,26 +37,37 @@ def nova(request):
             loja=loja
         )
 
+
         if form.is_valid():
 
-            promocao = form.save(commit=False)
+            promocao = form.save(
+                commit=False
+            )
+
 
             promocao.loja = loja
 
+
             promocao.save()
+
 
             messages.success(
                 request,
                 "Promoção cadastrada com sucesso."
             )
 
-            return redirect("promocoes:listar")
+
+            return redirect(
+                "promocoes:listar"
+            )
+
 
     else:
 
         form = PromocaoForm(
             loja=loja
         )
+
 
     return render(
         request,

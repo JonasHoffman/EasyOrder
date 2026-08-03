@@ -1,70 +1,202 @@
 {% extends "templates/base.html" %}
+{% load static %}
 
 {% block content %}
 
-<h2>Grupos de Sabores</h2>
+<div>
 
-<a href="{% url 'grupos_sabores:novo' %}" class="btn btn-primary">
-    Novo Grupo
-</a>
-
-<hr>
-
-<table class="table table-hover">
-
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Ordem</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        {% for grupo in grupos %}
-
-        <tr>
-
-            <td>{{ grupo.nome }}</td>
-
-            <td>{{ grupo.ordem }}</td>
-
-            <td>
-                {% if grupo.ativo %}
-                    <span class="text-success">Ativo</span>
-                {% else %}
-                    <span class="text-danger">Inativo</span>
-                {% endif %}
-            </td>
-
-            <td>
-                <a href="{% url 'grupos_sabores:visualizar' grupo.id %}">👁</a>
-
-                <a href="{% url 'grupos_sabores:editar' grupo.id %}">
-                    ✏
-                </a>
-
-                <a href="{% url 'grupos_sabores:status' grupo.id %}">
-                    🔒
-                </a>
-            </td>
-
-        </tr>
-
-        {% empty %}
-
-        <tr>
-            <td colspan="4">
-                Nenhum grupo cadastrado.
-            </td>
-        </tr>
-
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
         {% endfor %}
+    {% endif %}
 
-    </tbody>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-</table>
+        <div>
+            <h2>Grupos de Sabores</h2>
+
+            <small>
+                Total de grupos:
+                <strong>{{ grupos|length }}</strong>
+            </small>
+        </div>
+
+        <div>
+
+            <a href="{% url 'grupos_sabores:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Novo Grupo
+
+            </a>
+
+        </div>
+
+    </div>
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-3">
+
+                    <label for="status" class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-select"
+                        onchange="this.form.submit()">
+
+                        <option value="todos"
+                            {% if status == "todos" %}selected{% endif %}>
+                            Todos
+                        </option>
+
+                        <option value="ativos"
+                            {% if status == "ativos" %}selected{% endif %}>
+                            Ativos
+                        </option>
+
+                        <option value="inativos"
+                            {% if status == "inativos" %}selected{% endif %}>
+                            Inativos
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Nome
+                        </th>
+
+                        <th width="120">
+                            Ordem
+                        </th>
+
+                        <th width="120">
+                            Status
+                        </th>
+
+                        <th width="180">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for grupo in grupos %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ grupo.nome }}
+
+                            </td>
+
+                            <td>
+
+                                {{ grupo.ordem }}
+
+                            </td>
+
+                            <td>
+
+                                {% if grupo.ativo %}
+
+                                    <span class="badge bg-success">
+                                        Ativo
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Inativo
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="div-flex height-full">
+
+                                <a href="{% url 'grupos_sabores:visualizar' grupo.id %}"
+                                   class="btn btn-sm btn-warning btn-icon"
+                                   title="Detalhes">
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                </a>
+
+                                <a href="{% url 'grupos_sabores:editar' grupo.id %}"
+                                   class="btn btn-sm btn-warning btn-icon"
+                                   title="Editar">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="{% url 'grupos_sabores:status' grupo.id %}"
+                                   class="btn btn-sm btn-danger btn-icon"
+                                   title="Alterar status">
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="4" class="text-center">
+
+                                Nenhum grupo cadastrado.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

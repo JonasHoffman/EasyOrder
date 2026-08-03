@@ -2,9 +2,8 @@
 
 <ul class="nav-top">
     {% for item in nav %}
-        <li>
-            <a href="/estoque/{{ item.url }}" 
-               onclick="window.open(this.href, 'novaJanela', 'width=800,height=600'); return false;">
+        <li class="nav-topic">
+            <a href="/cardapio/{{ item.url }}" >
                 {{ item.nome }}
             </a>
         </li>
@@ -21,7 +20,7 @@
             class="form-control search-input"
             autocomplete="off"
         >
-        <button type="submit" class="btn-search" aria-label="Buscar">
+        <button type="submit" class="btn-search" aria-label="Buscar" class="background-nocolor">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="7"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -29,6 +28,44 @@
         </button>
     </form>
     <div id="suggestionsBox" class="suggestions-box"></div>
+</div>
+
+<div class="dropdown">
+    <button
+        class="btn btn-link position-relative text-dark"
+        type="button"
+        id="carrinhoDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        data-bs-auto-close="outside"
+    >
+        <i class="bi bi-cart3 fs-4"></i>
+        <span
+            id="carrinho-badge"
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            style="{% if not carrinho|length %}display:none;{% endif %}"
+        >
+            {{ carrinho|length }}
+        </span>
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-end p-3 shadow" aria-labelledby="carrinhoDropdown" style="width: 320px;">
+
+        <div id="carrinho-itens">
+            {% include 'templates/carrinho_itens.html' %}
+        </div>
+
+        <div class="border-top pt-3 mt-3">
+            <div class="d-flex justify-content-between mb-3">
+                <strong>Total</strong>
+                <strong id="carrinho-total-valor">R$ {{ carrinho.get_total|floatformat:2 }}</strong>
+            </div>
+            <a href="{% url 'carrinho:carrinho_detalhe' %}" class="btn btn-success w-100">
+                Finalizar pedido
+            </a>
+        </div>
+
+    </div>
 </div>
 
 <script src="{% static 'javascript/buscas.js' %}"></script>
