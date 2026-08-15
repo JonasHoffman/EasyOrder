@@ -25,7 +25,7 @@ def menu_items(request):
     for menu in menus:
         menu.subitens_permitidos = [
             sub for sub in menu.subitens.all()
-            if sub.view_id is None or sub.view_id in permissoes_ids
+            # if sub.view_id is None or sub.view_id in permissoes_ids
         ]
     
 

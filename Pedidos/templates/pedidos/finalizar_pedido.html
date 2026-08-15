@@ -1,0 +1,658 @@
+{% extends "templates/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+
+        <h2 class="mb-1">
+            Finalizar pedido
+        </h2>
+
+        <span class="text-muted">
+            Confira seus dados e confirme o pedido.
+        </span>
+
+    </div>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+
+            <!-- ========================= -->
+            <!-- FORMULÁRIO -->
+            <!-- ========================= -->
+
+            <div class="col-lg-8">
+
+
+                <!-- DADOS DO CLIENTE -->
+
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-body">
+
+                        <h5 class="mb-4">
+                            Seus dados
+                        </h5>
+
+
+                        <div class="mb-3">
+
+                            <label
+                                for="nome_cliente"
+                                class="form-label"
+                            >
+                                Nome
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="nome_cliente"
+                                name="nome_cliente"
+                                maxlength="150"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label
+                                for="telefone_cliente"
+                                class="form-label"
+                            >
+                                Telefone
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="telefone_cliente"
+                                name="telefone_cliente"
+                                maxlength="30"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TIPO DE ATENDIMENTO -->
+
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-body">
+
+                        <h5 class="mb-4">
+                            Como deseja receber?
+                        </h5>
+
+
+                        <div class="row g-2">
+
+                            <div class="col-md-4">
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="tipo_entrega"
+                                    id="tipo_entrega"
+                                    value="ENTREGA"
+                                    checked
+                                >
+
+                                <label
+                                    class="btn btn-outline-primary w-100 btn-carrinho"
+                                    for="tipo_entrega"
+                                >
+                                    Entrega
+                                </label>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="tipo_entrega"
+                                    id="tipo_retirada"
+                                    value="RETIRADA"
+                                >
+
+                                <label
+                                    class="btn btn-outline-primary w-100 btn-carrinho"
+                                    for="tipo_retirada"
+                                >
+                                    Retirada
+                                </label>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="tipo_entrega"
+                                    id="tipo_consumo"
+                                    value="CONSUMO_LOCAL"
+                                >
+
+                                <label
+                                    class="btn btn-outline-primary w-100 btn-carrinho"
+                                    for="tipo_consumo"
+                                >
+                                    Consumo no local
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ENDEREÇO -->
+
+                <div
+                    class="card shadow-sm border-0 mb-4"
+                    id="card-endereco"
+                >
+
+                    <div class="card-body">
+
+                        <h5 class="mb-4">
+                            Endereço de entrega
+                        </h5>
+
+
+                        <div class="row g-3">
+
+
+                            <div class="col-md-8">
+
+                                <label
+                                    for="endereco"
+                                    class="form-label"
+                                >
+                                    Endereço
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="endereco"
+                                    name="endereco"
+                                    maxlength="255"
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <label
+                                    for="numero_endereco"
+                                    class="form-label"
+                                >
+                                    Número
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="numero_endereco"
+                                    name="numero_endereco"
+                                    maxlength="20"
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="complemento"
+                                    class="form-label"
+                                >
+                                    Complemento
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="complemento"
+                                    name="complemento"
+                                    maxlength="100"
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="bairro"
+                                    class="form-label"
+                                >
+                                    Bairro
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="bairro"
+                                    name="bairro"
+                                    maxlength="100"
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="cidade"
+                                    class="form-label"
+                                >
+                                    Cidade
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="cidade"
+                                    name="cidade"
+                                    maxlength="100"
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <label
+                                    for="estado"
+                                    class="form-label"
+                                >
+                                    Estado
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="estado"
+                                    name="estado"
+                                    maxlength="2"
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <label
+                                    for="cep"
+                                    class="form-label"
+                                >
+                                    CEP
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="cep"
+                                    name="cep"
+                                    maxlength="10"
+                                >
+
+                            </div>
+
+
+                            <div class="col-12">
+
+                                <label
+                                    for="referencia"
+                                    class="form-label"
+                                >
+                                    Ponto de referência
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="referencia"
+                                    name="referencia"
+                                    maxlength="150"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PAGAMENTO -->
+
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-body">
+
+                        <h5 class="mb-4">
+                            Forma de pagamento
+                        </h5>
+
+
+                        <div class="row g-2">
+
+
+                            <div class="col-md-4">
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="forma_pagamento"
+                                    id="pagamento_pix"
+                                    value="PIX"
+                                >
+
+                                <label
+                                    class="btn btn-outline-primary w-100 btn-carrinho"
+                                    for="pagamento_pix"
+                                >
+                                    Pix
+                                </label>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="forma_pagamento"
+                                    id="pagamento_dinheiro"
+                                    value="DINHEIRO"
+                                >
+
+                                <label
+                                    class="btn btn-outline-primary w-100 btn-carrinho"
+                                    for="pagamento_dinheiro"
+                                >
+                                    Dinheiro
+                                </label>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="forma_pagamento"
+                                    id="pagamento_cartao"
+                                    value="CARTAO"
+                                >
+
+                                <label
+                                    class="btn btn-outline-primary w-100 btn-carrinho"
+                                    for="pagamento_cartao"
+                                >
+                                    Cartão
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSERVAÇÃO -->
+
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-body">
+
+                        <h5 class="mb-4">
+                            Observação
+                        </h5>
+
+                        <textarea
+                            class="form-control"
+                            name="observacao"
+                            rows="4"
+                            placeholder="Alguma observação sobre o pedido?"
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- RESUMO -->
+            <!-- ========================= -->
+
+            <div class="col-lg-4">
+
+                <div
+                    class="card shadow-sm border-0"
+                    style="position: sticky; top: 20px;"
+                >
+
+                    <div class="card-body">
+
+                        <h5 class="mb-4">
+                            Resumo do pedido
+                        </h5>
+
+
+                        {% for item in carrinho %}
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <div class="me-3">
+
+                                    <div class="fw-semibold">
+
+                                        {{ item.quantidade }}x
+                                        {{ item.produto.nome }}
+
+                                    </div>
+
+                                    {% if item.adicionais %}
+
+                                        <div class="small text-muted">
+                                            Com adicionais
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="text-nowrap">
+
+                                    R$
+                                    {{ item.subtotal|floatformat:2 }}
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                        <hr>
+
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span class="text-muted">
+                                Subtotal
+                            </span>
+
+                            <span>
+                                R$
+                                {{ carrinho.get_total|floatformat:2 }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span class="text-muted">
+                                Taxa de entrega
+                            </span>
+
+                            <span>
+                                R$ 0,00
+                            </span>
+
+                        </div>
+
+
+                        <hr>
+
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+
+                            <strong>
+                                Total
+                            </strong>
+
+                            <strong class="fs-4">
+
+                                R$
+                                {{ carrinho.get_total|floatformat:2 }}
+
+                            </strong>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-lg w-100 btn-azul"
+                        >
+                            Confirmar pedido
+                        </button>
+
+
+                        <a
+                            href="{% url 'carrinho:carrinho_detalhe' %}"
+                            class="btn btn-outline-secondary w-100 mt-2 btn-carrinho"
+                        >
+                            Voltar ao carrinho
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const radios =
+            document.querySelectorAll(
+                'input[name="tipo_entrega"]'
+            );
+
+        const cardEndereco =
+            document.getElementById(
+                "card-endereco"
+            );
+
+
+        function atualizarEndereco() {
+
+            const selecionado =
+                document.querySelector(
+                    'input[name="tipo_entrega"]:checked'
+                );
+
+
+            if (!selecionado) {
+                return;
+            }
+
+
+            if (
+                selecionado.value === "ENTREGA"
+            ) {
+
+                cardEndereco.style.display =
+                    "";
+
+            } else {
+
+                cardEndereco.style.display =
+                    "none";
+
+            }
+
+        }
+
+
+        radios.forEach(
+            function (radio) {
+
+                radio.addEventListener(
+                    "change",
+                    atualizarEndereco
+                );
+
+            }
+        );
+
+
+        atualizarEndereco();
+
+    }
+);
+
+</script>
+<script src="{% static 'javascript/finalizarpedido.js' %}"></script>
+
+
+{% endblock %}

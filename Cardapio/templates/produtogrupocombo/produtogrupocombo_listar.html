@@ -1,0 +1,342 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>Grupos do Combo</h2>
+
+        <small class="text-muted">
+            Combo: {{ combo.nome }}
+        </small>
+
+    </div>
+    <div>
+        <a href="{% url 'produtocombogrupo:novo'  %}"
+       class="btn btn-success btn-cancel btn-padrao btn-backgroundcolor">
+
+        Criar novo grupos de combo
+
+    </a>
+    <a href="{% url 'produtos:listar' %}"
+       class="btn btn-secondary btn-cancel btn-padrao">
+
+        Voltar
+
+    </a>
+    </div>
+
+    
+
+</div>
+
+
+{# ========================================================= #}
+{# GRUPOS JÁ VINCULADOS                                      #}
+{# ========================================================= #}
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        <strong>
+            Grupos do Combo
+        </strong>
+
+    </div>
+
+
+    <div class="card-body">
+
+        {% if grupos %}
+
+            <div class="list-group">
+
+                {% for vinculo in grupos %}
+
+                    <div class="list-group-item">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <div class="fw-bold">
+                                    {{ vinculo.grupo.nome }}
+                                </div>
+
+
+                                {% if vinculo.grupo.descricao %}
+
+                                    <small class="text-muted">
+                                        {{ vinculo.grupo.descricao }}
+                                    </small>
+
+                                {% endif %}
+
+
+                                <div class="mt-2">
+
+                                    {% if vinculo.obrigatorio %}
+
+                                        <span class="badge bg-primary">
+                                            Obrigatório
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            Opcional
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    <small class="text-muted ms-2">
+
+                                        Mínimo:
+                                        {{ vinculo.minimo }}
+
+                                        &nbsp;|&nbsp;
+
+                                        Máximo:
+                                        {{ vinculo.maximo }}
+
+                                        &nbsp;|&nbsp;
+
+                                        Ordem:
+                                        {{ vinculo.ordem }}
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <a
+                                    href="{% url 'produtogrupocombo:editar' vinculo.id %}"
+                                    class="btn btn-outline-primary btn-sm"
+                                >
+
+                                    Editar
+
+                                </a>
+
+
+                                <form
+                                    method="post"
+                                    action="{% url 'produtogrupocombo:excluir' vinculo.id %}"
+                                    style="display: inline;"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Deseja remover este grupo do combo?');"
+                                    >
+
+                                        Excluir
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-4">
+
+                <p class="text-muted mb-0">
+                    Nenhum grupo vinculado a este combo.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+
+{# ========================================================= #}
+{# ADICIONAR GRUPOS                                           #}
+{# ========================================================= #}
+
+<div class="card">
+
+    <div class="card-header">
+
+        <strong>
+            Adicionar Grupo
+        </strong>
+
+    </div>
+
+
+    <div class="card-body">
+
+
+        <form method="get" class="mb-3">
+
+            <div class="input-group">
+
+                <input
+                    type="text"
+                    name="busca"
+                    value="{{ busca }}"
+                    class="form-control"
+                    placeholder="Buscar grupo..."
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+
+                    Buscar
+
+                </button>
+
+
+                {% if busca %}
+
+                    <a
+                        href="{% url 'produtogrupocombo:listar' combo.id %}"
+                        class="btn btn-secondary"
+                    >
+
+                        Limpar
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </form>
+
+
+
+        {% if grupos_disponiveis %}
+
+            <div class="list-group">
+
+                {% for grupo in grupos_disponiveis %}
+
+                    <div class="list-group-item">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <div class="fw-bold">
+                                    {{ grupo.nome }}
+                                </div>
+
+
+                                {% if grupo.descricao %}
+
+                                    <small class="text-muted">
+                                        {{ grupo.descricao }}
+                                    </small>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div>
+
+                                {% if grupo.id in grupos_vinculados_ids %}
+
+                                    <span class="badge bg-success">
+                                        Adicionado
+                                    </span>
+
+                                {% else %}
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'produtogrupocombo:adicionar' combo.id grupo.id %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary btn-sm"
+                                        >
+
+                                            Adicionar
+
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-4">
+
+                {% if busca %}
+
+                    <p class="text-muted mb-0">
+                        Nenhum grupo encontrado para "{{ busca }}".
+                    </p>
+
+                {% else %}
+
+                    <p class="text-muted mb-0">
+                        Nenhum grupo disponível.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+{% endblock %}

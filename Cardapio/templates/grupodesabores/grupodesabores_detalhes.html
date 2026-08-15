@@ -2,30 +2,94 @@
 
 {% block content %}
 
-<h2>{{ grupo.nome }}</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-<p>
-    <strong>Nome:</strong>
-    {{ grupo.nome }}
-</p>
+    <div>
+        <h2 class="mb-1">
+            {{ grupo.nome }}
+        </h2>
 
-<p>
-    <strong>Ordem:</strong>
-    {{ grupo.ordem }}
-</p>
+        <span class="text-muted">
+            Detalhes do grupo de sabores
+        </span>
+    </div>
 
-<p>
-    <strong>Status:</strong>
+    <a
+        href="{% url 'grupos_sabores:editar' grupo.id %}"
+        class="btn btn-primary btn-carrinho"
+    >
+        Editar
+    </a>
 
-    {% if grupo.ativo %}
-        Ativo
-    {% else %}
-        Inativo
-    {% endif %}
-</p>
+</div>
 
-<a href="{% url 'grupos_sabores:editar' grupo.id %}">
-    Editar
-</a>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <h5 class="card-title mb-4">
+            Informações do grupo
+        </h5>
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+
+                <label class="form-label text-muted">
+                    Nome
+                </label>
+
+                <div class="fw-semibold">
+                    {{ grupo.nome }}
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <label class="form-label text-muted">
+                    Ordem
+                </label>
+
+                <div class="fw-semibold">
+                    {{ grupo.ordem }}
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <label class="form-label text-muted">
+                    Status
+                </label>
+
+                <div>
+
+                    {% if grupo.ativo %}
+
+                        <span class="badge bg-success">
+                            Ativo
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-secondary">
+                            Inativo
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

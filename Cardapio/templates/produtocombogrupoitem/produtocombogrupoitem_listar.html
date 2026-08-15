@@ -1,0 +1,160 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>Itens do Grupo</h2>
+
+        <small>
+
+            Combo:
+            <strong>{{ combo.nome }}</strong>
+
+            <br>
+
+            Grupo:
+            <strong>{{ grupo.nome }}</strong>
+
+            <br>
+
+            Total de itens:
+            <strong>{{ itens|length }}</strong>
+
+        </small>
+
+    </div>
+
+    <div>
+
+        <a href="{% url 'produtocombogrupoitem:novo' grupo.id %}"
+           class="btn btn-success btn-cancel btn-backgroundcolor">
+
+            <i class="fa-solid fa-plus"></i>
+            &nbsp;Novo Item
+
+        </a>
+
+        <a href="{% url 'produtocombogrupo:listar'  %}"
+           class="btn btn-success btn-cancel btn-padrao">
+
+            <i class="fa-solid fa-arrow-left"></i>
+            &nbsp;Voltar
+
+        </a>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th width="90">
+                        Ordem
+                    </th>
+
+                    <th>
+                        Produto
+                    </th>
+
+                    <th width="120">
+                        Quantidade
+                    </th>
+
+                    <th width="180">
+                        Ações
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in itens %}
+
+                    <tr class="tr-list">
+
+                        <td>
+
+                            {{ item.ordem }}
+
+                        </td>
+
+                        <td>
+
+                            {{ item.produto.nome }}
+
+                        </td>
+
+                        <td>
+
+                            {{ item.quantidade }}
+
+                        </td>
+
+                        <td class="div-flex height-full tr-list">
+
+                            <a href="{% url 'produtocombogrupoitem:editar' item.id %}"
+                               class="btn btn-sm btn-warning btn-icon"
+                               title="Editar">
+
+                                <i class="fa-solid fa-pen"></i>
+
+                            </a>
+
+                            <a href="{% url 'produtocombogrupoitem:excluir' item.id %}"
+                               class="btn btn-sm btn-danger btn-icon"
+                               title="Excluir"
+                               onclick="return confirm('Deseja excluir este item?')">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td colspan="4" class="text-center">
+
+                            Nenhum item cadastrado.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

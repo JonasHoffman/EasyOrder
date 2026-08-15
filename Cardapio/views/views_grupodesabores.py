@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from Cardapio.models import Loja
 
-from Cardapio.forms import GrupoDeSaboresForm
+from Cardapio.forms.grupodesabores_form import GrupoDeSaboresForm
 from Cardapio.models import GrupoDeSabores
 
 @login_required

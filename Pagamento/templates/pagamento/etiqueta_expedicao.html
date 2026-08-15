@@ -1,0 +1,752 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Etiqueta - Pedido #{{ pedido.numero }}
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        /* ==========================================
+           BOTÃO
+        ========================================== */
+
+        .acoes {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .botao-imprimir {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #222;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           ETIQUETA
+        ========================================== */
+
+        .etiqueta {
+            width: 80mm;
+            margin: 0 auto;
+            padding: 5mm;
+
+            background: white;
+            color: #000;
+
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        /* ==========================================
+           CABEÇALHO
+        ========================================== */
+
+        .cabecalho {
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .pedido {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .data {
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        /* ==========================================
+           ELEMENTOS
+        ========================================== */
+
+        .linha {
+            border-top: 1px dashed #000;
+            margin: 12px 0;
+        }
+
+        .campo {
+            margin-bottom: 4px;
+        }
+
+        .titulo {
+            font-weight: bold;
+        }
+
+        .tipo-entrega {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* ==========================================
+           ITENS
+        ========================================== */
+
+        .item {
+            margin-bottom: 8px;
+        }
+
+        .item-nome {
+            font-weight: bold;
+        }
+
+        .detalhe {
+            padding-left: 10px;
+            font-size: 12px;
+        }
+
+        /* ==========================================
+           RESUMO
+        ========================================== */
+
+        .resumo {
+            font-size: 13px;
+        }
+
+        .valor {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .total {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 7px;
+        }
+
+        /* ==========================================
+           COBRAR
+        ========================================== */
+
+        .cobrar {
+            margin-top: 12px;
+            padding: 8px;
+
+            border: 2px solid #000;
+
+            text-align: center;
+
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* ==========================================
+           OBSERVAÇÃO
+        ========================================== */
+
+        .observacao {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        /* ==========================================
+           IMPRESSÃO
+        ========================================== */
+
+        @media print {
+
+            @page {
+                size: 80mm auto;
+                margin: 0;
+            }
+
+            html,
+            body {
+                width: 80mm;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+
+            .acoes {
+                display: none;
+            }
+
+            .etiqueta {
+                width: 80mm;
+                margin: 0;
+                padding: 5mm;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+     BOTÃO
+========================================== -->
+
+<div class="acoes">
+
+    <button
+        class="botao-imprimir"
+        onclick="window.print()"
+    >
+        🖨️ Imprimir
+    </button>
+
+</div>
+
+
+<!-- ==========================================
+     ETIQUETA
+========================================== -->
+
+<div class="etiqueta">
+
+
+    <!-- ======================================
+         CABEÇALHO
+    ======================================= -->
+
+    <div class="cabecalho">
+
+        <div class="logo">
+            EASYORDER
+        </div>
+
+        <div class="pedido">
+            PEDIDO #{{ pedido.numero }}
+        </div>
+
+        <div class="data">
+
+            {{ pedido.criado_em|date:"d/m/Y H:i" }}
+
+        </div>
+
+    </div>
+
+
+    <div class="linha"></div>
+
+
+    <!-- ======================================
+         CLIENTE
+    ======================================= -->
+
+    <div class="campo">
+
+        <span class="titulo">
+            CLIENTE:
+        </span>
+
+        {{ pedido.nome_cliente }}
+
+    </div>
+
+
+    <div class="campo">
+
+        <span class="titulo">
+
+            {% if primeiro_pedido %}
+
+                1º PEDIDO DO CLIENTE
+
+            {% else %}
+
+                CLIENTE RECORRENTE
+
+            {% endif %}
+
+        </span>
+
+    </div>
+
+
+    <div class="campo">
+
+        <span class="titulo">
+            ID:
+        </span>
+
+        {{ pedido.id }}
+
+    </div>
+
+
+    <!-- ======================================
+         TIPO DE PEDIDO
+    ======================================= -->
+
+    <div class="linha"></div>
+
+
+    <div class="tipo-entrega">
+
+        {% if pedido.tipo_entrega == "ENTREGA" %}
+
+            ENTREGA
+
+        {% elif pedido.tipo_entrega == "RETIRADA" %}
+
+            RETIRADA NO LOCAL
+
+        {% elif pedido.tipo_entrega == "CONSUMO_LOCAL" %}
+
+            CONSUMO NO LOCAL
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ======================================
+         ENDEREÇO DE ENTREGA
+    ======================================= -->
+
+    {% if pedido.tipo_entrega == "ENTREGA" %}
+
+        <div class="linha"></div>
+
+        <div class="titulo">
+
+            ENDEREÇO DE ENTREGA
+
+        </div>
+
+        <div style="margin-top: 8px;">
+
+
+            {% if pedido.endereco %}
+
+                <div class="campo">
+
+                    {{ pedido.endereco }}
+
+                </div>
+
+            {% endif %}
+
+
+            {% if pedido.numero_endereco %}
+
+                <div class="campo">
+
+                    Nº {{ pedido.numero_endereco }}
+
+                </div>
+
+            {% endif %}
+
+
+            {% if pedido.complemento %}
+
+                <div class="campo">
+
+                    {{ pedido.complemento }}
+
+                </div>
+
+            {% endif %}
+
+
+            {% if pedido.bairro %}
+
+                <div class="campo">
+
+                    {{ pedido.bairro }}
+
+                </div>
+
+            {% endif %}
+
+
+            {% if pedido.cidade or pedido.estado %}
+
+                <div class="campo">
+
+                    {% if pedido.cidade %}
+
+                        {{ pedido.cidade }}
+
+                    {% endif %}
+
+                    {% if pedido.estado %}
+
+                        - {{ pedido.estado }}
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+
+            {% if pedido.cep %}
+
+                <div class="campo">
+
+                    CEP: {{ pedido.cep }}
+
+                </div>
+
+            {% endif %}
+
+
+            {% if pedido.referencia %}
+
+                <div class="campo">
+
+                    <span class="titulo">
+                        REFERÊNCIA:
+                    </span>
+
+                    {{ pedido.referencia }}
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ======================================
+         ITENS
+    ======================================= -->
+
+    <div class="linha"></div>
+
+
+    <div class="titulo">
+
+        ITENS
+
+    </div>
+
+
+    <div style="margin-top: 8px;">
+
+
+        {% for item in pedido.itens.all %}
+
+
+            <div class="item">
+
+
+                <!-- PRODUTO -->
+
+                <div class="item-nome">
+
+                    {{ item.quantidade|floatformat:"-0" }}x
+                    {{ item.nome_produto }}
+
+                </div>
+
+
+                <!-- SABORES -->
+
+                {% for sabor in item.sabores.all %}
+
+                    <div class="detalhe">
+
+                        • {{ sabor.nome_sabor }}
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- INGREDIENTES REMOVIDOS -->
+
+                {% for ingrediente in item.ingredientes.all %}
+
+                    {% if ingrediente.removido %}
+
+                        <div class="detalhe">
+
+                            • SEM
+                            {{ ingrediente.nome_ingrediente }}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+
+                <!-- ADICIONAIS -->
+
+                {% for adicional in item.adicionais.all %}
+
+                    <div class="detalhe">
+
+                        • +
+                        {{ adicional.quantidade|floatformat:"-0" }}
+                        {{ adicional.nome_adicional }}
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- COMBOS -->
+
+                {% for combo in item.itens_combo.all %}
+
+                    <div class="detalhe">
+
+                        •
+                        {{ combo.quantidade|floatformat:"-0" }}x
+                        {{ combo.nome_grupo }}:
+                        {{ combo.nome_produto }}
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- OBSERVAÇÃO DO ITEM -->
+
+                {% if item.observacao %}
+
+                    <div class="detalhe">
+
+                        • OBS:
+                        {{ item.observacao }}
+
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+    <!-- ======================================
+         PAGAMENTO
+    ======================================= -->
+
+    <div class="linha"></div>
+
+
+    <div class="titulo">
+
+        PAGAMENTO
+
+    </div>
+
+
+    {% if pedido.pagamento %}
+
+
+        <div class="campo">
+
+            {{ pedido.pagamento.get_metodo_display }}
+
+        </div>
+
+
+        <div class="campo">
+
+            {% if pedido.pagamento.status == "pago" %}
+
+                PAGO
+
+            {% else %}
+
+                {{ pedido.pagamento.get_status_display }}
+
+            {% endif %}
+
+        </div>
+
+
+    {% else %}
+
+
+        <div class="campo">
+
+            PAGAMENTO NÃO INFORMADO
+
+        </div>
+
+
+    {% endif %}
+
+
+    <!-- ======================================
+         RESUMO FINANCEIRO
+    ======================================= -->
+
+    <div class="linha"></div>
+
+
+    <div class="titulo">
+
+        RESUMO
+
+    </div>
+
+
+    <div class="resumo">
+
+
+        <div class="valor">
+
+            <span>
+                PEDIDO
+            </span>
+
+            <span>
+                R$ {{ pedido.subtotal|floatformat:2 }}
+            </span>
+
+        </div>
+
+
+        <div class="valor">
+
+            <span>
+                ENTREGA
+            </span>
+
+            <span>
+                R$ {{ pedido.taxa_entrega|floatformat:2 }}
+            </span>
+
+        </div>
+
+
+        <div class="valor">
+
+            <span>
+                DESCONTO
+            </span>
+
+            <span>
+                R$ {{ pedido.desconto|floatformat:2 }}
+            </span>
+
+        </div>
+
+
+        <div class="linha"></div>
+
+
+        <div class="valor total">
+
+            <span>
+                TOTAL
+            </span>
+
+            <span>
+                R$ {{ pedido.total|floatformat:2 }}
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ======================================
+         VALOR A COBRAR
+    ======================================= -->
+
+    {% if pedido.pagamento and pedido.pagamento.status == "pago" %}
+
+
+        <div class="cobrar">
+
+            COBRAR DO CLIENTE
+
+            <br>
+
+            R$ 0,00
+
+        </div>
+
+
+    {% else %}
+
+
+        <div class="cobrar">
+
+            COBRAR DO CLIENTE
+
+            <br>
+
+            R$ {{ pedido.total|floatformat:2 }}
+
+        </div>
+
+
+    {% endif %}
+
+
+    <!-- ======================================
+         OBSERVAÇÃO DO PEDIDO
+    ======================================= -->
+
+    {% if pedido.observacao %}
+
+
+        <div class="linha"></div>
+
+
+        <div class="observacao">
+
+            <strong>
+                OBSERVAÇÃO:
+            </strong>
+
+            {{ pedido.observacao }}
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+
+</body>
+
+</html>
+```

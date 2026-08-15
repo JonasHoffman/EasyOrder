@@ -1,0 +1,186 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>{{ titulo }}</h2>
+
+        <small class="text-muted">
+            Combo: {{ combo.nome }}
+        </small>
+
+    </div>
+    <div>
+        <a href="{% url 'produtocombogrupoitem:novo' combo.id %}"
+       class="btn btn-success btn-cancel btn-padrao btn-backgroundcolor">
+
+        Adicionar item 
+
+    </a>
+    <a href="{% url 'produtogrupocombo:listar' combo.id %}"
+       class="btn btn-secondary btn-cancel btn-padrao">
+
+        Voltar
+
+    </a>
+    </div>
+
+    
+
+</div>
+
+
+<form method="post">
+
+    {% csrf_token %}
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+
+            <div class="mb-3 linha-form">
+
+                <label class="label-form">
+
+                    Grupo
+
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    value="{{ vinculo.grupo.nome }}"
+                    disabled
+                >
+
+            </div>
+
+
+            <div class="mb-3 linha-form">
+
+                <label
+                    class="label-form label-sincronizado"
+                    for="{{ form.obrigatorio.id_for_label }}"
+                >
+
+                    {{ form.obrigatorio.label }}
+
+                </label>
+
+                {{ form.obrigatorio }}
+
+                {{ form.obrigatorio.errors }}
+
+            </div>
+
+
+            <div class="mb-3 linha-form">
+
+                <label
+                    class="label-form"
+                    for="{{ form.minimo.id_for_label }}"
+                >
+
+                    {{ form.minimo.label }}
+
+                </label>
+
+                {{ form.minimo }}
+
+                {{ form.minimo.errors }}
+
+            </div>
+
+
+            <div class="mb-3 linha-form">
+
+                <label
+                    class="label-form"
+                    for="{{ form.maximo.id_for_label }}"
+                >
+
+                    {{ form.maximo.label }}
+
+                </label>
+
+                {{ form.maximo }}
+
+                {{ form.maximo.errors }}
+
+            </div>
+
+
+            <div class="mb-3 linha-form">
+
+                <label
+                    class="label-form"
+                    for="{{ form.ordem.id_for_label }}"
+                >
+
+                    {{ form.ordem.label }}
+
+                </label>
+
+                {{ form.ordem }}
+
+                {{ form.ordem.errors }}
+
+            </div>
+
+
+            {% if form.non_field_errors %}
+
+                <div class="text-danger mb-3">
+
+                    {{ form.non_field_errors }}
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+        <div class="card-footer">
+
+            <button
+                class="btn btn-success btn-cancel btn-padrao"
+                type="submit"
+            >
+
+                Salvar
+
+            </button>
+
+
+            <a
+                href="{% url 'produtogrupocombo:listar' combo.id %}"
+                class="btn btn-secondary btn-cancel btn-padrao"
+            >
+
+                Cancelar
+
+            </a>
+
+        </div>
+
+    </div>
+
+</form>
+
+{% endblock %}

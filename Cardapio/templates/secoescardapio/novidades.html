@@ -1,27 +1,19 @@
-<div class="mb-5">
+<div class="mb-6">
 
     <h2 class="mb-3">
         {{ secao.get_tipo_display }}
     </h2>
 
-    <div class="categorias-scroll">
+    <div class="grid-cardapio">
 
         {% for produto in secao.dados %}
 
-        <div class="recomendado-card">
+        <a href="{% url 'produtos:produto_detalhe' produto.slug %}"
+           class="text-decoration-none text-dark card-cardapio">
 
-            <div class="card shadow-sm">
+            <div class="div-card-cardapio">
 
-                {% if produto.imagem %}
-
-                <img
-                    src="{{ produto.imagem.url }}"
-                    alt="{{ produto.nome }}"
-                >
-
-                {% endif %}
-
-                <div class="card-body">
+                <div class="text-card-cardapio">
 
                     <h5 class="card-title">
                         {{ produto.nome }}
@@ -41,9 +33,29 @@
 
                 </div>
 
+                <div class="img-card-cardapio">
+
+                    {% if produto.imagem %}
+
+                    <img
+                        src="{{ produto.imagem.url }}"
+                        alt="{{ produto.nome }}"
+                        class="img-card-cardapio"
+                    >
+
+                    {% else %}
+
+                    <div class="img-card-cardapio img-placeholder">
+                        Sem imagem
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
             </div>
 
-        </div>
+        </a>
 
         {% empty %}
 

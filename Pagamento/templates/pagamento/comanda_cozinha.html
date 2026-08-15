@@ -1,0 +1,440 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Comanda - Pedido #{{ pedido.numero }}
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f2f2f2;
+            font-family: Arial, sans-serif;
+            color: #000;
+        }
+
+        .acoes {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .botao-imprimir {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #222;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .comanda {
+
+            width: 80mm;
+
+            margin: 0 auto;
+
+            padding: 5mm;
+
+            background: white;
+
+            font-size: 14px;
+
+            line-height: 1.35;
+        }
+
+        .cabecalho {
+
+            text-align: center;
+
+        }
+
+        .logo {
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+        }
+
+        .pedido {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            margin-top: 5px;
+
+        }
+
+        .data {
+
+            font-size: 12px;
+
+            margin-top: 3px;
+
+        }
+
+        .linha {
+
+            border-top: 1px dashed #000;
+
+            margin: 12px 0;
+
+        }
+
+        .titulo {
+
+            font-weight: bold;
+
+        }
+
+        .tipo {
+
+            text-align: center;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            margin: 8px 0;
+
+        }
+
+        .cliente {
+
+            font-size: 15px;
+
+        }
+
+        .item {
+
+            margin-bottom: 12px;
+
+        }
+
+        .item-nome {
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+        }
+
+        .detalhe {
+
+            padding-left: 12px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+        }
+
+        .observacao {
+
+            margin-top: 10px;
+
+            padding: 8px;
+
+            border: 2px solid #000;
+
+            font-weight: bold;
+
+        }
+
+        @media print {
+
+            @page {
+
+                size: 80mm auto;
+
+                margin: 0;
+
+            }
+
+            html,
+            body {
+
+                width: 80mm;
+
+                margin: 0;
+
+                padding: 0;
+
+                background: white;
+
+            }
+
+            .acoes {
+
+                display: none;
+
+            }
+
+            .comanda {
+
+                width: 80mm;
+
+                margin: 0;
+
+                padding: 5mm;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="acoes">
+
+    <button
+        class="botao-imprimir"
+        onclick="window.print()"
+    >
+        🖨️ Imprimir
+    </button>
+
+</div>
+
+
+<div class="comanda">
+
+
+    <!-- =====================================
+         CABEÇALHO
+    ====================================== -->
+
+    <div class="cabecalho">
+
+        <div class="logo">
+
+            EASYORDER
+
+        </div>
+
+
+        <div class="pedido">
+
+            PEDIDO #{{ pedido.numero }}
+
+        </div>
+
+
+        <div class="data">
+
+            {{ pedido.criado_em|date:"d/m/Y H:i" }}
+
+        </div>
+
+    </div>
+
+
+    <div class="linha"></div>
+
+
+    <!-- =====================================
+         CLIENTE
+    ====================================== -->
+
+    <div class="cliente">
+
+        <span class="titulo">
+            CLIENTE:
+        </span>
+
+        {{ pedido.nome_cliente }}
+
+    </div>
+
+
+    <!-- =====================================
+         TIPO
+    ====================================== -->
+
+    <div class="tipo">
+
+        {% if pedido.tipo_entrega == "ENTREGA" %}
+
+            🚚 ENTREGA
+
+        {% elif pedido.tipo_entrega == "RETIRADA" %}
+
+            🛍️ RETIRADA
+
+        {% elif pedido.tipo_entrega == "CONSUMO_LOCAL" %}
+
+            🍽️ CONSUMO NO LOCAL
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="linha"></div>
+
+
+    <!-- =====================================
+         ITENS
+    ====================================== -->
+
+    <div class="titulo">
+
+        ITENS
+
+    </div>
+
+
+    <div style="margin-top: 10px;">
+
+
+        {% for item in pedido.itens.all %}
+
+
+            <div class="item">
+
+
+                <!-- PRODUTO -->
+
+                <div class="item-nome">
+
+                    {{ item.quantidade|floatformat:"-0" }}x
+                    {{ item.nome_produto }}
+
+                </div>
+
+
+                <!-- SABORES -->
+
+                {% for sabor in item.sabores.all %}
+
+                    <div class="detalhe">
+
+                        • SABOR:
+                        {{ sabor.nome_sabor }}
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- INGREDIENTES REMOVIDOS -->
+
+                {% for ingrediente in item.ingredientes.all %}
+
+                    {% if ingrediente.removido %}
+
+                        <div class="detalhe">
+
+                            • SEM
+                            {{ ingrediente.nome_ingrediente }}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+
+                <!-- ADICIONAIS -->
+
+                {% for adicional in item.adicionais.all %}
+
+                    <div class="detalhe">
+
+                        • +
+                        {{ adicional.quantidade|floatformat:"-0" }}
+                        {{ adicional.nome_adicional }}
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- COMBO -->
+
+                {% for combo in item.itens_combo.all %}
+
+                    <div class="detalhe">
+
+                        •
+                        {{ combo.quantidade|floatformat:"-0" }}x
+                        {{ combo.nome_grupo }}:
+                        {{ combo.nome_produto }}
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- OBSERVAÇÃO DO ITEM -->
+
+                {% if item.observacao %}
+
+                    <div class="detalhe">
+
+                        • OBS:
+                        {{ item.observacao }}
+
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+    <!-- =====================================
+         OBSERVAÇÃO DO PEDIDO
+    ====================================== -->
+
+    {% if pedido.observacao %}
+
+
+        <div class="linha"></div>
+
+
+        <div class="observacao">
+
+            OBSERVAÇÃO DO PEDIDO:
+
+            <br><br>
+
+            {{ pedido.observacao }}
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+
+</body>
+
+</html>
+```

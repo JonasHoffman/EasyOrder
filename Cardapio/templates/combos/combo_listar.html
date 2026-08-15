@@ -1,0 +1,271 @@
+
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Combos</h2>
+
+            <small>
+                Total de combos:
+                <strong>{{ combos|length }}</strong>
+            </small>
+
+        </div>
+
+        <div>
+
+            <a href="{% url 'combos:novo' %}"
+               class="btn btn-success btn-cancel btn-backgroundcolor">
+
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Novo Combo
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+
+                    <label for="busca" class="form-label">
+                        Buscar
+                    </label>
+
+                    <input
+                        type="text"
+                        name="busca"
+                        id="busca"
+                        value="{{ busca }}"
+                        class="form-control"
+                        placeholder="Nome ou código">
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <label for="status" class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-select">
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="ativos"
+                            {% if status == "ativos" %}selected{% endif %}>
+                            Ativos
+                        </option>
+
+                        <option value="inativos"
+                            {% if status == "inativos" %}selected{% endif %}>
+                            Inativos
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn btn-secondary w-100">
+                        Buscar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th width="70">
+                            Imagem
+                        </th>
+
+                        <th>
+                            Nome
+                        </th>
+
+                        <th>
+                            Categoria
+                        </th>
+
+                        <th width="120">
+                            Preço
+                        </th>
+
+                        <th width="120">
+                            Status
+                        </th>
+
+                        <th width="240">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for combo in combos %}
+
+                        <tr class="tr-list">
+
+                            <td>
+
+                                {% if combo.imagem %}
+
+                                    <img src="{{ combo.imagem.url }}"
+                                         width="50"
+                                         height="50"
+                                         class="rounded object-fit-cover">
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <strong>{{ combo.nome }}</strong>
+
+                                {% if combo.codigo %}
+
+                                    <br>
+
+                                    <small class="text-muted">
+
+                                        {{ combo.codigo }}
+
+                                    </small>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {{ combo.categoria.nome }}
+
+                            </td>
+
+                            <td>
+
+                                R$ {{ combo.preco }}
+
+                            </td>
+
+                            <td>
+
+                                {% if combo.disponivel %}
+
+                                    <span class="badge bg-success">
+                                        Disponível
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Indisponível
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="div-flex height-full tr-list">
+
+                                <a href="{% url 'produtogrupocombo:listar' combo.id %}"
+                                   class="btn btn-warning btn-sm btn-icon-maior"
+                                   title="Configurar Combo">
+
+                                    <i class="fa-solid fa-gears"></i>
+                                    Configurar
+
+                                </a>
+
+                                <a href="{% url 'combos:editar' combo.id %}"
+                                   class="btn btn-warning btn-sm btn-icon"
+                                   title="Editar">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="{% url 'combos:excluir' combo.id %}"
+                                   class="btn btn-danger btn-sm btn-icon"
+                                   title="Excluir"
+                                   onclick="return confirm('Deseja excluir este combo?')">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="6" class="text-center">
+
+                                Nenhum combo encontrado.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

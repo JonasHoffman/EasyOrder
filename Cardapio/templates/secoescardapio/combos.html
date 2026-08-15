@@ -1,65 +1,66 @@
-<div class="mb-5">
+<div class="mb-6">
 
-<h2>nadaaaa</h2>
-<h2>
-{{ secao.get_tipo_display }}
-</h2>
+    <h2 class="mb-3">
+        {{ secao.get_tipo_display }}
+    </h2>
 
+    <div class="grid-cardapio">
 
-<div class="row">
+        {% for produto in secao.dados %}
 
+        <a href="{% url 'produtos:produto_detalhe' produto.slug %}"
+           class="text-decoration-none text-dark card-cardapio">
 
-{% for produto in secao.dados %}
+            <div class="div-card-cardapio">
 
+                <div class="text-card-cardapio">
 
-<div class="col-md-4 mb-3">
+                    <h5 class="card-title">
+                        {{ produto.nome }}
+                    </h5>
 
+                    {% if produto.descricao %}
+                    <p class="card-text">
+                        {{ produto.descricao }}
+                    </p>
+                    {% endif %}
 
-<div class="card shadow-sm">
+                    <strong>
+                        R$ {{ produto.preco }}
+                    </strong>
 
+                </div>
 
-{% if produto.imagem %}
+                <div class="img-card-cardapio">
 
-<img
-src="{{ produto.imagem.url }}"
-class="card-img-top"
->
+                    {% if produto.imagem %}
 
-{% endif %}
+                        <img
+                            src="{{ produto.imagem.url }}"
+                            alt="{{ produto.nome }}"
+                            class="img-card-cardapio"
+                        >
 
+                    {% else %}
 
+                        <div class="img-card-cardapio img-placeholder">
+                            Sem imagem
+                        </div>
 
-<div class="card-body">
+                    {% endif %}
 
+                </div>
 
-<h5>
-{{ produto.nome }}
-</h5>
+            </div>
 
+        </a>
 
-<p>
-{{ produto.descricao }}
-</p>
+        {% empty %}
 
+        <p>Nenhum combo disponível.</p>
 
-<strong>
-R$ {{ produto.preco }}
-</strong>
+        {% endfor %}
 
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-{% endfor %}
-
-
-</div>
-
+    </div>
 
 </div>

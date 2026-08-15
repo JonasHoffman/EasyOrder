@@ -1,0 +1,73 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">{{ titulo }}</h2>
+
+<p class="mb-4">
+
+    Combo:
+    <strong>{{ combo.nome }}</strong>
+
+    <br>
+
+    Grupo:
+    <strong>{{ grupo.nome }}</strong>
+
+</p>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <div class="mb-3 linha-form">
+
+        <label class="label-form" for="{{ form.produto.id_for_label }}">
+            {{ form.produto.label }}
+        </label>
+
+        {{ form.produto }}
+        {{ form.produto.errors }}
+
+    </div>
+
+    <div class="mb-3 linha-form">
+
+        <label class="label-form" for="{{ form.quantidade.id_for_label }}">
+            {{ form.quantidade.label }}
+        </label>
+
+        {{ form.quantidade }}
+        {{ form.quantidade.errors }}
+
+    </div>
+
+    <div class="mb-3 linha-form">
+
+        <label class="label-form" for="{{ form.ordem.id_for_label }}">
+            {{ form.ordem.label }}
+        </label>
+
+        {{ form.ordem }}
+        {{ form.ordem.errors }}
+
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-success btn-cancel btn-padrao">
+
+        Salvar
+
+    </button>
+
+    <a href="{% url 'produtocombogrupoitem:listar' grupo.id %}"
+       class="btn btn-secondary btn-cancel btn-padrao">
+
+        Cancelar
+
+    </a>
+
+</form>
+
+{% endblock %}

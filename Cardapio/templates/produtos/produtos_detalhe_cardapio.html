@@ -2,69 +2,319 @@
 {% load static %}
 
 {% block content %}
-<div class="produto-detalhe-container">
 
-    <a href="javascript:history.back()" class="voltar-link">
-        &larr; Voltar ao cardápio
-    </a>
+<div class="container py-4">
 
-    <div class="produto-detalhe">
-        <div class="produto-imagem-wrapper">
-            {% if produto.imagem %}
-                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="produto-imagem-grande">
-            {% else %}
-                <div class="produto-sem-imagem">Sem imagem</div>
-            {% endif %}
-        </div>
+    <!-- ===================================================== -->
+    <!-- VOLTAR -->
+    <!-- ===================================================== -->
 
-        <div class="produto-info">
-            <span class="produto-categoria-tag">{{ produto.categoria.nome }}</span>
-            <h1 class="produto-nome">{{ produto.nome }}</h1>
-            
-            {% if produto.descricao %}
-                <p class="produto-descricao">{{ produto.descricao }}</p>
-            {% endif %}
+    <div class="mb-4">
 
-            <div class="produto-preco-linha">
-                <span class="produto-preco">R$ {{ produto.preco }}</span>
-            </div>
+        <a
+            href="javascript:history.back()"
+            class="text-decoration-none text-muted"
+        >
+            &larr; Voltar ao cardápio
+        </a>
 
-            <div class="produto-quantidade">
-                <label>Quantidade</label>
-                <div class="qtd-controle">
-                    <button type="button" class="qtd-btn" onclick="alterarQtd(-1)">-</button>
-                    <span id="qtdValor">1</span>
-                    <button type="button" class="qtd-btn" onclick="alterarQtd(1)">+</button>
-                </div>
-            </div>
-
-            <a
-                href="{% url 'produtos:personalizar_produto' produto.slug %}"
-                class="btn btn-primary btn-adicionar-carrinho"
-            >
-                Adicionar ao carrinho
-            </a>
-        </div>
     </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PRODUTO -->
+    <!-- ===================================================== -->
+
+    <div class="card shadow-sm border-0 mb-5">
+
+        <div class="card-body p-4">
+
+            <div class="row g-4 align-items-start">
+
+                <!-- ================================================= -->
+                <!-- IMAGEM -->
+                <!-- ================================================= -->
+
+                <div class="col-md-5">
+
+                    <div class="text-center">
+
+                        {% if produto.imagem %}
+
+                            <img
+                                src="{{ produto.imagem.url }}"
+                                alt="{{ produto.nome }}"
+                                class="img-fluid rounded"
+                                style="
+                                    width: 100%;
+                                    max-height: 350px;
+                                    object-fit: cover;
+                                "
+                            >
+
+                        {% else %}
+
+                            <div
+                                class="
+                                    bg-light
+                                    rounded
+                                    d-flex
+                                    align-items-center
+                                    justify-content-center
+                                "
+                                style="height: 300px;"
+                            >
+
+                                <span class="text-muted">
+                                    Sem imagem
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- INFORMAÇÕES -->
+                <!-- ================================================= -->
+
+                <div class="col-md-7">
+
+                    <!-- CATEGORIA -->
+
+                    {% if produto.categoria %}
+
+                        <span class="badge bg-secondary mb-2">
+
+                            {{ produto.categoria.nome }}
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <!-- NOME -->
+
+                    <h1 class="mb-3">
+
+                        {{ produto.nome }}
+
+                    </h1>
+
+
+                    <!-- DESCRIÇÃO -->
+
+                    {% if produto.descricao %}
+
+                        <p class="text-muted mb-4">
+
+                            {{ produto.descricao }}
+
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- ================================================= -->
+                    <!-- PREÇO -->
+                    <!-- ================================================= -->
+
+                    <div class="mb-4">
+
+                        <span class="fs-3 fw-bold text-success">
+
+                            R$
+                            {{ produto.preco|floatformat:2 }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- COMBO -->
+                    <!-- ================================================= -->
+
+                    {% if produto.tipo == "COMBO" %}
+
+                        <div class="mb-4">
+
+                            <p class="text-muted mb-3">
+
+                                Este é um combo.
+                                Você poderá escolher os produtos
+                                e opções depois de continuar.
+
+                            </p>
+
+
+                            <a
+                                href="{% url 'produtos:personalizar_produto' produto.slug %}"
+                                class="btn btn-primary btn-lg w-100 btn-carrinho"
+                            >
+
+                                Adicionar ao carrinho
+
+                            </a>
+
+                        </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- PRODUTO SIMPLES -->
+                    <!-- ================================================= -->
+
+                    {% else %}
+
+                        <div class="mb-4">
+
+                            <a
+                                href="{% url 'produtos:personalizar_produto' produto.slug %}"
+                                class="btn btn-primary btn-lg w-100"
+                            >
+
+                                Adicionar ao carrinho
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ===================================================== -->
+    <!-- RELACIONADOS -->
+    <!-- ===================================================== -->
 
     {% if relacionados %}
-    <div class="produtos-relacionados">
-        <h3>Você também pode gostar</h3>
-        <div class="relacionados-grid">
-            {% for item in relacionados %}
-                <a href="{% url 'produtos:produto_detalhe' item.slug %}" class="relacionado-card">
-                    {% if item.imagem %}
-                        <img src="{{ item.imagem.url }}" alt="{{ item.nome }}">
-                    {% endif %}
-                    <span class="relacionado-nome">{{ item.nome }}</span>
-                    <span class="relacionado-preco">R$ {{ item.preco }}</span>
-                </a>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 
-    
+        <div class="mt-5">
+
+            <!-- CABEÇALHO -->
+
+            <div class="mb-4">
+
+                <h3 class="mb-1">
+
+                    Você também pode gostar
+
+                </h3>
+
+
+                <p class="text-muted">
+
+                    Confira outros produtos.
+
+                </p>
+
+            </div>
+
+
+            <!-- PRODUTOS -->
+
+            <div class="row g-3">
+
+                {% for item in relacionados %}
+
+                    <div class="col-6 col-md-3">
+
+                        <a
+                            href="{% url 'produtos:produto_detalhe' item.slug %}"
+                            class="
+                                text-decoration-none
+                                text-dark
+                            "
+                        >
+
+                            <div
+                                class="
+                                    card
+                                    h-100
+                                    shadow-sm
+                                    border-0
+                                "
+                            >
+
+                                <!-- IMAGEM -->
+
+                                {% if item.imagem %}
+
+                                    <img
+                                        src="{{ item.imagem.url }}"
+                                        alt="{{ item.nome }}"
+                                        class="card-img-top"
+                                        style="
+                                            height: 180px;
+                                            object-fit: cover;
+                                        "
+                                    >
+
+                                {% endif %}
+
+
+                                <!-- INFORMAÇÕES -->
+
+                                <div class="card-body">
+
+                                    <h6 class="mb-2">
+
+                                        {{ item.nome }}
+
+                                    </h6>
+
+
+                                    {% if item.descricao %}
+
+                                        <p
+                                            class="
+                                                text-muted
+                                                small
+                                                mb-2
+                                            "
+                                        >
+
+                                            {{ item.descricao|truncatechars:70 }}
+
+                                        </p>
+
+                                    {% endif %}
+
+
+                                    <strong class="text-success">
+
+                                        R$
+                                        {{ item.preco|floatformat:2 }}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
 
 </div>
 

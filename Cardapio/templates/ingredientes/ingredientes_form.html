@@ -9,9 +9,9 @@
         <h2 class="mb-0">
 
             {% if form.instance.id %}
-                Editar Item Adicional
+                Editar Ingrediente
             {% else %}
-                Novo Item Adicional
+                Novo Ingrediente
             {% endif %}
 
         </h2>
@@ -20,100 +20,43 @@
 
     <div class="card-body">
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST">
 
             {% csrf_token %}
 
-            <div class="row">
+            <div class="mb-3 linha-form">
+                <label class="label-form" for="{{ form.nome.id_for_label }}">
+                    {{ form.nome.label }}
+                </label>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">
-                        Grupo de Adicionais
-                    </label>
-
-                    {{ form.grupo }}
-
-                    <small class="d-block mt-2">
-                        <a href="{% url 'grupoadicional:novo' %}">
-                            + Criar novo grupo de adicionais
-                        </a>
-                    </small>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">
-                        Nome
-                    </label>
-
-                    {{ form.nome }}
-                </div>
-
-                <div class="col-md-12 mb-3">
-                    <label class="form-label">
-                        Descrição
-                    </label>
-
-                    {{ form.descricao }}
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        Preço
-                    </label>
-
-                    {{ form.preco }}
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        Ordem
-                    </label>
-
-                    {{ form.ordem }}
-                </div>
-
-                <div class="col-md-4 mb-3">
-
-                    <label class="form-label">
-                        Imagem
-                    </label>
-
-                    {{ form.imagem }}
-
-                    {% if form.instance.imagem %}
-                        <div class="mt-2">
-                            <img
-                                src="{{ form.instance.imagem.url }}"
-                                class="img-thumbnail"
-                                style="max-width:120px;">
-                        </div>
-                    {% endif %}
-
-                </div>
-
-                <div class="col-md-12">
-
-                    <div class="form-check">
-
-                        {{ form.ativo }}
-
-                        <label class="form-check-label">
-                            Ativo
-                        </label>
-
-                    </div>
-
-                </div>
-
+                {{ form.nome }}
+                {{ form.nome.errors }}
             </div>
 
-            <hr>
+            <div class="mb-3 linha-form">
+                <label class="label-form" for="{{ form.ordem.id_for_label }}">
+                    {{ form.ordem.label }}
+                </label>
 
-            <button type="submit" class="btn btn-success">
+                {{ form.ordem }}
+                {{ form.ordem.errors }}
+            </div>
+
+            <div class="mb-3 linha-form">
+                <label class="label-form label-sincronizado">
+                    {{ form.ativo.label }}
+                </label>
+
+                {{ form.ativo }}
+                {{ form.ativo.errors }}
+            </div>
+
+            <button class="btn btn-success btn-cancel btn-padrao" type="submit">
                 Salvar
             </button>
 
-            <a href="{% url 'item_adicional:listar' %}" class="btn btn-secondary">
+            <a href="{% url 'ingredientes:listar' %}"
+               class="btn btn-secondary btn-cancel btn-padrao">
                 Cancelar
             </a>
 

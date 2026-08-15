@@ -1,54 +1,522 @@
-<form method="post">
+<div class="mx-auto" style="max-width:700px;">
 
-    {% csrf_token %}
+    <!-- ================================================= -->
+    <!-- CABEÇALHO -->
+    <!-- ================================================= -->
 
-    <input
-        type="hidden"
-        name="etapa"
-        value="sabores"
+    <div class="text-center mb-4">
+
+        {% if produto.imagem %}
+
+            <img
+                src="{{ produto.imagem.url }}"
+                alt="{{ produto.nome }}"
+                class="img-fluid rounded"
+                style="
+                    max-height:220px;
+                    object-fit:cover;
+                "
+            >
+
+        {% endif %}
+
+        <h2 class="mt-3">
+            {{ produto.nome }}
+        </h2>
+
+        {% if produto.permite_multiplos_sabores %}
+
+            <p class="text-muted mb-0">
+
+                Escolha até
+                {{ produto.maximo_sabores }}
+                partes de sabores.
+
+            </p>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                Escolha um sabor.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FORMULÁRIO -->
+    <!-- ================================================= -->
+
+    <form
+        method="POST"
+        action=""
+        id="form-sabores"
     >
 
-    <h2>
+        {% csrf_token %}
 
-        {{ produto.nome }}
+        <input
+            type="hidden"
+            name="etapa"
+            value="sabores"
+        >
 
-    </h2>
 
-    <h4>
+        <!-- ================================================= -->
+        <!-- CONTADOR GERAL -->
+        <!-- ================================================= -->
 
-        Escolha os sabores
+        {% if produto.permite_multiplos_sabores %}
 
-    </h4>
+            <div
+                class="alert alert-light border d-flex justify-content-between align-items-center"
+            >
 
-    {% for sabor in sabores %}
+                <span>
+                    Sabores selecionados
+                </span>
 
-        <div>
+                <strong>
 
-            <label>
+                    <span id="sabores-selecionados">
+                        0
+                    </span>
 
-                <input
-                    type="checkbox"
-                    name="sabores"
-                    value="{{ sabor.id }}"
-                >
+                    /
+                    {{ produto.maximo_sabores }}
 
-                {{ sabor.nome }}
+                </strong>
 
-            </label>
+            </div>
 
-        </div>
+        {% endif %}
 
-    {% endfor %}
 
-    <br>
+        <!-- ================================================= -->
+        <!-- GRUPOS -->
+        <!-- ================================================= -->
 
-    <button
-        class="btn btn-primary"
-        type="submit"
-    >
+        {% for grupo_sabor in grupos_sabores %}
 
-        Continuar
+            <div class="bg-white rounded shadow-sm p-3 mb-3">
 
-    </button>
+                <div class="mb-3">
 
-</form>
+                    <h5 class="mb-1">
+                        {{ grupo_sabor.grupo.nome }}
+                    </h5>
+
+                    {% if grupo_sabor.grupo.descricao %}
+
+                        <p class="text-muted small mb-0">
+                            {{ grupo_sabor.grupo.descricao }}
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- SABORES -->
+                <!-- ================================================= -->
+
+                {% for sabor in grupo_sabor.grupo.sabores.all %}
+
+                    {% if sabor.ativo %}
+
+                        <div
+                            class="
+                                sabor-item
+                                d-flex
+                                justify-content-between
+                                align-items-center
+                                py-3
+                                border-bottom
+                            "
+                            data-sabor-id="{{ sabor.id }}"
+                        >
+
+                            <!-- INFORMAÇÕES -->
+
+                            <div>
+
+                                <strong>
+                                    {{ sabor.nome }}
+                                </strong>
+
+                                {% if sabor.descricao %}
+
+                                    <div class="text-muted small">
+                                        {{ sabor.descricao }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% if sabor.valor_adicional %}
+
+                                    <div class="text-success small">
+
+                                        + R$
+                                        {{ sabor.valor_adicional|floatformat:2 }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- CONTROLE -->
+
+                            {% if produto.permite_multiplos_sabores %}
+
+                                <div
+                                    class="
+                                        d-flex
+                                        align-items-center
+                                        gap-2
+                                    "
+                                >
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary btn-sm btn-menos"
+                                        data-sabor="{{ sabor.id }}"
+                                        disabled
+                                    >
+                                        −
+                                    </button>
+
+
+                                    <span
+                                        class="fw-bold"
+                                        style="min-width:25px; text-align:center;"
+                                        id="quantidade-sabor-{{ sabor.id }}"
+                                    >
+                                        0
+                                    </span>
+
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-primary btn-sm btn-mais"
+                                        data-sabor="{{ sabor.id }}"
+                                    >
+                                        +
+                                    </button>
+
+                                </div>
+
+
+                                <!-- VALOR ENVIADO PARA O BACKEND -->
+
+                                <input
+                                    type="hidden"
+                                    name="sabores"
+                                    value="0"
+                                    id="input-sabor-{{ sabor.id }}"
+                                    data-sabor="{{ sabor.id }}"
+                                >
+
+                            {% else %}
+
+                                <input
+                                    type="radio"
+                                    name="sabores"
+                                    value="{{ sabor.id }}"
+                                    required
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% empty %}
+
+                    <p class="text-muted mb-0">
+
+                        Nenhum sabor disponível neste grupo.
+
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        {% empty %}
+
+            <div class="alert alert-warning">
+
+                Nenhum grupo de sabores disponível.
+
+            </div>
+
+        {% endfor %}
+
+
+        <!-- ================================================= -->
+        <!-- BOTÃO -->
+        <!-- ================================================= -->
+
+        <button
+            type="submit"
+            class="btn btn-primary btn-lg w-100"
+        >
+
+            Continuar
+
+        </button>
+
+    </form>
+
+</div>
+
+
+{% if produto.permite_multiplos_sabores %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const maximo =
+            {{ produto.maximo_sabores }};
+
+
+        let totalSelecionado = 0;
+
+
+        const contador =
+            document.getElementById(
+                "sabores-selecionados"
+            );
+
+
+        const botoesMais =
+            document.querySelectorAll(
+                ".btn-mais"
+            );
+
+
+        const botoesMenos =
+            document.querySelectorAll(
+                ".btn-menos"
+            );
+
+
+        function atualizarInterface() {
+
+            contador.textContent =
+                totalSelecionado;
+
+
+            botoesMais.forEach(
+                function (botao) {
+
+                    if (
+                        totalSelecionado >=
+                        maximo
+                    ) {
+
+                        botao.disabled = true;
+
+                    } else {
+
+                        botao.disabled = false;
+
+                    }
+
+                }
+            );
+
+
+            botoesMenos.forEach(
+                function (botao) {
+
+                    const saborId =
+                        botao.dataset.sabor;
+
+
+                    const quantidade =
+                        parseInt(
+                            document.getElementById(
+                                "quantidade-sabor-" +
+                                saborId
+                            ).textContent
+                        );
+
+
+                    botao.disabled =
+                        quantidade <= 0;
+
+                }
+            );
+
+        }
+
+
+        botoesMais.forEach(
+            function (botao) {
+
+                botao.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            totalSelecionado >=
+                            maximo
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const saborId =
+                            this.dataset.sabor;
+
+
+                        const quantidadeElemento =
+                            document.getElementById(
+                                "quantidade-sabor-" +
+                                saborId
+                            );
+
+
+                        const input =
+                            document.getElementById(
+                                "input-sabor-" +
+                                saborId
+                            );
+
+
+                        let quantidade =
+                            parseInt(
+                                quantidadeElemento.textContent
+                            );
+
+
+                        quantidade++;
+
+
+                        quantidadeElemento.textContent =
+                            quantidade;
+
+
+                        input.value =
+                            quantidade;
+
+
+                        totalSelecionado++;
+
+
+                        atualizarInterface();
+
+                    }
+                );
+
+            }
+        );
+
+
+        botoesMenos.forEach(
+            function (botao) {
+
+                botao.addEventListener(
+                    "click",
+                    function () {
+
+                        const saborId =
+                            this.dataset.sabor;
+
+
+                        const quantidadeElemento =
+                            document.getElementById(
+                                "quantidade-sabor-" +
+                                saborId
+                            );
+
+
+                        const input =
+                            document.getElementById(
+                                "input-sabor-" +
+                                saborId
+                            );
+
+
+                        let quantidade =
+                            parseInt(
+                                quantidadeElemento.textContent
+                            );
+
+
+                        if (
+                            quantidade <= 0
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        quantidade--;
+
+
+                        quantidadeElemento.textContent =
+                            quantidade;
+
+
+                        input.value =
+                            quantidade;
+
+
+                        totalSelecionado--;
+
+
+                        atualizarInterface();
+
+                    }
+                );
+
+            }
+        );
+
+
+        document
+            .getElementById("form-sabores")
+            .addEventListener(
+                "submit",
+                function (event) {
+
+                    if (
+                        totalSelecionado === 0
+                    ) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Escolha pelo menos um sabor."
+                        );
+
+                        return;
+
+                    }
+
+                }
+            );
+
+
+        atualizarInterface();
+
+    }
+);
+
+</script>
+
+{% endif %}

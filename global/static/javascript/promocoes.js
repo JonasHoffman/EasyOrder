@@ -33,7 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function atualizarDesconto() {
 
 
-        const promocional = parseFloat(precoPromocional.value);
+        const promocional = parseFloat(
+            precoPromocional.value
+        );
 
 
         if (!valorOriginal || isNaN(promocional)) {
@@ -55,17 +57,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-        const percentual = ((valorOriginal - promocional) / valorOriginal) * 100;
+        const percentual = (
+            (valorOriginal - promocional) /
+            valorOriginal
+        ) * 100;
 
 
 
-        desconto.innerHTML = percentual.toFixed(1) + "%";
+        desconto.innerHTML =
+            percentual.toFixed(1) + "%";
 
 
 
         if (precoFinal) {
 
-            precoFinal.innerHTML = formatarMoeda(promocional);
+            precoFinal.innerHTML =
+                formatarMoeda(promocional);
 
         }
 
@@ -75,66 +82,117 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    produto.addEventListener("change", function () {
+
+    if (produto) {
 
 
-        if (!this.value) {
+        produto.addEventListener(
+            "change",
+            function () {
 
 
-            precoOriginal.innerHTML = "R$ 0,00";
 
-            desconto.innerHTML = "0%";
+                if (!this.value) {
 
-            if (precoFinal) {
 
-                precoFinal.innerHTML = "R$ 0,00";
+                    if (precoOriginal) {
+
+                        precoOriginal.innerHTML =
+                            "R$ 0,00";
+
+                    }
+
+
+                    if (desconto) {
+
+                        desconto.innerHTML =
+                            "0%";
+
+                    }
+
+
+                    if (precoFinal) {
+
+                        precoFinal.innerHTML =
+                            "R$ 0,00";
+
+                    }
+
+
+                    valorOriginal = 0;
+
+
+                    return;
+
+
+                }
+
+
+
+
+
+                fetch(
+                    `/cardapio/promocoes/produto/${this.value}/`
+                )
+
+
+                    .then(response => response.json())
+
+
+                    .then(data => {
+
+
+                        valorOriginal =
+                            parseFloat(data.preco);
+
+
+
+                        if (precoOriginal) {
+
+                            precoOriginal.innerHTML =
+                                formatarMoeda(valorOriginal);
+
+                        }
+
+
+
+                        atualizarDesconto();
+
+
+                    });
+
+
 
             }
+        );
 
 
-            valorOriginal = 0;
-
-
-            return;
-
-
-        }
-
-
-
-        fetch(`/cardapio/promocoes/produto/${this.value}/`)
-
-
-            .then(response => response.json())
-
-
-            .then(data => {
-
-
-                valorOriginal = parseFloat(data.preco);
-
-
-
-                precoOriginal.innerHTML = formatarMoeda(valorOriginal);
-
-
-
-                atualizarDesconto();
-
-
-            });
-
-
-    });
+    }
 
 
 
 
-    precoPromocional.addEventListener("input", atualizarDesconto);
+    if (precoPromocional) {
+
+        precoPromocional.addEventListener(
+            "input",
+            atualizarDesconto
+        );
+
+    }
 
 
 
 });
+
+
+
+
+
+
+
+// BUSCA DE PRODUTO NO SELECT
+
 
 const campoBuscaProduto = document.getElementById(
     "buscar-produto"
@@ -155,40 +213,104 @@ if (campoBuscaProduto && selectProduto) {
     );
 
 
+    let tempoBusca;
+
+
 
     campoBuscaProduto.addEventListener(
         "input",
-        function(){
-
-
-            const texto = this.value
-                .toLowerCase();
+        function () {
 
 
 
-            selectProduto.innerHTML = "";
+            clearTimeout(tempoBusca);
 
 
 
-            opcoesOriginais.forEach(
-                function(opcao){
+            tempoBusca = setTimeout(function () {
 
 
-                    if (
-                        opcao.text
-                        .toLowerCase()
-                        .includes(texto)
-                    ){
 
-                        selectProduto.appendChild(
-                            opcao.cloneNode(true)
-                        );
+                const texto =
+                    campoBuscaProduto.value
+                    .toLowerCase();
+
+
+
+                selectProduto.innerHTML = "";
+
+
+
+                let quantidade = 0;
+
+
+
+                opcoesOriginais.forEach(
+                    function(opcao) {
+
+
+
+                        if (
+                            opcao.text
+                            .toLowerCase()
+                            .includes(texto)
+                        ) {
+
+
+                            selectProduto.appendChild(
+                                opcao.cloneNode(true)
+                            );
+
+
+                            quantidade++;
+
+
+                        }
+
 
                     }
+                );
+
+
+
+                // abre somente depois que terminou de digitar
+                if (quantidade > 1) {
+
+
+                    selectProduto.focus();
+
+                    selectProduto.size =
+                        quantidade;
+
+
+                } else {
+
+
+                    selectProduto.size =
+                        1;
 
 
                 }
-            );
+
+
+
+            }, 600);
+
+
+
+        }
+    );
+
+
+
+
+
+    selectProduto.addEventListener(
+        "change",
+        function () {
+
+
+            selectProduto.size = 1;
 
 
         }

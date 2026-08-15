@@ -5,16 +5,1018 @@
 
 <div class="container py-4">
 
-    {% if etapa == "sabores" %}
+    <div class="mx-auto" style="max-width:700px;">
 
-        {% include "sabor/sabor_escolher.html" %}
+        <!-- ===================================================== -->
+        <!-- CABEÇALHO -->
+        <!-- ===================================================== -->
 
-    {% elif etapa == "personalizar" %}
+        <div class="text-center mb-4">
 
-        {% include "ingredientes/ingredientes_personalizacao.html" %}
+            {% if produto.imagem %}
 
-    {% endif %}
+                <img
+                    src="{{ produto.imagem.url }}"
+                    alt="{{ produto.nome }}"
+                    class="img-fluid rounded"
+                    style="
+                        max-height:220px;
+                        object-fit:cover;
+                    "
+                >
+
+            {% endif %}
+
+            <h2 class="mt-3">
+                {{ produto.nome }}
+            </h2>
+
+            {% if produto.tipo == "COMBO" %}
+
+                <p class="text-muted mb-0">
+                    Monte seu combo.
+                </p>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    Personalize seu produto.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- COMBO -->
+        <!-- ===================================================== -->
+
+        {% if produto.tipo == "COMBO" %}
+
+            <form
+                method="POST"
+                action=""
+                id="form-combo"
+                data-combo-id="{{ produto.id }}"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="produto"
+                    value="{{ produto.id }}"
+                >
+
+                <div id="combo-hidden-inputs"></div>
+
+
+                <!-- ================================================= -->
+                <!-- GRUPOS DO COMBO -->
+                <!-- ================================================= -->
+
+                {% for grupo in dados_combo %}
+
+                    <div
+                        class="bg-white rounded shadow-sm p-3 mb-4"
+                        data-grupo-container="{{ grupo.grupo.id }}"
+                        data-grupo-id="{{ grupo.grupo.id }}"
+                        data-grupo-minimo="{{ grupo.minimo }}"
+                        data-grupo-maximo="{{ grupo.maximo }}"
+                        data-grupo-obrigatorio="{{ grupo.obrigatorio|yesno:'true,false' }}"
+                    >
+
+                        <!-- ================================================= -->
+                        <!-- CABEÇALHO DO GRUPO -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <h5 class="mb-1">
+                                {{ grupo.grupo.nome }}
+                            </h5>
+
+                            {% if grupo.grupo.descricao %}
+
+                                <div class="text-muted small">
+                                    {{ grupo.grupo.descricao }}
+                                </div>
+
+                            {% endif %}
+
+                            <div class="text-muted small mt-1">
+
+                                {% if grupo.obrigatorio %}
+                                    Obrigatório
+                                {% else %}
+                                    Opcional
+                                {% endif %}
+
+                                &nbsp;·&nbsp;
+
+                                {% if grupo.minimo == grupo.maximo %}
+
+                                    Escolha {{ grupo.minimo }}
+
+                                {% else %}
+
+                                    Escolha de
+                                    {{ grupo.minimo }}
+                                    até
+                                    {{ grupo.maximo }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- CONTADOR DO GRUPO -->
+
+                            <div
+                                class="text-muted small mt-2"
+                                data-contador-grupo="{{ grupo.grupo.id }}"
+                            >
+
+                                Selecionados:
+
+                                <strong>0</strong>
+
+                                /
+
+                                {{ grupo.maximo }}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- ITENS DO GRUPO -->
+                        <!-- ================================================= -->
+
+                        {% for dados_item in grupo.itens %}
+
+                            {% with item=dados_item.item %}
+                            {% with produto_item=dados_item.produto %}
+
+                                <div
+                                    class="border-bottom py-3"
+                                    data-item-wrapper="{{ item.id }}"
+                                    data-grupo="{{ grupo.grupo.id }}"
+                                    data-produto-id="{{ produto_item.id }}"
+                                >
+
+                                    <!-- ===================================== -->
+                                    <!-- PRODUTO -->
+                                    <!-- ===================================== -->
+
+                                    <div
+                                        class="d-flex justify-content-between align-items-center"
+                                    >
+
+                                        <div
+                                            class="flex-grow-1"
+                                            style="min-width:0;"
+                                        >
+
+                                            <div class="fw-semibold">
+                                                {{ produto_item.nome }}
+                                            </div>
+
+                                            {% if produto_item.descricao %}
+
+                                                <div class="text-muted small">
+                                                    {{ produto_item.descricao }}
+                                                </div>
+
+                                            {% endif %}
+
+                                            {% if item.quantidade != 1 %}
+
+                                                <div class="text-muted small">
+                                                    Quantidade:
+                                                    {{ item.quantidade }}
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <!-- ================================= -->
+                                        <!-- CONTADOR -->
+                                        <!-- ================================= -->
+
+                                        <div
+                                            class="d-flex align-items-center ms-3"
+                                            data-item-contador
+                                            data-item="{{ item.id }}"
+                                            data-grupo="{{ grupo.grupo.id }}"
+                                            data-produto="{{ produto_item.id }}"
+                                            data-maximo="{{ grupo.maximo }}"
+                                        >
+
+                                            <button
+                                                type="button"
+                                                class="btn btn-outline-secondary btn-sm"
+                                                data-acao="menos"
+                                            >
+                                                −
+                                            </button>
+
+                                            <span
+                                                class="mx-3 fw-semibold"
+                                                data-quantidade="{{ item.id }}"
+                                            >
+                                                0
+                                            </span>
+
+                                            <button
+                                                type="button"
+                                                class="btn btn-outline-secondary btn-sm"
+                                                data-acao="mais"
+                                            >
+                                                +
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- ===================================== -->
+                                    <!-- PERSONALIZAÇÕES -->
+                                    <!-- ===================================== -->
+
+                                    <div
+                                        class="mt-3"
+                                        data-personalizacoes="{{ item.id }}"
+                                    ></div>
+
+
+                                    <!-- ===================================== -->
+                                    <!-- TEMPLATE PERSONALIZAÇÃO -->
+                                    <!-- ===================================== -->
+
+                                    <template
+                                        id="template-personalizacao-{{ item.id }}"
+                                    >
+
+                                        <div
+                                            class="bg-light rounded p-3 mt-3"
+                                            data-personalizacao-unidade
+                                        >
+
+                                            <!-- ================================= -->
+                                            <!-- TÍTULO -->
+                                            <!-- ================================= -->
+
+                                            <div class="fw-semibold mb-3">
+
+                                                Personalizar
+                                                {{ produto_item.nome }}
+
+                                                <span
+                                                    class="text-muted"
+                                                    data-numero-unidade
+                                                ></span>
+
+                                            </div>
+
+
+                                            <!-- ================================= -->
+                                            <!-- SABORES -->
+                                            <!-- ================================= -->
+
+                                            {% if dados_item.possui_sabores %}
+
+                                                {% if dados_item.sabores %}
+
+                                                    <div
+                                                        class="mb-4"
+                                                        data-sabores-container
+                                                        data-maximo-sabores="{{ dados_item.maximo_sabores }}"
+                                                        data-multiplos-sabores="{{ dados_item.permite_multiplos_sabores|yesno:'true,false' }}"
+                                                    >
+
+                                                        <h6 class="mb-3">
+                                                            Sabores
+                                                        </h6>
+
+
+                                                        <!-- CONTADOR -->
+
+                                                        <div
+                                                            class="text-muted small mb-3"
+                                                            data-contador-sabores
+                                                        >
+
+                                                            Sabores selecionados:
+
+                                                            <strong>0</strong>
+
+                                                            /
+
+                                                            {{ dados_item.maximo_sabores }}
+
+                                                        </div>
+
+
+                                                        <!-- ================================= -->
+                                                        <!-- GRUPOS DE SABORES -->
+                                                        <!-- ================================= -->
+
+                                                        {% regroup dados_item.sabores by grupo as grupos_sabores %}
+
+                                                        {% for grupo_sabor in grupos_sabores %}
+
+                                                            <div class="mb-4">
+
+                                                                <h6 class="mb-3">
+                                                                    {{ grupo_sabor.grouper.nome }}
+                                                                </h6>
+
+
+                                                                <!-- ================================= -->
+                                                                <!-- SABORES -->
+                                                                <!-- ================================= -->
+
+                                                                {% for dados_sabor in grupo_sabor.list %}
+
+                                                                    <div
+                                                                        class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                                                                        data-sabor-contador
+                                                                        data-sabor-id="{{ dados_sabor.sabor.id }}"
+                                                                    >
+
+                                                                        <div>
+
+                                                                            <div class="fw-semibold">
+
+                                                                                {{ dados_sabor.sabor.nome }}
+
+                                                                                {% if dados_sabor.sabor.valor_adicional %}
+
+                                                                                    <span
+                                                                                        class="text-success small"
+                                                                                    >
+
+                                                                                        + R$
+                                                                                        {{ dados_sabor.sabor.valor_adicional|floatformat:2 }}
+
+                                                                                    </span>
+
+                                                                                {% endif %}
+
+                                                                            </div>
+
+
+                                                                            <!-- COMPOSIÇÃO -->
+
+                                                                            {% if dados_sabor.ingredientes %}
+
+                                                                                <div
+                                                                                    class="text-muted small"
+                                                                                >
+
+                                                                                    <strong>
+                                                                                        Composição:
+                                                                                    </strong>
+
+                                                                                    {% for sabor_ingrediente in dados_sabor.ingredientes %}
+
+                                                                                        {{ sabor_ingrediente.ingrediente.nome }}
+
+                                                                                        {% if not forloop.last %}
+                                                                                            ·
+                                                                                        {% endif %}
+
+                                                                                    {% endfor %}
+
+                                                                                </div>
+
+                                                                            {% endif %}
+
+                                                                        </div>
+
+
+                                                                        <!-- CONTADOR DO SABOR -->
+
+                                                                        <div
+                                                                            class="d-flex align-items-center ms-3"
+                                                                        >
+
+                                                                            <button
+                                                                                type="button"
+                                                                                class="btn btn-outline-secondary btn-sm"
+                                                                                data-sabor-acao="menos"
+                                                                            >
+                                                                                −
+                                                                            </button>
+
+                                                                            <span
+                                                                                class="mx-3 fw-semibold"
+                                                                                data-sabor-quantidade
+                                                                            >
+                                                                                0
+                                                                            </span>
+
+                                                                            <button
+                                                                                type="button"
+                                                                                class="btn btn-outline-secondary btn-sm"
+                                                                                data-sabor-acao="mais"
+                                                                            >
+                                                                                +
+                                                                            </button>
+
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                {% endfor %}
+
+                                                            </div>
+
+                                                        {% endfor %}
+
+                                                    </div>
+
+                                                {% endif %}
+
+
+                                            <!-- ================================= -->
+                                            <!-- PRODUTO SEM SABOR -->
+                                            <!-- ================================= -->
+
+                                            {% else %}
+
+                                                {% if dados_item.ingredientes %}
+
+                                                    <div class="mb-4">
+
+                                                        <h6 class="mb-3">
+                                                            Retirar ingredientes
+                                                        </h6>
+
+
+                                                        {% for ingrediente in dados_item.ingredientes %}
+
+                                                            {% if ingrediente.ativo and ingrediente.permite_remocao %}
+
+                                                                <div
+                                                                    class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                                                                >
+
+                                                                    <div>
+
+                                                                        <div class="fw-semibold">
+                                                                            {{ ingrediente.ingrediente.nome }}
+                                                                        </div>
+
+                                                                        {% if ingrediente.observacao %}
+
+                                                                            <div class="text-muted small">
+                                                                                {{ ingrediente.observacao }}
+                                                                            </div>
+
+                                                                        {% endif %}
+
+                                                                    </div>
+
+
+                                                                    <!-- CONTADOR -->
+
+                                                                    <div
+                                                                        class="d-flex align-items-center ms-3"
+                                                                        data-ingrediente-contador
+                                                                        data-ingrediente-id="{{ ingrediente.id }}"
+                                                                    >
+
+                                                                        <button
+                                                                            type="button"
+                                                                            class="btn btn-outline-secondary btn-sm"
+                                                                            data-ingrediente-acao="menos"
+                                                                        >
+                                                                            −
+                                                                        </button>
+
+                                                                        <span class="mx-3">
+                                                                            0
+                                                                        </span>
+
+                                                                        <button
+                                                                            type="button"
+                                                                            class="btn btn-outline-secondary btn-sm"
+                                                                            data-ingrediente-acao="mais"
+                                                                        >
+                                                                            +
+                                                                        </button>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            {% endif %}
+
+                                                        {% endfor %}
+
+                                                    </div>
+
+                                                {% endif %}
+
+                                            {% endif %}
+
+
+                                            <!-- ================================= -->
+                                            <!-- ADICIONAIS -->
+                                            <!-- ================================= -->
+
+                                            {% if dados_item.adicionais %}
+
+                                                <div>
+
+                                                    <h6 class="mb-3">
+                                                        Adicionais
+                                                    </h6>
+
+
+                                                    {% for adicional in dados_item.adicionais %}
+
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                                                        >
+
+                                                            <div>
+
+                                                                <div class="fw-semibold">
+                                                                    {{ adicional.nome }}
+                                                                </div>
+
+                                                                {% if adicional.descricao %}
+
+                                                                    <div class="text-muted small">
+                                                                        {{ adicional.descricao }}
+                                                                    </div>
+
+                                                                {% endif %}
+
+                                                                <div class="text-success small">
+
+                                                                    + R$
+                                                                    {{ adicional.preco|floatformat:2 }}
+
+                                                                </div>
+
+                                                            </div>
+
+
+                                                            <!-- CONTADOR -->
+
+                                                            <div
+                                                                class="d-flex align-items-center ms-3"
+                                                                data-adicional-contador
+                                                                data-adicional-id="{{ adicional.id }}"
+                                                            >
+
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn btn-outline-secondary btn-sm"
+                                                                    data-adicional-acao="menos"
+                                                                >
+                                                                    −
+                                                                </button>
+
+                                                                <span class="mx-3">
+                                                                    0
+                                                                </span>
+
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn btn-outline-secondary btn-sm"
+                                                                    data-adicional-acao="mais"
+                                                                >
+                                                                    +
+                                                                </button>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    {% endfor %}
+
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </template>
+
+                                </div>
+
+                            {% endwith %}
+                            {% endwith %}
+
+                        {% empty %}
+
+                            <div class="text-muted">
+                                Nenhum produto disponível neste grupo.
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="bg-white rounded shadow-sm p-3 mb-4">
+
+                        <div class="text-muted">
+                            Este combo ainda não possui produtos configurados.
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- ================================================= -->
+                <!-- QUANTIDADE DO COMBO -->
+                <!-- ================================================= -->
+
+                <div class="bg-white rounded shadow-sm p-3 mb-4">
+
+                    <label class="form-label">
+                        Quantidade do combo
+                    </label>
+
+                    <input
+                        class="form-control"
+                        style="width:100px;"
+                        type="number"
+                        name="quantidade"
+                        value="1"
+                        min="1"
+                        max="99"
+                    >
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- BOTÃO -->
+                <!-- ================================================= -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-lg w-100"
+                >
+                    Adicionar ao carrinho
+                </button>
+
+            </form>
+
+
+        <!-- ===================================================== -->
+        <!-- PRODUTO NORMAL -->
+        <!-- ===================================================== -->
+
+        {% else %}
+
+            <form
+                method="POST"
+                action=""
+                id="form-produto"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="produto"
+                    value="{{ produto.id }}"
+                >
+
+
+                <!-- =============================================== -->
+                <!-- SABORES -->
+                <!-- =============================================== -->
+
+                {% if dados_produto.possui_sabores %}
+
+                    {% if dados_produto.sabores %}
+
+                        <div
+                            class="bg-white rounded shadow-sm p-3 mb-3"
+                            data-sabores-container
+                            data-maximo-sabores="{{ dados_produto.maximo_sabores }}"
+                            data-multiplos-sabores="{{ dados_produto.permite_multiplos_sabores|yesno:'true,false' }}"
+                        >
+
+                            <h5 class="mb-3">
+                                Sabores
+                            </h5>
+
+
+                            <!-- CONTADOR -->
+
+                            <div
+                                class="text-muted small mb-3"
+                                data-contador-sabores
+                            >
+
+                                Sabores selecionados:
+
+                                <strong>0</strong>
+
+                                /
+
+                                {{ dados_produto.maximo_sabores }}
+
+                            </div>
+
+
+                            <!-- GRUPOS -->
+
+                            {% regroup dados_produto.sabores by grupo as grupos_sabores %}
+
+                            {% for grupo_sabor in grupos_sabores %}
+
+                                <div class="mb-4">
+
+                                    <h6 class="mb-3">
+                                        {{ grupo_sabor.grouper.nome }}
+                                    </h6>
+
+
+                                    {% for dados_sabor in grupo_sabor.list %}
+
+                                        <div
+                                            class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                                            data-sabor-contador
+                                            data-sabor-id="{{ dados_sabor.sabor.id }}"
+                                        >
+
+                                            <div>
+
+                                                <div class="fw-semibold">
+
+                                                    {{ dados_sabor.sabor.nome }}
+
+                                                    {% if dados_sabor.sabor.valor_adicional %}
+
+                                                        <span
+                                                            class="text-success small"
+                                                        >
+
+                                                            + R$
+                                                            {{ dados_sabor.sabor.valor_adicional|floatformat:2 }}
+
+                                                        </span>
+
+                                                    {% endif %}
+
+                                                </div>
+
+
+                                                {% if dados_sabor.ingredientes %}
+
+                                                    <div
+                                                        class="text-muted small"
+                                                    >
+
+                                                        <strong>
+                                                            Composição:
+                                                        </strong>
+
+                                                        {% for sabor_ingrediente in dados_sabor.ingredientes %}
+
+                                                            {{ sabor_ingrediente.ingrediente.nome }}
+
+                                                            {% if not forloop.last %}
+                                                                ·
+                                                            {% endif %}
+
+                                                        {% endfor %}
+
+                                                    </div>
+
+                                                {% endif %}
+
+                                            </div>
+
+
+                                            <!-- CONTADOR -->
+
+                                            <div
+                                                class="d-flex align-items-center ms-3"
+                                            >
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline-secondary btn-sm"
+                                                    data-sabor-acao="menos"
+                                                >
+                                                    −
+                                                </button>
+
+                                                <span
+                                                    class="mx-3 fw-semibold"
+                                                    data-sabor-quantidade
+                                                >
+                                                    0
+                                                </span>
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline-secondary btn-sm"
+                                                    data-sabor-acao="mais"
+                                                >
+                                                    +
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                <!-- =============================================== -->
+                <!-- SEM SABORES -->
+                <!-- =============================================== -->
+
+                {% else %}
+
+                    {% if dados_produto.ingredientes %}
+
+                        <div class="bg-white rounded shadow-sm p-3 mb-3">
+
+                            <h5 class="mb-3">
+                                Retirar ingredientes
+                            </h5>
+
+
+                            {% for ingrediente in dados_produto.ingredientes %}
+
+                                {% if ingrediente.ativo and ingrediente.permite_remocao %}
+
+                                    <div
+                                        class="d-flex justify-content-between align-items-center py-3 border-bottom"
+                                    >
+
+                                        <div>
+
+                                            <div class="fw-semibold">
+                                                {{ ingrediente.ingrediente.nome }}
+                                            </div>
+
+                                            {% if ingrediente.observacao %}
+
+                                                <div class="text-muted small">
+                                                    {{ ingrediente.observacao }}
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <input
+                                            type="checkbox"
+                                            name="ingredientes_removidos"
+                                            value="{{ ingrediente.id }}"
+                                            class="form-check-input"
+                                        >
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+
+                <!-- =============================================== -->
+                <!-- ADICIONAIS -->
+                <!-- =============================================== -->
+
+                {% if dados_produto.adicionais %}
+
+                    <div class="bg-white rounded shadow-sm p-3 mb-3">
+
+                        <h5 class="mb-3">
+                            Adicionais
+                        </h5>
+
+
+                        {% for adicional in dados_produto.adicionais %}
+
+                            <div
+                                class="d-flex justify-content-between align-items-center py-3 border-bottom"
+                            >
+
+                                <div>
+
+                                    <div class="fw-semibold">
+                                        {{ adicional.nome }}
+                                    </div>
+
+                                    {% if adicional.descricao %}
+
+                                        <div class="text-muted small">
+                                            {{ adicional.descricao }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    <div class="text-success small">
+
+                                        + R$
+                                        {{ adicional.preco|floatformat:2 }}
+
+                                    </div>
+
+                                </div>
+
+
+                                <input
+                                    type="checkbox"
+                                    name="adicionais"
+                                    value="{{ adicional.id }}"
+                                    class="form-check-input"
+                                >
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- =============================================== -->
+                <!-- QUANTIDADE -->
+                <!-- =============================================== -->
+
+                <div class="bg-white rounded shadow-sm p-3 mb-4">
+
+                    <label class="form-label">
+                        Quantidade
+                    </label>
+
+                    <input
+                        class="form-control"
+                        style="width:100px;"
+                        type="number"
+                        name="quantidade"
+                        value="1"
+                        min="1"
+                        max="99"
+                    >
+
+                </div>
+
+
+                <!-- =============================================== -->
+                <!-- BOTÃO -->
+                <!-- =============================================== -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-lg w-100"
+                >
+                    Adicionar ao carrinho
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
 
 </div>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT EXTERNO -->
+<!-- ========================================================= -->
+
+<script src="{% static 'javascript/personalizar.js' %}"></script>
 
 {% endblock %}

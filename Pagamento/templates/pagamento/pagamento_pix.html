@@ -1,0 +1,179 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h3 class="mb-2">
+                        Pagamento via Pix
+                    </h3>
+
+                    <p class="text-muted">
+                        Pedido #{{ pagamento.pedido.numero_pedido }}
+                    </p>
+
+
+                    <div class="mb-3">
+
+                        <strong class="fs-4">
+                            R$ {{ pagamento.valor }}
+                        </strong>
+
+                    </div>
+
+
+                    {% if qrcode %}
+
+                        <div class="mb-4">
+
+                            <img
+                                src="{{ qrcode }}"
+                                alt="QR Code Pix"
+                                class="img-fluid"
+                                style="max-width: 280px;"
+                            >
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if pix_copia_e_cola %}
+
+                        <div class="text-start">
+
+                            <label class="form-label">
+                                Pix Copia e Cola
+                            </label>
+
+                            <div class="input-group">
+
+                                <input
+                                    type="text"
+                                    id="pix-copia-cola"
+                                    class="form-control"
+                                    value="{{ pix_copia_e_cola }}"
+                                    readonly
+                                >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    id="btn-copiar-pix"
+                                >
+                                    Copiar
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="mt-4">
+
+                        <span class="badge bg-warning text-dark">
+                            Aguardando pagamento
+                        </span>
+
+                    </div>
+
+
+                    {% if expira_em %}
+
+                        <p class="text-muted mt-3 mb-0">
+
+                            Este pagamento expira em:
+                            {{ expira_em }}
+
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const botao =
+            document.getElementById(
+                "btn-copiar-pix"
+            );
+
+        const campo =
+            document.getElementById(
+                "pix-copia-cola"
+            );
+
+
+        if (!botao || !campo) {
+            return;
+        }
+
+
+        botao.addEventListener(
+            "click",
+            async function () {
+
+                try {
+
+                    await navigator.clipboard.writeText(
+                        campo.value
+                    );
+
+                    botao.textContent =
+                        "Copiado!";
+
+                    setTimeout(
+                        function () {
+
+                            botao.textContent =
+                                "Copiar";
+
+                        },
+                        2000
+                    );
+
+                } catch (erro) {
+
+                    campo.select();
+
+                    document.execCommand(
+                        "copy"
+                    );
+
+                    botao.textContent =
+                        "Copiado!";
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

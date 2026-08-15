@@ -1,7 +1,7 @@
 from django import forms
 from Cardapio.models import Categoria
 from django.core.exceptions import ValidationError
-from Cardapio.utils import validar_imgs
+from Cardapio.utils.validar_imgs import validar_imagem
 
 
 
@@ -9,7 +9,7 @@ from Cardapio.utils import validar_imgs
 
 class CategoriaForm(forms.ModelForm):
     imagem = forms.ImageField(
-        validators=[validar_imgs],
+        validators=[validar_imagem],
         required=False
     )
     

@@ -22,18 +22,18 @@ class ProdutoGrupoAdicionalForm(forms.ModelForm):
 
         widgets = {
 
-            "produto": forms.Select(
-                attrs={
-                    "class":"form-select"
-                }
-            ),
-
 
             "grupo": forms.Select(
                 attrs={
                     "class":"form-select"
                 }
-            )
+            ),
+            "produto": forms.Select(
+                attrs={
+                    "class": "form-select",
+                    "id": "id_produto",
+                }
+            ),
 
         }
 

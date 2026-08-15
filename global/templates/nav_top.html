@@ -31,15 +31,22 @@
 </div>
 
 <div class="dropdown">
+
+    <!-- ========================================================= -->
+    <!-- BOTÃO CARRINHO -->
+    <!-- ========================================================= -->
+
     <button
-        class="btn btn-link position-relative text-dark"
+        class="btn btn-link position-relative text-dark p-1"
         type="button"
         id="carrinhoDropdown"
         data-bs-toggle="dropdown"
         aria-expanded="false"
         data-bs-auto-close="outside"
     >
+
         <i class="bi bi-cart3 fs-4"></i>
+
         <span
             id="carrinho-badge"
             class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -47,25 +54,66 @@
         >
             {{ carrinho|length }}
         </span>
+
     </button>
 
-    <div class="dropdown-menu dropdown-menu-end p-3 shadow" aria-labelledby="carrinhoDropdown" style="width: 320px;">
+
+    <!-- ========================================================= -->
+    <!-- DROPDOWN -->
+    <!-- ========================================================= -->
+
+    <div
+        class="dropdown-menu dropdown-menu-end p-3 shadow"
+        aria-labelledby="carrinhoDropdown"
+        data-bs-auto-close="outside"
+        style="width: 360px; max-height: 500px; overflow-y: auto;"
+    >
+
+        <!-- ===================================================== -->
+        <!-- ITENS -->
+        <!-- ===================================================== -->
 
         <div id="carrinho-itens">
+
             {% include 'templates/carrinho_itens.html' %}
+
         </div>
 
+
+        <!-- ===================================================== -->
+        <!-- TOTAL -->
+        <!-- ===================================================== -->
+
         <div class="border-top pt-3 mt-3">
-            <div class="d-flex justify-content-between mb-3">
-                <strong>Total</strong>
-                <strong id="carrinho-total-valor">R$ {{ carrinho.get_total|floatformat:2 }}</strong>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <span class="fw-semibold">
+                    Total
+                </span>
+
+                <strong id="carrinho-total-valor">
+                    R$ {{ carrinho.get_total|floatformat:2 }}
+                </strong>
+
             </div>
-            <a href="{% url 'carrinho:carrinho_detalhe' %}" class="btn btn-success w-100">
+
+
+            <!-- ================================================= -->
+            <!-- FINALIZAR -->
+            <!-- ================================================= -->
+
+            <a
+                href="{% url 'carrinho:carrinho_detalhe' %}"
+                class="btn btn-success w-100 btn-carrinho"
+            >
                 Finalizar pedido
             </a>
+
         </div>
 
     </div>
+
 </div>
 
 <script src="{% static 'javascript/buscas.js' %}"></script>

@@ -1,0 +1,430 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div>
+
+    <div class="card">
+
+        <!-- ===================================================== -->
+        <!-- CABEÇALHO -->
+        <!-- ===================================================== -->
+
+        <div class="card-header display-flex space-between">
+
+            <div>
+
+                <h2>
+                    {{ titulo }}
+                </h2>
+
+            </div>
+
+            <div>
+
+                <a
+                    href="{% url 'sabor:novo' %}"
+                    class="btn btn-success btn-cancel btn-backgroundcolor"
+                >
+
+                    <i class="fa-solid fa-plus"></i>
+                    &nbsp;Criar Sabor
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <!-- ================================================= -->
+            <!-- ERRO -->
+            <!-- ================================================= -->
+
+            {% if erro %}
+
+                <div class="alert alert-danger">
+
+                    {{ erro }}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- ================================================= -->
+            <!-- FORMULÁRIO -->
+            <!-- ================================================= -->
+
+            <form method="post">
+
+                {% csrf_token %}
+
+
+                <!-- ============================================= -->
+                <!-- PRODUTO -->
+                <!-- ============================================= -->
+
+                <div class="form-group mb-4">
+
+                    <label class="form-label">
+
+                        Produto
+
+                    </label>
+
+
+                    {% if produto %}
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ produto.nome }}"
+                            readonly
+                        >
+
+                        <input
+                            type="hidden"
+                            name="produto"
+                            value="{{ produto.id }}"
+                        >
+
+                    {% else %}
+
+                        <div class="row">
+
+                            <div class="col-md-8">
+
+                                {{ form.produto }}
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <input
+                                    type="text"
+                                    id="buscar-produto"
+                                    class="form-control"
+                                    placeholder="Buscar produto..."
+                                >
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {{ form.produto.errors }}
+
+                </div>
+
+
+                <hr>
+
+
+                <!-- ============================================= -->
+                <!-- TÍTULO -->
+                <!-- ============================================= -->
+
+                <div class="mb-3">
+
+                    <h5>
+
+                        Selecionar grupos de sabores
+
+                    </h5>
+
+                    <small class="text-muted">
+
+                        Selecione os grupos de sabores que estarão
+                        disponíveis para este produto.
+
+                    </small>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- BUSCA -->
+                <!-- ============================================= -->
+
+                <div class="mb-4">
+
+                    <input
+                        type="text"
+                        id="buscar-grupo"
+                        class="form-control"
+                        placeholder="Pesquisar grupo ou sabor..."
+                    >
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- GRUPOS DE SABORES -->
+                <!-- ================================================= -->
+
+                {% for grupo in grupos_sabores %}
+
+                    <div
+                        class="card border-0 shadow-sm mb-3 grupo-sabor"
+                        data-busca="
+                            {{ grupo.nome|lower }}
+                            {% for sabor in grupo.sabores.all %}
+                                {{ sabor.nome|lower }}
+                            {% endfor %}
+                        "
+                    >
+
+                        <!-- ========================================= -->
+                        <!-- CABEÇALHO DO GRUPO -->
+                        <!-- ========================================= -->
+
+                        <div class="card-header bg-light">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div class="flex-grow-1">
+
+                                    <h5 class="mb-1">
+
+                                        {{ grupo.nome }}
+
+                                    </h5>
+
+
+                                    {% if grupo.descricao %}
+
+                                        <small class="text-muted">
+
+                                            {{ grupo.descricao }}
+
+                                        </small>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- ================================= -->
+                                <!-- CHECKBOX DO GRUPO -->
+                                <!-- ================================= -->
+
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="grupo"
+                                        value="{{ grupo.id }}"
+                                        id="grupo{{ grupo.id }}"
+
+                                        {% if grupo.selecionado %}
+                                            checked
+                                        {% endif %}
+                                    >
+
+                                    <label
+                                        class="form-check-label fw-semibold"
+                                        for="grupo{{ grupo.id }}"
+                                    >
+
+                                        Usar este grupo
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ========================================= -->
+                        <!-- SABORES -->
+                        <!-- ========================================= -->
+
+                        <div class="card-body py-2">
+
+                            {% if grupo.sabores.all %}
+
+                                <div class="text-muted">
+
+                                    {% for sabor in grupo.sabores.all %}
+
+                                        <span class="nome-sabor">
+
+                                            {{ sabor.nome }}
+
+                                        </span>
+
+                                        {% if not forloop.last %}
+
+                                            <span>
+                                                ,
+                                            </span>
+
+                                        {% endif %}
+
+                                    {% empty %}
+
+                                        <span class="text-muted">
+
+                                            Nenhum sabor cadastrado.
+
+                                        </span>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    Nenhum sabor cadastrado.
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                {% empty %}
+
+                    <div class="alert alert-info">
+
+                        Nenhum grupo de sabores cadastrado.
+
+                        <br>
+
+                        Crie primeiro um grupo e seus sabores.
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- ================================================= -->
+                <!-- BOTÕES -->
+                <!-- ================================================= -->
+
+                <hr>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-success btn-cancel btn-padrao"
+                >
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Salvar
+
+                </button>
+
+
+                <a
+                    href="{% url 'produtogruposabor:listar' %}"
+                    class="btn btn-secondary btn-cancel btn-padrao"
+                >
+
+                    Cancelar
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- BUSCA DE PRODUTO -->
+<!-- ========================================================= -->
+
+<script src="{% static 'javascript/campodebuscaproduto.js' %}"></script>
+
+
+<!-- ========================================================= -->
+<!-- BUSCA DE GRUPOS E SABORES -->
+<!-- ========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const campoBusca =
+            document.getElementById("buscar-grupo");
+
+        if (!campoBusca) {
+            return;
+        }
+
+
+        const grupos =
+            document.querySelectorAll(".grupo-sabor");
+
+
+        campoBusca.addEventListener(
+            "keyup",
+            function () {
+
+                const texto =
+                    this.value
+                        .toLowerCase()
+                        .normalize("NFD")
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ""
+                        )
+                        .trim();
+
+
+                grupos.forEach(
+                    function (grupo) {
+
+                        const busca =
+                            grupo.dataset.busca
+                                .toLowerCase()
+                                .normalize("NFD")
+                                .replace(
+                                    /[\u0300-\u036f]/g,
+                                    ""
+                                );
+
+
+                        if (busca.includes(texto)) {
+
+                            grupo.style.display = "";
+
+                        } else {
+
+                            grupo.style.display = "none";
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

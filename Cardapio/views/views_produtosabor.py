@@ -5,10 +5,16 @@ from django.shortcuts import (
 )
 
 from django.contrib.auth.decorators import login_required
-
-from Cardapio.models import ProdutoSabor,Produto,Sabor
-from Cardapio.forms.produtosabor_forms import ProdutoSaborForm
 from django.contrib import messages
+
+from Cardapio.models import (
+    ProdutoSabor,
+    Produto,
+    Sabor,
+    GrupoDeSabores,
+)
+
+from Cardapio.forms.produtosabor_forms import ProdutoSaborForm
 
 
 @login_required
@@ -20,41 +26,45 @@ def listar_produto_sabor(request):
         "status",
         "todos"
     )
-    # FILTRO NENHUM SABOR
-    
-    
+
     produtos = (
-    Produto.objects.filter(
-        loja=request.user.perfil.loja,
-        possui_sabores=True
+        Produto.objects
+        .filter(
+            loja=loja,
+            possui_sabores=True
+        )
+        .prefetch_related(
+            "sabores__sabor",
+            "sabores__sabor__grupo"
+        )
+        .order_by(
+            "ordem",
+            "nome"
+        )
     )
-    .prefetch_related(
-        "sabores__sabor",
-        "sabores__sabor__grupo"
-    )
-)
-    
+
     if status == "disponiveis":
 
         produtos = produtos.filter(
             disponivel=True
         )
 
-
     elif status == "indisponiveis":
 
         produtos = produtos.filter(
             disponivel=False
         )
-    if request.GET.get("sem_sabor"):
-    
-            produtos = produtos.exclude(
-                id__in=ProdutoSabor.objects.values_list(
-                    "produto_id",
-                    flat=True
-                )
-            )
 
+    if request.GET.get("sem_sabor"):
+
+        produtos = produtos.exclude(
+            id__in=ProdutoSabor.objects.filter(
+                produto__loja=loja
+            ).values_list(
+                "produto_id",
+                flat=True
+            )
+        )
 
     return render(
         request,
@@ -65,121 +75,86 @@ def listar_produto_sabor(request):
         }
     )
 
-def adicionar_produto_sabor(request, produto_id=None):
+
+@login_required
+def adicionar_produto_sabor(
+    request,
+    produto_id=None
+):
 
     loja = request.user.perfil.loja
 
     produto = None
 
+    # =========================================================
+    # PRODUTO
+    # =========================================================
 
     if produto_id:
 
         produto = get_object_or_404(
             Produto,
             id=produto_id,
-            loja=loja
+            loja=loja,
+            possui_sabores=True
         )
 
+    # =========================================================
+    # POST
+    # =========================================================
 
     if request.method == "POST":
 
-
-        sabores = request.POST.getlist("sabor")
-
-
-        # Remove campos vazios
-        sabores = [
-            s for s in sabores
-            if s
-        ]
-
-
-        # Remove sabores duplicados
-        sabores = list(
-            dict.fromkeys(sabores)
+        sabores_ids = request.POST.getlist(
+            "sabor"
         )
 
+        # Remove vazios
+        sabores_ids = [
+            sabor_id
+            for sabor_id in sabores_ids
+            if sabor_id
+        ]
 
-        # Caso tenha vindo pela tela sem produto definido
+        # Remove duplicados
+        sabores_ids = list(
+            dict.fromkeys(
+                sabores_ids
+            )
+        )
+
+        # -----------------------------------------------------
+        # PRODUTO NÃO INFORMADO NA URL
+        # -----------------------------------------------------
+
         if not produto:
 
             produto = get_object_or_404(
                 Produto,
                 id=request.POST.get("produto"),
-                loja=loja
+                loja=loja,
+                possui_sabores=True
             )
 
+        # -----------------------------------------------------
+        # NENHUM SABOR
+        # -----------------------------------------------------
 
-        # Verifica limite de sabores
-        if len(sabores) > produto.maximo_sabores:
+        if not sabores_ids:
 
             form = ProdutoSaborForm(
                 loja=loja
             )
 
-
             if produto_id:
-                form.fields.pop("produto")
-
-
-            return render(
-                request,
-                "produtosabor/produtosabor_form.html",
-                {
-                    "form": form,
-                    "produto": produto,
-                    "titulo": "Adicionar sabor ao produto",
-                    "erro": (
-                        f"O produto permite no máximo "
-                        f"{produto.maximo_sabores} sabores."
-                    )
-                }
-            )
-
-
-        # ================================
-        # VALIDA INGREDIENTES DO SABOR
-        # ================================
-
-        sabores_sem_ingredientes = []
-
-
-        for sabor_id in sabores:
-
-
-            sabor = get_object_or_404(
-                Sabor,
-                id=sabor_id,
-                loja=loja
-            )
-
-
-            possui_ingredientes = (
-                sabor.ingredientes
-                .filter(ativo=True)
-                .exists()
-            )
-
-
-            if not possui_ingredientes:
-
-                sabores_sem_ingredientes.append(
-                    sabor.nome
+                form.fields.pop(
+                    "produto",
+                    None
                 )
 
-
-
-        if sabores_sem_ingredientes:
-
-
-            form = ProdutoSaborForm(
-                loja=loja
+            grupos_sabores = _buscar_grupos_sabores(
+                loja
             )
-
-
-            if produto_id:
-                form.fields.pop("produto")
-
 
             return render(
                 request,
@@ -187,80 +162,143 @@ def adicionar_produto_sabor(request, produto_id=None):
                 {
                     "form": form,
                     "produto": produto,
-                    "titulo": "Adicionar sabor ao produto",
-                    "erro": (
-                        "Os seguintes sabores não possuem "
-                        "ingredientes cadastrados: "
-                        +
-                        ", ".join(
-                            sabores_sem_ingredientes
-                        )
-                    )
+                    "grupos_sabores": grupos_sabores,
+                    "titulo": "Adicionar sabores ao produto",
+                    "erro": "Selecione pelo menos um sabor."
                 }
             )
 
+        # -----------------------------------------------------
+        # BUSCA SABORES
+        # -----------------------------------------------------
 
+        sabores = (
+            Sabor.objects
+            .filter(
+                id__in=sabores_ids,
+                loja=loja,
+                ativo=True
+            )
+            .select_related(
+                "grupo"
+            )
+        )
 
-        # ================================
-        # SALVA OS SABORES
-        # ================================
+        # -----------------------------------------------------
+        # GARANTE QUE TODOS OS IDs EXISTEM
+        # -----------------------------------------------------
 
-        for sabor_id in sabores:
+        sabores_validos = set(
+            sabores.values_list(
+                "id",
+                flat=True
+            )
+        )
+
+        ids_recebidos = set(
+            int(sabor_id)
+            for sabor_id in sabores_ids
+            if sabor_id.isdigit()
+        )
+
+        if sabores_validos != ids_recebidos:
+
+            messages.error(
+                request,
+                "Um ou mais sabores selecionados são inválidos."
+            )
+
+            return redirect(
+                request.path
+            )
+
+        # -----------------------------------------------------
+        # SABORES JÁ VINCULADOS
+        # -----------------------------------------------------
+
+        sabores_existentes = set(
+            ProdutoSabor.objects
+            .filter(
+                produto=produto,
+                sabor_id__in=sabores_validos
+            )
+            .values_list(
+                "sabor_id",
+                flat=True
+            )
+        )
+
+        # -----------------------------------------------------
+        # CRIA OS VÍNCULOS
+        # -----------------------------------------------------
+
+        ordem_atual = (
+            ProdutoSabor.objects
+            .filter(
+                produto=produto
+            )
+            .count()
+        )
+
+        novos = 0
+
+        for sabor in sabores:
+
+            # Já existe
+            if sabor.id in sabores_existentes:
+                continue
+
+            ordem_atual += 1
 
             ProdutoSabor.objects.create(
                 produto=produto,
-                sabor_id=sabor_id,
-                ordem=request.POST.get(
-                    f"ordem_{sabor_id}",
-                    0
-                ),
-                ativo=request.POST.get(
-                    f"ativo_{sabor_id}"
-                ) == "on"
+                sabor=sabor,
+                ordem=ordem_atual,
+                ativo=True
             )
 
+            novos += 1
 
-        messages.success(
-            request,
-            "Sabores adicionados ao produto com sucesso."
-        )
+        # -----------------------------------------------------
+        # MENSAGEM
+        # -----------------------------------------------------
 
+        if novos:
+
+            messages.success(
+                request,
+                f"{novos} sabor(es) adicionado(s) ao produto."
+            )
+
+        else:
+
+            messages.info(
+                request,
+                "Os sabores selecionados já estão vinculados ao produto."
+            )
 
         return redirect(
             "produtosabor:listar"
         )
 
-
-
+    # =========================================================
     # GET
+    # =========================================================
 
     form = ProdutoSaborForm(
         loja=loja
     )
 
-
     if produto:
 
         form.fields.pop(
-            "produto"
+            "produto",
+            None
         )
 
-
-    sabores_disponiveis = (
-        Sabor.objects
-        .filter(
-            loja=loja,
-            ativo=True
-        )
-        .prefetch_related(
-            "ingredientes__ingrediente"
-        )
-        .order_by(
-            "ordem",
-            "nome"
-        )
+    grupos_sabores = _buscar_grupos_sabores(
+        loja
     )
-
 
     return render(
         request,
@@ -268,14 +306,17 @@ def adicionar_produto_sabor(request, produto_id=None):
         {
             "form": form,
             "produto": produto,
-            "sabores_disponiveis": sabores_disponiveis,
-            "titulo": "Adicionar sabor ao produto"
+            "grupos_sabores": grupos_sabores,
+            "titulo": "Adicionar sabores ao produto"
         }
     )
 
 
 @login_required
-def excluir_produto_sabor(request, id):
+def excluir_produto_sabor(
+    request,
+    id
+):
 
     loja = request.user.perfil.loja
 
@@ -285,110 +326,171 @@ def excluir_produto_sabor(request, id):
         produto__loja=loja
     )
 
-
     if request.method == "POST":
 
         produto_sabor.delete()
 
+        messages.success(
+            request,
+            "Sabor removido do produto."
+        )
 
     return redirect(
         "produtosabor:listar"
     )
 
+
 @login_required
-def editar_sabores_produto(request, produto_id):
+def editar_sabores_produto(
+    request,
+    produto_id
+):
 
     loja = request.user.perfil.loja
 
     produto = get_object_or_404(
         Produto,
         id=produto_id,
-        loja=loja
+        loja=loja,
+        possui_sabores=True
     )
+
+    # =========================================================
+    # SABORES ATUAIS
+    # =========================================================
 
     sabores_cadastrados = (
         ProdutoSabor.objects
-        .filter(produto=produto)
-        .select_related("sabor")
-        .order_by("ordem")
-    )
-    sabores_disponiveis = list(
-        Sabor.objects
         .filter(
-            loja=loja,
-            ativo=True
+            produto=produto
         )
-        .prefetch_related(
-            "ingredientes__ingrediente"
+        .select_related(
+            "sabor",
+            "sabor__grupo"
         )
         .order_by(
-            "ordem",
-            "nome"
+            "ordem"
         )
     )
 
-
-    # Cria mapa dos sabores já vinculados ao produto
     sabores_produto = {
         ps.sabor_id: ps
         for ps in sabores_cadastrados
     }
 
+    # =========================================================
+    # GRUPOS
+    # =========================================================
 
-    # adiciona informações para o template
-    for sabor in sabores_disponiveis:
+    grupos_sabores = _buscar_grupos_sabores(
+        loja
+    )
 
-        if sabor.id in sabores_produto:
+    # =========================================================
+    # MARCA SABORES SELECIONADOS
+    # =========================================================
 
-            ps = sabores_produto[sabor.id]
+    for grupo in grupos_sabores:
 
-            sabor.selecionado = True
-            sabor.ordem_produto = ps.ordem
-            sabor.ativo_produto = ps.ativo
+        for sabor in grupo.sabores.all():
 
-        else:
+            produto_sabor = (
+                sabores_produto.get(
+                    sabor.id
+                )
+            )
 
-            sabor.selecionado = False
-            sabor.ordem_produto = 0
-            sabor.ativo_produto = True
+            if produto_sabor:
+
+                sabor.selecionado = True
+                sabor.ordem_produto = (
+                    produto_sabor.ordem
+                )
+                sabor.ativo_produto = (
+                    produto_sabor.ativo
+                )
+
+            else:
+
+                sabor.selecionado = False
+                sabor.ordem_produto = 0
+                sabor.ativo_produto = True
+
+    # =========================================================
+    # POST
+    # =========================================================
 
     if request.method == "POST":
 
-        sabores = request.POST.getlist("sabor")
+        sabores_ids = request.POST.getlist(
+            "sabor"
+        )
 
-        # Remove vazios
-        sabores = [s for s in sabores if s]
+        sabores_ids = [
+            sabor_id
+            for sabor_id in sabores_ids
+            if sabor_id
+        ]
 
-        # Remove duplicados enviados pelo formulário
-        sabores = list(dict.fromkeys(sabores))
+        sabores_ids = list(
+            dict.fromkeys(
+                sabores_ids
+            )
+        )
 
-        if len(sabores) > produto.maximo_sabores:
+        # -----------------------------------------------------
+        # VALIDA SABORES
+        # -----------------------------------------------------
 
-            form = ProdutoSaborForm(loja=loja)
-            form.fields.pop("produto")
+        sabores = (
+            Sabor.objects
+            .filter(
+                id__in=sabores_ids,
+                loja=loja,
+                ativo=True
+            )
+        )
 
-            return render(
+        ids_validos = set(
+            sabores.values_list(
+                "id",
+                flat=True
+            )
+        )
+
+        ids_recebidos = {
+            int(sabor_id)
+            for sabor_id in sabores_ids
+            if sabor_id.isdigit()
+        }
+
+        if ids_validos != ids_recebidos:
+
+            messages.error(
                 request,
-                "produtosabor/produtosabor_form.html",
-                {
-                    "form": form,
-                    "produto": produto,
-                    "sabores_cadastrados": sabores_cadastrados,
-                    "titulo": "Editar sabores do produto",
-                    "erro": (
-                        f"O produto permite no máximo "
-                        f"{produto.maximo_sabores} sabores."
-                    )
-                }
+                "Um ou mais sabores selecionados são inválidos."
             )
 
-        # Remove todos os sabores atuais
+            return redirect(
+                request.path
+            )
+
+        # -----------------------------------------------------
+        # REMOVE VÍNCULOS ANTIGOS
+        # -----------------------------------------------------
+
         ProdutoSabor.objects.filter(
             produto=produto
         ).delete()
 
-        # Cria novamente
-        for ordem, sabor_id in enumerate(sabores, start=1):
+        # -----------------------------------------------------
+        # CRIA NOVAMENTE
+        # -----------------------------------------------------
+
+        for ordem, sabor_id in enumerate(
+            sabores_ids,
+            start=1
+        ):
 
             ProdutoSabor.objects.create(
                 produto=produto,
@@ -402,11 +504,22 @@ def editar_sabores_produto(request, produto_id):
             "Sabores atualizados com sucesso."
         )
 
-        return redirect("produtosabor:listar")
+        return redirect(
+            "produtosabor:listar"
+        )
 
-    form = ProdutoSaborForm(loja=loja)
+    # =========================================================
+    # GET
+    # =========================================================
 
-    form.fields.pop("produto")
+    form = ProdutoSaborForm(
+        loja=loja
+    )
+
+    form.fields.pop(
+        "produto",
+        None
+    )
 
     return render(
         request,
@@ -414,17 +527,20 @@ def editar_sabores_produto(request, produto_id):
         {
             "form": form,
             "produto": produto,
-            "sabores_disponiveis": sabores_disponiveis,
+            "grupos_sabores": grupos_sabores,
             "sabores_cadastrados": sabores_cadastrados,
             "titulo": "Editar sabores do produto",
         }
     )
 
+
 @login_required
-def alterar_status_produto_sabor(request, produto_id):
+def alterar_status_produto_sabor(
+    request,
+    produto_id
+):
 
     loja = request.user.perfil.loja
-
 
     produto = get_object_or_404(
         Produto,
@@ -432,18 +548,37 @@ def alterar_status_produto_sabor(request, produto_id):
         loja=loja
     )
 
-
     produto.disponivel = not produto.disponivel
 
     produto.save()
-
 
     messages.success(
         request,
         "Status do produto alterado com sucesso."
     )
 
-
     return redirect(
         "produtosabor:listar"
+    )
+
+
+# =============================================================
+# FUNÇÃO AUXILIAR
+# =============================================================
+
+def _buscar_grupos_sabores(loja):
+
+    return (
+        GrupoDeSabores.objects
+        .filter(
+            loja=loja,
+            ativo=True
+        )
+        .prefetch_related(
+            "sabores"
+        )
+        .order_by(
+            "ordem",
+            "nome"
+        )
     )

@@ -2,89 +2,400 @@
 
     {% for item in carrinho %}
 
-    <div 
-        class="d-flex align-items-center mb-3"
-        data-chave="{{ item.chave }}"
-    >
-
-        {% if item.produto.imagem %}
-        <img 
-            src="{{ item.produto.imagem.url }}"
-            alt="{{ item.produto.nome }}"
-            style="width:56px;height:56px;object-fit:cover;border-radius:8px;"
-            class="me-2"
+        <div
+            class="d-flex align-items-start mb-3 pb-3 border-bottom"
+            data-chave="{{ item.chave }}"
         >
-        {% endif %}
 
+            <!-- ================================================= -->
+            <!-- IMAGEM DO PRODUTO PRINCIPAL -->
+            <!-- ================================================= -->
 
-        <div class="flex-grow-1">
+            {% if item.produto.imagem %}
 
-            <div class="fw-semibold">
-                {{ item.produto.nome }}
-            </div>
+                <img
+                    src="{{ item.produto.imagem.url }}"
+                    alt="{{ item.produto.nome }}"
+                    style="
+                        width:56px;
+                        height:56px;
+                        object-fit:cover;
+                        border-radius:8px;
+                    "
+                    class="me-2"
+                >
 
+            {% else %}
 
-            <div class="text-muted small">
-                {{ item.quantidade }}x 
-                R$ {{ item.preco_total|floatformat:2 }}
-            </div>
-
-
-            {% if item.ingredientes_removidos %}
-
-            <div class="small text-danger">
-
-                Sem:
-
-                {% for item_ingrediente in item.ingredientes_removidos %}
-
-                    {{ item_ingrediente.ingrediente.nome }}
-
-                    {% if not forloop.last %}, {% endif %}
-
-                {% endfor %}
-
-            </div>
-
-            {% endif %}
-
-
-            {% if item.adicionais %}
-                <div class="small text-success">
-                    Adicionais:
-
-                    {% for adicional in item.adicionais %}
-                        {{ adicional.nome }}
-                        {% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                <div
+                    class="me-2 d-flex align-items-center justify-content-center text-muted bg-light border"
+                    style="
+                        width:56px;
+                        height:56px;
+                        border-radius:8px;
+                        font-size:10px;
+                        text-align:center;
+                        flex-shrink:0;
+                    "
+                >
+                    Sem imagem
                 </div>
+
             {% endif %}
 
-        </div>
+
+            <!-- ================================================= -->
+            <!-- INFORMAÇÕES -->
+            <!-- ================================================= -->
+
+            <div class="flex-grow-1">
+
+                <!-- ================================================= -->
+                <!-- PRODUTO PRINCIPAL -->
+                <!-- ================================================= -->
+
+                <div class="fw-semibold">
+                    {{ item.produto.nome }}
+                </div>
 
 
-        <div class="text-end">
+                <!-- ================================================= -->
+                <!-- QUANTIDADE / PREÇO -->
+                <!-- ================================================= -->
 
-            <div class="fw-semibold">
-                R$ {{ item.subtotal|floatformat:2 }}
+                <div class="text-muted small">
+
+                    {{ item.quantidade }}x
+                    R$ {{ item.preco_unitario|floatformat:2 }}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- COMBO -->
+                <!-- ================================================= -->
+
+                {% if item.combo_detalhes %}
+
+                    {% for combo in item.combo_detalhes %}
+
+                        <div class="small mt-2">
+
+                            <!-- GRUPO -->
+
+                            <div>
+
+                                <span class="fw-semibold">
+                                    {{ combo.grupo.nome }}:
+                                </span>
+
+                            </div>
+
+
+                            <!-- ITENS DO GRUPO -->
+
+                            {% for detalhe in combo.itens %}
+
+                                <div class="ms-2">
+
+                                    <!-- ================================= -->
+                                    <!-- PRODUTO DO COMBO -->
+                                    <!-- ================================= -->
+
+                                    <div>
+
+                                        <span>
+                                            {{ detalhe.produto.nome }}
+                                        </span>
+
+                                        {% if detalhe.quantidade > 1 %}
+
+                                            <span class="text-muted">
+                                                x{{ detalhe.quantidade }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <!-- ================================= -->
+                                    <!-- PERSONALIZAÇÕES -->
+                                    <!-- ================================= -->
+
+                                    {% if detalhe.personalizacoes %}
+
+                                        {% for personalizacao in detalhe.personalizacoes %}
+
+
+                                            <!-- ============================= -->
+                                            <!-- SABORES -->
+                                            <!-- ============================= -->
+
+                                            {% if personalizacao.sabores %}
+
+                                                <div class="small">
+
+                                                    <span class="fw-semibold">
+                                                        Sabor:
+                                                    </span>
+
+                                                    {% for sabor in personalizacao.sabores %}
+
+                                                        <span>
+
+                                                            {{ sabor.nome }}
+
+                                                            {% if sabor.valor_adicional %}
+
+                                                                <span class="text-success">
+
+                                                                    (+ R$
+                                                                    {{ sabor.valor_adicional|floatformat:2 }})
+
+                                                                </span>
+
+                                                            {% endif %}
+
+                                                        </span>
+
+                                                        {% if not forloop.last %}
+                                                            ,
+                                                        {% endif %}
+
+                                                    {% endfor %}
+
+                                                </div>
+
+                                            {% endif %}
+
+
+                                            <!-- ============================= -->
+                                            <!-- INGREDIENTES REMOVIDOS -->
+                                            <!-- ============================= -->
+
+                                            {% if personalizacao.ingredientes %}
+
+                                                <div class="small text-danger">
+
+                                                    <span class="fw-semibold">
+                                                        Sem:
+                                                    </span>
+
+                                                    {% for ingrediente in personalizacao.ingredientes %}
+
+                                                        <span>
+
+                                                            {{ ingrediente.ingrediente.nome }}
+
+                                                        </span>
+
+                                                        {% if not forloop.last %}
+                                                            ,
+                                                        {% endif %}
+
+                                                    {% endfor %}
+
+                                                </div>
+
+                                            {% endif %}
+
+
+                                            <!-- ============================= -->
+                                            <!-- ADICIONAIS -->
+                                            <!-- ============================= -->
+
+                                            {% if personalizacao.adicionais %}
+
+                                                <div class="small text-success">
+
+                                                    <span class="fw-semibold">
+                                                        Adicionais:
+                                                    </span>
+
+                                                    {% for adicional in personalizacao.adicionais %}
+
+                                                        <span>
+
+                                                            {{ adicional.nome }}
+
+                                                            {% if adicional.preco %}
+
+                                                                (+ R$
+                                                                {{ adicional.preco|floatformat:2 }})
+
+                                                            {% endif %}
+
+                                                        </span>
+
+                                                        {% if not forloop.last %}
+                                                            ,
+                                                        {% endif %}
+
+                                                    {% endfor %}
+
+                                                </div>
+
+                                            {% endif %}
+
+
+                                        {% endfor %}
+
+                                    {% endif %}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- SABORES DO PRODUTO PRINCIPAL -->
+                <!-- ================================================= -->
+
+                {% if item.sabores %}
+
+                    <div class="small mt-1">
+
+                        <span class="fw-semibold">
+                            Sabores:
+                        </span>
+
+                        {% for sabor in item.sabores %}
+
+                            <span>
+
+                                {{ sabor.nome }}
+
+                                {% if sabor.valor_adicional %}
+
+                                    <span class="text-success">
+
+                                        + R$
+                                        {{ sabor.valor_adicional|floatformat:2 }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </span>
+
+                            {% if not forloop.last %}
+                                ,
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- INGREDIENTES REMOVIDOS DO PRODUTO PRINCIPAL -->
+                <!-- ================================================= -->
+
+                {% if item.ingredientes_removidos %}
+
+                    <div class="small text-danger">
+
+                        <span class="fw-semibold">
+                            Sem:
+                        </span>
+
+                        {% for item_ingrediente in item.ingredientes_removidos %}
+
+                            {{ item_ingrediente.ingrediente.nome }}
+
+                            {% if not forloop.last %}
+                                ,
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- ADICIONAIS DO PRODUTO PRINCIPAL -->
+                <!-- ================================================= -->
+
+                {% if item.adicionais %}
+
+                    <div class="small text-success">
+
+                        <span class="fw-semibold">
+                            Adicionais:
+                        </span>
+
+                        {% for adicional in item.adicionais %}
+
+                            {{ adicional.nome }}
+
+                            {% if adicional.preco %}
+
+                                (+ R$
+                                {{ adicional.preco|floatformat:2 }})
+
+                            {% endif %}
+
+                            {% if not forloop.last %}
+                                ,
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
             </div>
 
 
-            <button 
-                class="btn btn-sm btn-link text-danger p-0 btn-remover-carrinho"
-                data-chave="{{ item.chave }}"
-            >
-                remover
-            </button>
+            <!-- ================================================= -->
+            <!-- TOTAL -->
+            <!-- ================================================= -->
+
+            <div class="text-end ms-2">
+
+                <div class="fw-semibold">
+
+                    R$
+                    {{ item.subtotal|floatformat:2 }}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- REMOVER -->
+                <!-- ================================================= -->
+
+                <button
+                    type="button"
+                    class="btn btn-sm text-danger btn-remover-carrinho"
+                    data-chave="{{ item.chave }}"
+                >
+                    Remover
+                </button>
+
+            </div>
 
         </div>
-
-    </div>
-
 
     {% endfor %}
 
 {% else %}
+
+    <!-- ========================================================= -->
+    <!-- CARRINHO VAZIO -->
+    <!-- ========================================================= -->
 
     <p class="text-muted text-center py-4">
         Seu carrinho está vazio.

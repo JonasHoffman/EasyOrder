@@ -1,5 +1,5 @@
 {% extends "templates/base.html" %}
-
+{% load static %}
 
 {% block content %}
 
@@ -92,20 +92,35 @@
 
                 <div class="mb-4">
 
-
                     <label class="form-label">
-
-
                         Produto
-
-
                     </label>
 
 
+                    <div class="row">
 
-                    {{ form.produto }}
+                        
 
 
+                        <div class="col-md-8">
+
+                            {{ form.produto }}
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <input
+                                type="text"
+                                id="buscar-produto"
+                                class="form-control"
+                                placeholder="Buscar produto..."
+                            >
+
+                        </div>
+
+                    </div>
+
+                    
 
                 </div>
 
@@ -146,7 +161,7 @@
 
 
                 <a href="{% url 'produto_grupo_adicional:listar' %}"
-                   class="btn btn-outline-secondary">
+                   class="btn btn-outline-secondary btn-cancel btn-padrao">
 
 
                     Cancelar
@@ -159,7 +174,7 @@
 
                 <button
                     type="submit"
-                    class="btn btn-success">
+                    class="btn btn-success btn-cancel btn-padrao">
 
 
                     Salvar
@@ -183,5 +198,6 @@
 
 </div>
 
+<script src="{% static 'javascript/campodebuscaproduto.js' %}"></script>
 
 {% endblock %}

@@ -1,0 +1,401 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div>
+
+    <!-- ===================================================== -->
+    <!-- MENSAGENS -->
+    <!-- ===================================================== -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- ===================================================== -->
+    <!-- CABEÇALHO -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>
+                Grupos de Sabores dos Produtos
+            </h2>
+
+            <small>
+                Total de produtos:
+                <strong>
+                    {{ produtos|length }}
+                </strong>
+            </small>
+
+        </div>
+
+
+        <div>
+
+            <a
+                href="{% url 'produtos:listar' %}"
+                class="btn btn-success btn-cancel btn-backgroundcolor"
+            >
+
+                <i class="fa-solid fa-plus"></i>
+
+                &nbsp;Editar Produto
+
+            </a>
+
+
+            <a
+                href="{% url 'produtogruposabor:novo' %}"
+                class="btn btn-success btn-cancel btn-backgroundcolor"
+            >
+
+                <i class="fa-solid fa-plus"></i>
+
+                &nbsp;Adicionar Grupo
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FILTROS -->
+    <!-- ===================================================== -->
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <form
+                method="get"
+                class="row g-3 align-items-end"
+            >
+
+                <!-- STATUS -->
+
+                <div class="col-md-3">
+
+                    <label
+                        for="status"
+                        class="form-label"
+                    >
+
+                        Status
+
+                    </label>
+
+
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-select"
+                        onchange="this.form.submit()"
+                    >
+
+                        <option
+                            value="todos"
+                            {% if status == "todos" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Todos
+
+                        </option>
+
+
+                        <option
+                            value="disponiveis"
+                            {% if status == "disponiveis" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Disponíveis
+
+                        </option>
+
+
+                        <option
+                            value="indisponiveis"
+                            {% if status == "indisponiveis" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Indisponíveis
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- SEM GRUPO -->
+
+                <div class="col-md-3">
+
+                    <div class="form-check mt-4">
+
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            name="sem_grupo"
+                            value="1"
+                            id="sem_grupo"
+                            onchange="this.form.submit()"
+
+                            {% if request.GET.sem_grupo %}
+                                checked
+                            {% endif %}
+                        >
+
+
+                        <label
+                            class="form-check-label"
+                            for="sem_grupo"
+                        >
+
+                            Nenhum grupo
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- TABELA -->
+    <!-- ===================================================== -->
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Produto
+                        </th>
+
+                        <th>
+                            Grupos de sabores
+                        </th>
+
+                        <th width="120">
+                            Grupos
+                        </th>
+
+                        <th width="120">
+                            Máximo de sabores
+                        </th>
+
+                        <th width="120">
+                            Status
+                        </th>
+
+                        <th width="180">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for produto in produtos %}
+
+                        <tr class="tr-list">
+
+
+                            <!-- ================================= -->
+                            <!-- PRODUTO -->
+                            <!-- ================================= -->
+
+                            <td>
+
+                                <strong>
+                                    {{ produto.nome }}
+                                </strong>
+
+                            </td>
+
+
+                            <!-- ================================= -->
+                            <!-- GRUPOS -->
+                            <!-- ================================= -->
+
+                            <td>
+
+                                {% for item in produto.grupos_sabores.all %}
+
+                                    {% if item.ativo %}
+
+                                        <span
+                                            class="badge bg-secondary me-1"
+                                        >
+
+                                            {{ item.grupo.nome }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                {% empty %}
+
+                                    <span class="text-muted">
+
+                                        Nenhum grupo
+
+                                    </span>
+
+                                {% endfor %}
+
+                            </td>
+
+
+                            <!-- ================================= -->
+                            <!-- QUANTIDADE DE GRUPOS -->
+                            <!-- ================================= -->
+
+                            <td>
+
+                                {{ produto.grupos_sabores.count }}
+
+                            </td>
+
+
+                            <!-- ================================= -->
+                            <!-- MÁXIMO DE SABORES -->
+                            <!-- ================================= -->
+
+                            <td>
+
+                                {{ produto.maximo_sabores }}
+
+                            </td>
+
+
+                            <!-- ================================= -->
+                            <!-- STATUS -->
+                            <!-- ================================= -->
+
+                            <td>
+
+                                {% if produto.disponivel %}
+
+                                    <span class="badge bg-success">
+
+                                        Disponível
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+
+                                        Indisponível
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ================================= -->
+                            <!-- AÇÕES -->
+                            <!-- ================================= -->
+
+                            <td class="div-flex height-full tr-list">
+
+
+                                <!-- EDITAR GRUPOS -->
+
+                                <a
+                                    href="{% url 'produtogruposabor:editar' produto.id %}"
+                                    class="btn btn-sm btn-warning btn-icon"
+                                    title="Editar grupos"
+                                >
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+
+                                <!-- ALTERAR STATUS -->
+
+                                <a
+                                    href="{% url 'produtogruposabor:status' produto.id %}"
+                                    class="btn btn-sm btn-danger btn-icon"
+                                    title="Alterar status"
+                                >
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center"
+                            >
+
+                                Nenhum produto encontrado.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

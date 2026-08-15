@@ -118,24 +118,25 @@ class Produto(models.Model):
     
 class ProdutoComboGrupo(models.Model):
 
-    produto = models.ForeignKey(
-        Produto,
+    loja = models.ForeignKey(
+        Loja,
         on_delete=models.CASCADE,
         related_name="grupos_combo"
     )
 
     nome = models.CharField(max_length=80)
 
-    obrigatorio = models.BooleanField(default=True)
+    descricao = models.TextField(blank=True)
 
-    minimo = models.PositiveSmallIntegerField(default=1)
-
-    maximo = models.PositiveSmallIntegerField(default=1)
+    ativo = models.BooleanField(default=True)
 
     ordem = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["ordem"]
+        ordering = ["ordem", "nome"]
+
+    def __str__(self):
+        return self.nome
 
 class ProdutoComboGrupoItem(models.Model):
 
@@ -147,7 +148,8 @@ class ProdutoComboGrupoItem(models.Model):
 
     produto = models.ForeignKey(
         Produto,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="itens_combo",
     )
 
     quantidade = models.DecimalField(
@@ -160,6 +162,44 @@ class ProdutoComboGrupoItem(models.Model):
 
     class Meta:
         ordering = ["ordem"]
+
+    def __str__(self):
+        return self.produto.nome
+
+class ProdutoGrupoCombo(models.Model):
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name="grupos_combo"
+    )
+
+    grupo = models.ForeignKey(
+        ProdutoComboGrupo,
+        on_delete=models.CASCADE,
+        related_name="produtos_combos"
+    )
+
+    obrigatorio = models.BooleanField(default=True)
+
+    minimo = models.PositiveSmallIntegerField(default=1)
+
+    maximo = models.PositiveSmallIntegerField(default=1)
+
+    ordem = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["ordem"]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["produto", "grupo"],
+                name="produto_grupo_combo_unico"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.produto} - {self.grupo}"
     
 class GrupoDeSabores(models.Model):
 
@@ -282,7 +322,43 @@ class Ingrediente(models.Model):
     def __str__(self):
         return self.nome
 
+class ProdutoGrupoSabor(models.Model):
 
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name="grupos_sabores"
+    )
+
+    grupo = models.ForeignKey(
+        GrupoDeSabores,
+        on_delete=models.CASCADE,
+        related_name="produtos"
+    )
+
+    ordem = models.PositiveIntegerField(
+        default=0
+    )
+
+    ativo = models.BooleanField(
+        default=True
+    )
+
+    class Meta:
+
+        ordering = ["ordem"]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["produto", "grupo"],
+                name="produto_grupo_sabor_unico"
+            )
+        ]
+
+    def __str__(self):
+
+        return f"{self.produto} - {self.grupo}"
+    
 class ProdutoIngrediente(models.Model):
 
     produto = models.ForeignKey(

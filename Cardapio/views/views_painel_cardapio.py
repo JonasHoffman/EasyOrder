@@ -40,12 +40,12 @@ def painel_cardapio(request):
             "url_novo": "item_adicional:novo",
         },
 
-        # {
-        #     "titulo": "Combos",
-        #     "descricao": "Monte combos de produtos.",
-        #     "url_listar": "combos:listar",
-        #     "url_novo": "combos:novo",
-        # },
+        {
+            "titulo": "Combos",
+            "descricao": "Monte combos de produtos.",
+            "url_listar": "combos:listar",
+            "url_novo": "combos:novo",
+        },
 
     ]
 

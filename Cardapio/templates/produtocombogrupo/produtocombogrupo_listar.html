@@ -1,0 +1,252 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+
+{% if messages %}
+
+{% for message in messages %}
+
+<div class="alert alert-{{ message.tags }}">
+
+    {{ message }}
+
+</div>
+
+{% endfor %}
+
+{% endif %}
+
+
+
+<div class="mb-4">
+
+    <h2>
+        Grupos de Combo
+    </h2>
+
+
+    <small>
+
+        Total de grupos:
+        <strong>{{ grupos|length }}</strong>
+
+    </small>
+
+
+</div>
+
+
+
+<div class="mb-3">
+
+
+    <a href="{% url 'produtocombogrupo:novo' %}"
+       class="btn btn-success btn-cancel btn-backgroundcolor btn-padrao">
+
+
+        <i class="fa-solid fa-plus"></i>
+
+        Novo Grupo
+
+
+    </a>
+
+
+</div>
+
+
+
+
+
+<div class="table-responsive">
+
+
+<table class="table table-hover align-middle mb-0">
+
+
+<thead>
+
+<tr>
+
+
+<th width="90">
+    Ordem
+</th>
+
+
+<th>
+    Nome
+</th>
+
+
+<th>
+    Descrição
+</th>
+
+
+<th width="120">
+    Status
+</th>
+
+
+<th width="180">
+    Ações
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody>
+
+
+{% for grupo in grupos %}
+
+
+<tr class="tr-list">
+
+
+<td>
+
+{{ grupo.ordem }}
+
+</td>
+
+
+
+<td>
+
+<strong>
+{{ grupo.nome }}
+</strong>
+
+</td>
+
+
+
+<td>
+
+{{ grupo.descricao|default:"-" }}
+
+</td>
+
+
+
+
+<td>
+
+
+{% if grupo.ativo %}
+
+
+<span class="badge bg-success">
+
+Ativo
+
+</span>
+
+
+{% else %}
+
+
+<span class="badge bg-secondary">
+
+Inativo
+
+</span>
+
+
+{% endif %}
+
+
+
+</td>
+
+
+
+
+<td class="div-flex height-full tr-list">
+
+
+<a href="{% url 'produtocombogrupo:editar' grupo.id %}"
+   class="btn btn-sm btn-warning btn-icon"
+   title="Editar">
+
+
+<i class="fa-solid fa-pen"></i>
+
+
+</a>
+
+
+
+<a href="{% url 'produtocombogrupoitem:listar' grupo.id %}"
+   class="btn btn-sm btn-info btn-icon"
+   title="Itens">
+
+
+<i class="fa-solid fa-list"></i>
+
+
+</a>
+
+
+
+<a href="{% url 'produtocombogrupo:excluir' grupo.id %}"
+   class="btn btn-sm btn-danger btn-icon"
+   title="Excluir"
+   onclick="return confirm('Deseja excluir este grupo?')">
+
+
+<i class="fa-solid fa-trash"></i>
+
+
+</a>
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+{% empty %}
+
+
+<tr>
+
+
+<td colspan="5" class="text-center">
+
+Nenhum grupo cadastrado.
+
+</td>
+
+
+</tr>
+
+
+
+{% endfor %}
+
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+{% endblock %}

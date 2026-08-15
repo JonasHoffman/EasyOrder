@@ -1,15 +1,25 @@
-<ul>
+<ul class="menu">
     {% for menu in menus %}
         <li>
-            <div class='nav-itens'onclick="toggleSubmenu('submenu-{{ menu.id }}')">
+            <div class="nav-itens"
+                 onclick="toggleSubmenu('submenu-{{ menu.id }}')">
+                <i class="fa-solid {{ menu.icone }}"></i>
                 {{ menu.nome }}
             </div>
 
-            <ul id="submenu-{{ menu.id }}">
+            <ul id="submenu-{{ menu.id }}" class="submenu">
                 {% for sub in menu.subitens_permitidos %}
-                    <li><a href="{{ sub.url }}">{{ sub.nome }}</a></li>
+                    <li>
+                        <a href="{{ sub.url }}">{{ sub.nome }}</a>
+                    </li>
                 {% endfor %}
             </ul>
         </li>
     {% endfor %}
 </ul>
+
+<script>
+function toggleSubmenu(id) {
+    document.getElementById(id).classList.toggle("open");
+}
+</script>
