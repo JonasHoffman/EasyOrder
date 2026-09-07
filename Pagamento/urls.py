@@ -1,6 +1,6 @@
 from django.urls import path
 
-from Pagamento.views import pagamento_pix,webhook_efi,pagamento_cartao,simular_pagamento,etiqueta_expedicao,comanda_cozinha,imprimir_pedido
+from Pagamento.views import pagamento_pix,webhook_efi,pagamento_cartao,simular_pagamento,etiqueta_expedicao,comanda_cozinha,imprimir_pedido,pagamento_demo_aprovar
 
 
 app_name = "pagamento"
@@ -39,6 +39,11 @@ urlpatterns = [
     "imprimir/<int:pedido_id>/",
     imprimir_pedido,
     name="imprimir_pedido",
+    
+),path(
+    "demo/aprovar/<int:pagamento_id>/",
+    pagamento_demo_aprovar,
+    name="pagamento_demo_aprovar",
 ),
 
 ]

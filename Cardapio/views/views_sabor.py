@@ -116,7 +116,7 @@ def editar_sabor(request, id):
         id=id,
         loja=loja
     )
-    print(sabor)
+    
     if request.method == "POST":
 
         form = SaborForm(

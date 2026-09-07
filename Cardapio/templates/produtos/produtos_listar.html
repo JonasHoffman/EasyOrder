@@ -39,11 +39,39 @@
         </div>
 
     </div>
+
+
     <div class="card mb-3">
 
         <div class="card-body">
 
             <form method="get" class="row g-3 align-items-end">
+
+                <!-- ============================= -->
+                <!-- BUSCA -->
+                <!-- ============================= -->
+
+                <div class="col-md-5">
+
+                    <label for="q" class="form-label">
+                        Buscar produto
+                    </label>
+
+                    <input
+                        type="text"
+                        name="q"
+                        id="q"
+                        class="form-control"
+                        placeholder="Digite o nome do produto..."
+                        value="{{ busca }}"
+                    >
+
+                </div>
+
+
+                <!-- ============================= -->
+                <!-- STATUS -->
+                <!-- ============================= -->
 
                 <div class="col-md-3">
 
@@ -76,11 +104,30 @@
 
                 </div>
 
+
+                <!-- ============================= -->
+                <!-- BOTÃO BUSCAR -->
+                <!-- ============================= -->
+
+                <div class="col-auto">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Buscar
+
+                    </button>
+
+                </div>
+
             </form>
 
         </div>
 
     </div>
+
 
     <div class="card">
 

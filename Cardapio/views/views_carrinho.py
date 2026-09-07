@@ -203,9 +203,7 @@ def carrinho_adicionar(request, produto_id):
 
             except (ValueError, TypeError):
                 continue
-            print("\n================ COMBO MONTADO ================")
-            print(combo)
-            print("================================================\n")
+            
 
         # --------------------------------------------------------
         # ADICIONAL
@@ -249,28 +247,14 @@ def carrinho_adicionar(request, produto_id):
     # TESTE
     # ============================================================
 
-    print("\n================ CARRINHO ================")
-    print("produto:", produto.id)
-    print("quantidade:", quantidade)
-    print("ingredientes:", ingredientes)
-    print("adicionais:", adicionais)
-    print("sabores:", sabores)
-    print("combo:", combo)
-    print("===========================================\n")
+    
 
     # ============================================================
     # ADICIONAR
     # ============================================================
 
     try:
-        print("\n====================================")
-        print("PRODUTO:", produto)
-        print("QUANTIDADE:", quantidade)
-        print("INGREDIENTES:", ingredientes)
-        print("ADICIONAIS:", adicionais)
-        print("SABORES:", sabores)
-        print("COMBO:", combo)
-        print("====================================\n")
+        
         cart.adicionar(
             produto=produto,
             quantidade=quantidade,
@@ -279,11 +263,7 @@ def carrinho_adicionar(request, produto_id):
             sabores=sabores,
             combo=combo,
         )
-        print("\n================ CARRINHO APÓS ADICIONAR ================")
-        print(cart.carrinho)
-        print("TOTAL ITENS:", len(cart))
-        print("TOTAL:", cart.get_total())
-        print("==========================================================\n")
+        
 
     except ValueError as erro:
 

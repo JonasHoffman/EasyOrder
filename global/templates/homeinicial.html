@@ -1,0 +1,187 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="home-page">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="home-hero">
+
+        <div class="home-hero-content">
+
+            <span class="home-label">
+                EASYORDER
+            </span>
+
+            <h1>
+                Gestão simplificada
+                <br>
+                para o seu negócio
+            </h1>
+
+            <p>
+                Cardápio, pedidos, estoque e pagamentos
+                organizados em um único sistema.
+            </p>
+
+            <div class="home-actions">
+
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'interface:minhaloja' %}"
+                       class="home-button">
+                        Acessar sistema
+                    </a>
+                {% else %}
+                    <a href="{% url 'usuarios:login' %}"
+                       class="home-button">
+                        Acessar sistema
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DIAGRAMA
+    ====================================================== -->
+
+    <section class="home-diagrama-section-2">
+
+        <div class="home-section-header">
+
+            <span class="home-label">
+                COMO FUNCIONA
+            </span>
+
+            <h2>
+                Tudo em um só lugar
+            </h2>
+
+            <p>
+                O EasyOrder reúne as principais áreas
+                necessárias para administrar seu negócio.
+            </p>
+
+        </div>
+
+
+        <div class="home-diagrama-2">
+
+            <img
+                src="{% static 'img/inicial.png' %}"
+                alt="Diagrama EasyOrder"
+                class="diagrama-imagem-2"
+            >
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RECURSOS
+    ====================================================== -->
+
+    <section class="home-recursos">
+
+        <div class="home-recurso">
+
+            <div class="home-recurso-icon">
+                <i class="fa-solid fa-utensils"></i>
+            </div>
+
+            <h3>
+                Cardápio
+            </h3>
+
+            <p>
+                Gerencie produtos, categorias, sabores,
+                adicionais, combos e promoções.
+            </p>
+
+        </div>
+
+
+        <div class="home-recurso">
+
+            <div class="home-recurso-icon">
+                <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+
+            <h3>
+                Pedidos
+            </h3>
+
+            <p>
+                Acompanhe os pedidos e seus status
+                através de um fluxo visual.
+            </p>
+
+        </div>
+
+
+        <div class="home-recurso">
+
+            <div class="home-recurso-icon">
+                <i class="fa-solid fa-box"></i>
+            </div>
+
+            <h3>
+                Estoque
+            </h3>
+
+            <p>
+                Organize produtos e acompanhe
+                as movimentações do estoque.
+            </p>
+
+        </div>
+
+
+        <div class="home-recurso">
+
+            <div class="home-recurso-icon">
+                <i class="fa-solid fa-credit-card"></i>
+            </div>
+
+            <h3>
+                Pagamentos
+            </h3>
+
+            <p>
+                Controle os pagamentos realizados
+                através do sistema.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RODAPÉ
+    ====================================================== -->
+
+    <footer class="home-footer">
+
+        <span>
+            EasyOrder
+        </span>
+
+        <span>
+            Sistema de gerenciamento
+        </span>
+
+    </footer>
+
+</div>
+
+{% endblock %}

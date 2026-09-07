@@ -22,6 +22,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+PAGAMENTO_DEMO = os.getenv("PAGAMENTO_DEMO", "False").lower() == "true"
+
 EFIPAY_CREDENTIALS = {
     "client_id": os.getenv("EFIPAY_CLIENT_ID"),
     "client_secret": os.getenv("EFIPAY_CLIENT_SECRET"),
@@ -43,7 +45,7 @@ EFIPAY_PIX_CHAVE = os.getenv("EFIPAY_PIX_CHAVE")
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_*4&@z!z+%ay&f^8bh41k(!fu!hw78qczdz2-^f&zq4n=8bn45'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -66,6 +68,7 @@ INSTALLED_APPS = [
     'Interface',
     'Pedidos',
     'Pagamento',
+    'Demo',
 ]
 
 MIDDLEWARE = [

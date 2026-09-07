@@ -15,6 +15,66 @@ from Cardapio.models import (
 
 
 # LISTAR INGREDIENTES DO SABOR
+from django.db.models import Q
+
+
+@login_required
+def selecionar_sabor_ingredientes(request):
+
+    loja = request.user.perfil.loja
+
+    busca = request.GET.get(
+        "busca",
+        ""
+    )
+
+    sabores = (
+        Sabor.objects
+        .filter(
+            loja=loja
+        )
+        .select_related(
+            "grupo"
+        )
+        .order_by(
+            "grupo__ordem",
+            "ordem",
+            "nome"
+        )
+    )
+
+    if busca:
+
+        sabores = sabores.filter(
+            Q(nome__icontains=busca)
+        )
+
+    if request.method == "POST":
+
+        sabor_id = request.POST.get(
+            "sabor"
+        )
+
+        if sabor_id:
+
+            return redirect(
+                "saboringrediente:listar",
+                sabor_id=sabor_id
+            )
+
+        messages.error(
+            request,
+            "Selecione um sabor."
+        )
+
+    return render(
+        request,
+        "saboringrediente/saboringrediente_selecionar.html",
+        {
+            "sabores": sabores,
+            "busca": busca,
+        }
+    )
 
 @login_required
 def listar_ingredientes_sabor(request, sabor_id):

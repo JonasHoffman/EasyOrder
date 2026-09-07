@@ -1,3 +1,4 @@
+{% load static %}
 {% if carrinho|length %}
 
     {% for item in carrinho %}
@@ -142,26 +143,20 @@
 
                                                     {% for sabor in personalizacao.sabores %}
 
-                                                        <span>
+                                                        <div class="ms-2">
 
                                                             {{ sabor.nome }}
 
                                                             {% if sabor.valor_adicional %}
 
                                                                 <span class="text-success">
-
                                                                     (+ R$
                                                                     {{ sabor.valor_adicional|floatformat:2 }})
-
                                                                 </span>
 
                                                             {% endif %}
 
-                                                        </span>
-
-                                                        {% if not forloop.last %}
-                                                            ,
-                                                        {% endif %}
+                                                        </div>
 
                                                     {% endfor %}
 
@@ -185,9 +180,7 @@
                                                     {% for ingrediente in personalizacao.ingredientes %}
 
                                                         <span>
-
                                                             {{ ingrediente.ingrediente.nome }}
-
                                                         </span>
 
                                                         {% if not forloop.last %}
@@ -243,9 +236,12 @@
 
                                     {% endif %}
 
+
                                 </div>
 
+
                             {% endfor %}
+
 
                         </div>
 
@@ -268,26 +264,20 @@
 
                         {% for sabor in item.sabores %}
 
-                            <span>
+                            <div class="ms-2">
 
                                 {{ sabor.nome }}
 
                                 {% if sabor.valor_adicional %}
 
                                     <span class="text-success">
-
                                         + R$
                                         {{ sabor.valor_adicional|floatformat:2 }}
-
                                     </span>
 
                                 {% endif %}
 
-                            </span>
-
-                            {% if not forloop.last %}
-                                ,
-                            {% endif %}
+                            </div>
 
                         {% endfor %}
 
@@ -356,6 +346,7 @@
 
                 {% endif %}
 
+
             </div>
 
 
@@ -387,6 +378,7 @@
 
             </div>
 
+
         </div>
 
     {% endfor %}
@@ -400,5 +392,6 @@
     <p class="text-muted text-center py-4">
         Seu carrinho está vazio.
     </p>
+<script src="{% static 'javascript/itensdeslizantecardapio.js' %}"></script>
 
 {% endif %}

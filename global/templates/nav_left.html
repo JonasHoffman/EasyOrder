@@ -1,25 +1,142 @@
 <ul class="menu">
+
     {% for menu in menus %}
-        <li>
-            <div class="nav-itens"
-                 onclick="toggleSubmenu('submenu-{{ menu.id }}')">
-                <i class="fa-solid {{ menu.icone }}"></i>
-                {{ menu.nome }}
+
+        <li class="menu-item">
+
+            <!-- ================================================= -->
+            <!-- MENU PRINCIPAL -->
+            <!-- ================================================= -->
+
+            <div
+                class="nav-item-principal"
+                onclick="toggleSubmenu('submenu-{{ menu.id }}', this)"
+            >
+
+                <span class="nav-item-conteudo">
+
+                    <i class="fa-solid {{ menu.icone }}"></i>
+
+                    <span>
+                        {{ menu.nome }}
+                    </span>
+
+                </span>
+
+                <i class="fa-solid fa-chevron-right nav-seta"></i>
+
             </div>
 
-            <ul id="submenu-{{ menu.id }}" class="submenu">
+
+            <!-- ================================================= -->
+            <!-- SEGUNDO NÍVEL -->
+            <!-- ================================================= -->
+
+            <ul
+                id="submenu-{{ menu.id }}"
+                class="submenu"
+            >
+
                 {% for sub in menu.subitens_permitidos %}
-                    <li>
-                        <a href="{{ sub.url }}">{{ sub.nome }}</a>
+
+                    <li class="submenu-item">
+
+                        {% if sub.subitens_permitidos %}
+
+                            <!-- ================================= -->
+                            <!-- ITEM COM TERCEIRO NÍVEL -->
+                            <!-- ================================= -->
+
+                            <div
+                                class="nav-item-secundario"
+                                onclick="toggleSubmenu('subsubmenu-{{ sub.id }}', this)"
+                            >
+
+                                <span>
+                                    {{ sub.nome }}
+                                </span>
+
+                                <i class="fa-solid fa-chevron-right nav-seta"></i>
+
+                            </div>
+
+
+                            <!-- ================================= -->
+                            <!-- TERCEIRO NÍVEL -->
+                            <!-- ================================= -->
+
+                            <ul
+                                id="subsubmenu-{{ sub.id }}"
+                                class="submenu-terceiro"
+                            >
+
+                                {% for item in sub.subitens_permitidos %}
+
+                                    <li>
+
+                                        <a
+                                            href="{{ item.url }}"
+                                            class="nav-item-terceiro"
+                                        >
+
+                                            <span class="nav-ponto"></span>
+
+                                            {{ item.nome }}
+
+                                        </a>
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <!-- ================================= -->
+                            <!-- ITEM SEM FILHOS -->
+                            <!-- ================================= -->
+
+                            <a
+                                href="{{ sub.url }}"
+                                class="nav-item-secundario link"
+                            >
+
+                                {{ sub.nome }}
+
+                            </a>
+
+                        {% endif %}
+
                     </li>
+
                 {% endfor %}
+
             </ul>
+
         </li>
+
     {% endfor %}
+
 </ul>
 
+
 <script>
-function toggleSubmenu(id) {
-    document.getElementById(id).classList.toggle("open");
+
+function toggleSubmenu(id, elemento) {
+
+    const submenu = document.getElementById(id);
+
+    if (!submenu) {
+        return;
+    }
+
+    submenu.classList.toggle("open");
+
+    if (elemento) {
+        elemento.classList.toggle("active");
+    }
+
 }
+
 </script>

@@ -3,15 +3,17 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("KANBAN: iniciado");
 
 
+    // =========================================================
+    // ELEMENTOS
+    // =========================================================
+
     const cards = document.querySelectorAll(
         ".kanban-card"
     );
 
-
     const dropzones = document.querySelectorAll(
         ".kanban-dropzone"
     );
-
 
     const finalizarDropzone =
         document.querySelector(
@@ -24,12 +26,10 @@ document.addEventListener("DOMContentLoaded", function () {
         cards.length
     );
 
-
     console.log(
         "DROPZONES:",
         dropzones.length
     );
-
 
     console.log(
         "FINALIZAR:",
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
             function () {
 
                 /*
-                 * Se estiver sendo arrastado,
+                 * Se o card estiver sendo arrastado,
                  * não expande.
                  */
 
@@ -156,7 +156,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     "DRAG START"
                 );
 
-
                 console.log(
                     "PEDIDO ID:",
                     pedidoId
@@ -199,6 +198,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
 
+                // Remove destaque das colunas
+
                 dropzones.forEach(
                     function (dropzone) {
 
@@ -209,6 +210,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 );
 
+
+                // Remove destaque da área finalizar
 
                 if (finalizarDropzone) {
 
@@ -317,7 +320,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     "DROP"
                 );
 
-
                 console.log(
                     "PEDIDO:",
                     pedidoId
@@ -396,7 +398,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     statusAnteriorId
                 );
 
-
                 console.log(
                     "NOVO STATUS:",
                     novoStatusId
@@ -448,8 +449,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                 * Ao mover o card,
-                 * fecha a expansão.
+                 * Fecha a expansão
+                 * ao mover.
                  */
 
                 card.classList.remove(
@@ -474,29 +475,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     "================================"
                 );
 
-
                 console.log(
                     "PEDIDO MOVIDO"
                 );
-
 
                 console.log(
                     "PEDIDO ID:",
                     pedidoId
                 );
 
-
                 console.log(
                     "STATUS ANTERIOR:",
                     statusAnteriorId
                 );
 
-
                 console.log(
                     "NOVO STATUS:",
                     novoStatusId
                 );
-
 
                 console.log(
                     "================================"
@@ -610,7 +606,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     "DROP PARA FINALIZAR"
                 );
 
-
                 console.log(
                     "PEDIDO:",
                     pedidoId
@@ -673,7 +668,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 // =================================================
-                // STATUS ENTREGUE
+                // STATUS FINALIZADOR
                 // =================================================
 
                 const statusEntregueId =
@@ -681,9 +676,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 console.log(
-                    "STATUS ENTREGUE:",
+                    "STATUS FINALIZADOR:",
                     statusEntregueId
                 );
+
+
+                if (!statusEntregueId) {
+
+                    console.log(
+                        "ERRO: status finalizador não configurado."
+                    );
+
+                    alert(
+                        "O status de finalização não está configurado."
+                    );
+
+                    return;
+
+                }
 
 
                 // =================================================
@@ -751,12 +761,10 @@ document.addEventListener("DOMContentLoaded", function () {
             "ENVIANDO STATUS PARA O SERVIDOR..."
         );
 
-
         console.log(
             "PEDIDO:",
             pedidoId
         );
-
 
         console.log(
             "NOVO STATUS:",
@@ -796,6 +804,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
         )
+
         .then(function (response) {
 
             console.log(
@@ -817,6 +826,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.json();
 
         })
+
         .then(function (data) {
 
             console.log(
@@ -838,11 +848,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                 * Se era uma finalização,
-                 * o card nunca saiu da coluna.
-                 *
-                 * Portanto não precisamos
-                 * fazer rollback visual.
+                 * Se foi uma movimentação normal,
+                 * precisamos devolver o card.
                  */
 
                 if (!finalizando) {
@@ -886,8 +893,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                 * Atualiza contadores
-                 * e mensagens de coluna vazia.
+                 * Atualiza a interface.
                  */
 
                 atualizarContadores();
@@ -908,35 +914,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 "================================"
             );
 
-
             console.log(
                 "STATUS SALVO NO BANCO"
             );
-
 
             console.log(
                 "PEDIDO:",
                 data.pedido_id
             );
 
-
             console.log(
                 "STATUS:",
                 data.status_id
             );
-
 
             console.log(
                 "STATUS:",
                 data.status_nome
             );
 
-
             console.log(
                 "================================"
             );
 
         })
+
         .catch(function (erro) {
 
             console.error(
@@ -946,8 +948,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             /*
-             * Se era uma finalização,
-             * o card ainda está na coluna original.
+             * Se foi uma movimentação normal,
+             * devolve o card.
+             *
+             * Se foi finalização,
+             * o card nunca foi removido,
+             * então não precisamos fazer nada.
              */
 
             if (!finalizando) {
@@ -998,7 +1004,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         /*
          * Retorna o card para a coluna
-         * onde estava originalmente.
+         * original.
          */
 
         dropzoneAnterior.appendChild(
@@ -1007,7 +1013,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * Atualiza novamente a interface.
+         * Fecha expansão.
+         */
+
+        card.classList.remove(
+            "expandido"
+        );
+
+
+        /*
+         * Atualiza interface.
          */
 
         atualizarContadores();

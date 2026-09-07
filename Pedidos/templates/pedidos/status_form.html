@@ -1,0 +1,544 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/status_kanban.css' %}"
+>
+
+<div class="status-form-page">
+
+
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
+
+    <div class="status-form-header">
+
+        <div>
+
+            <div class="status-config-title">
+
+                <div class="status-config-icon">
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ titulo }}
+                    </h2>
+
+                    <p>
+                        Configure uma etapa do fluxo de pedidos.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{% url 'pedidos:status_lista' %}"
+            class="status-btn status-btn-secondary"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Voltar
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         MENSAGENS
+         ===================================================== -->
+
+    {% if messages %}
+
+        <div class="status-messages">
+
+            {% for message in messages %}
+
+                <div class="status-message {{ message.tags }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         FORMULÁRIO
+         ===================================================== -->
+
+    <form
+        method="post"
+        class="status-form"
+    >
+
+        {% csrf_token %}
+
+
+        <!-- =================================================
+             INFORMAÇÕES PRINCIPAIS
+             ================================================= -->
+
+        <div class="status-form-card">
+
+
+            <div class="status-form-card-header">
+
+                <div>
+
+                    <h3>
+                        Informações do status
+                    </h3>
+
+                    <p>
+                        Defina como essa etapa será apresentada.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-form-card-body">
+
+
+                <!-- =========================================
+                     NOME
+                     ========================================= -->
+
+                <div class="status-form-group">
+
+                    <label for="{{ form.nome.id_for_label }}">
+
+                        Nome do status
+
+                    </label>
+
+                    {{ form.nome }}
+
+                    {% if form.nome.errors %}
+
+                        <div class="status-form-error">
+
+                            {{ form.nome.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                    <small>
+                        Esse é o nome que aparecerá no sistema e no Kanban.
+                    </small>
+
+                </div>
+
+
+                <!-- =========================================
+                     ORDEM
+                     ========================================= -->
+
+                <div class="status-form-group">
+
+                    <label for="{{ form.ordem.id_for_label }}">
+
+                        Ordem
+
+                    </label>
+
+                    {{ form.ordem }}
+
+                    {% if form.ordem.errors %}
+
+                        <div class="status-form-error">
+
+                            {{ form.ordem.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                    <small>
+                        Define a posição desse status no fluxo.
+                    </small>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FUNÇÃO NO SISTEMA
+             ================================================= -->
+
+        {% if status and status.sistema %}
+
+            <div class="status-form-card">
+
+                <div class="status-form-card-header">
+
+                    <div>
+
+                        <h3>
+                            Função no sistema
+                        </h3>
+
+                        <p>
+                            Esta função é definida pelo sistema.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="status-form-card-body">
+
+                    <div class="status-system-warning">
+
+                        <div class="status-system-warning-icon">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            {% if status.codigo == "aguardando-pagamento" %}
+
+                                <strong>
+                                    Aguardando pagamento
+                                </strong>
+
+                                <p>
+                                    Pedido aguardando a confirmação do pagamento.
+                                    Depois de confirmado, o pedido será enviado
+                                    para o status Recebido.
+                                </p>
+
+
+                            {% elif status.codigo == "recebido" %}
+
+                                <strong>
+                                    Entrada dos pedidos
+                                </strong>
+
+                                <p>
+                                    Este é o status obrigatório para onde os
+                                    pedidos são enviados quando são recebidos
+                                    e confirmados. Ele permanece ativo e visível
+                                    no Kanban.
+                                </p>
+
+
+                            {% elif status.codigo == "em-preparo" %}
+
+                                <strong>
+                                    Pedido em preparo
+                                </strong>
+
+                                <p>
+                                    Representa os pedidos que estão sendo
+                                    preparados pela loja.
+                                </p>
+
+
+                            {% elif status.codigo == "pronto" %}
+
+                                <strong>
+                                    Pedido pronto
+                                </strong>
+
+                                <p>
+                                    Representa os pedidos que já estão prontos
+                                    para entrega ou retirada.
+                                </p>
+
+
+                            {% elif status.codigo == "entregue" %}
+
+                                <strong>
+                                    Destino dos pedidos finalizados
+                                </strong>
+
+                                <p>
+                                    Este é o status utilizado para os pedidos
+                                    finalizados. Ao finalizar um pedido, ele
+                                    será enviado para este status.
+                                </p>
+
+
+                            {% elif status.codigo == "cancelado" %}
+
+                                <strong>
+                                    Destino dos pedidos cancelados
+                                </strong>
+
+                                <p>
+                                    Este é o status utilizado para os pedidos
+                                    cancelados. Você pode escolher se deseja
+                                    manter os pedidos cancelados visíveis
+                                    no Kanban.
+                                </p>
+
+                            {% else %}
+
+                                <strong>
+                                    Status do sistema
+                                </strong>
+
+                                <p>
+                                    Este status faz parte do fluxo padrão
+                                    do EasyOrder.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             COMPORTAMENTO
+             ================================================= -->
+
+        <div class="status-form-card">
+
+
+            <div class="status-form-card-header">
+
+                <div>
+
+                    <h3>
+                        Comportamento
+                    </h3>
+
+                    <p>
+                        Controle como o status participa do fluxo.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-form-card-body">
+
+
+                <!-- =========================================
+                     ATIVO
+                     ========================================= -->
+
+                <div class="status-setting-row">
+
+                    <div class="status-setting-info">
+
+                        <div class="status-setting-icon">
+
+                            <i class="fa-solid fa-power-off"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Status ativo
+                            </strong>
+
+                            <span>
+                                Permite utilizar essa etapa no fluxo.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <label class="status-switch">
+
+                        {{ form.ativo }}
+
+                        <span class="status-switch-slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- =========================================
+                     KANBAN
+                     ========================================= -->
+
+                <div class="status-setting-row">
+
+                    <div class="status-setting-info">
+
+                        <div class="status-setting-icon">
+
+                            <i class="fa-solid fa-table-columns"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Aparecer no Kanban
+                            </strong>
+
+                            <span>
+                                Exibe os pedidos nessa coluna do Kanban.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <label class="status-switch">
+
+                        {{ form.aparece_kanban }}
+
+                        <span class="status-switch-slider"></span>
+
+                    </label>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PROTEÇÃO DO SISTEMA
+             ================================================= -->
+
+        {% if status and status.sistema %}
+
+            <div class="status-system-warning">
+
+                <div class="status-system-warning-icon">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Status protegido pelo sistema
+                    </strong>
+
+                    <p>
+
+                        Este status faz parte do fluxo padrão
+                        do EasyOrder.
+
+                        {% if status.codigo == "recebido" %}
+
+                            O status Recebido é obrigatório para a
+                            entrada dos pedidos e deve permanecer
+                            ativo e visível no Kanban.
+
+                        {% elif status.codigo == "entregue" %}
+
+                            O status Entregue é utilizado como destino
+                            dos pedidos finalizados e não aparece
+                            como coluna normal do Kanban.
+
+                        {% else %}
+
+                            A função interna deste status não pode
+                            ser alterada, mas algumas configurações
+                            de visualização podem ser personalizadas.
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             ERROS GERAIS
+             ================================================= -->
+
+        {% if form.non_field_errors %}
+
+            <div class="status-form-errors">
+
+                {{ form.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             BOTÕES
+             ================================================= -->
+
+        <div class="status-form-footer">
+
+            <a
+                href="{% url 'pedidos:status_lista' %}"
+                class="status-btn status-btn-secondary"
+            >
+
+                Cancelar
+
+            </a>
+
+
+            <button
+                type="submit"
+                class="status-btn status-btn-primary"
+            >
+
+                <i class="fa-solid fa-check"></i>
+
+                Salvar alterações
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

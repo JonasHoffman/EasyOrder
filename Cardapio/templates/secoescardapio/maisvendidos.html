@@ -1,46 +1,61 @@
 <div class="mb-6">
 
-    <h2 class="mb-3">
+    <h2 class="mb-3 padding-bottom-12">
         {{ secao.get_tipo_display }}
     </h2>
 
     <div class="grid-cardapio">
 
-        {% for produto in secao.dados %}
+        {% for produto in secao.dados|slice:":8" %}
 
-        <a href="{% url 'produtos:produto_detalhe' produto.slug %}" class="text-decoration-none text-dark card-cardapio">
+        <a
+            href="{% url 'produtos:produto_detalhe' produto.slug %}"
+            class="text-decoration-none text-dark card-cardapio"
+        >
+
             <div class="div-card-cardapio">
+
                 <div class="text-card-cardapio">
+
                     <h5 class="card-title">
-                                {{ produto.nome }}
-                            </h5>
+                        {{ produto.nome }}
+                    </h5>
 
-                            {% if produto.descricao %}
+                    {% if produto.descricao %}
 
-                            <p class="card-text">
-                                {{ produto.descricao }}
-                            </p>
+                    <p class="card-text">
+                        {{ produto.descricao }}
+                    </p>
 
-                            {% endif %}
+                    {% endif %}
 
-                            <strong>
-                                R$ {{ produto.preco }}
-                            </strong>
+                    <strong>
+                        R$ {{ produto.preco }}
+                    </strong>
+
                 </div>
 
                 <div class="img-card-cardapio">
+
                     {% if produto.imagem %}
-                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="img-card-cardapio">
-                {% else %}
+
+                    <img
+                        src="{{ produto.imagem.url }}"
+                        alt="{{ produto.nome }}"
+                        class="img-card-cardapio"
+                    >
+
+                    {% else %}
+
                     <div class="img-card-cardapio img-placeholder">
                         Sem imagem
                     </div>
-                {% endif %}
+
+                    {% endif %}
+
                 </div>
 
             </div>
-
-                          
 
         </a>
 
@@ -51,5 +66,21 @@
         {% endfor %}
 
     </div>
+
+
+    {% if secao.dados|length > 8 %}
+
+    <div class="text-center mt-4">
+
+        <a
+            href="{% url 'cardapio_cliente:ver_todos' secao.tipo %}"
+            class="btn btn-outline-primary btn-carrinho"
+        >
+            Ver mais itens
+        </a>
+
+    </div>
+
+    {% endif %}
 
 </div>

@@ -1,252 +1,251 @@
+
 {% extends "templates/base.html" %}
+{% load static %}
 
 {% block content %}
 
+<div>
 
-{% if messages %}
+    {% if messages %}
+        {% for message in messages %}
 
-{% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
 
-<div class="alert alert-{{ message.tags }}">
+        {% endfor %}
+    {% endif %}
 
-    {{ message }}
 
-</div>
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
 
-{% endfor %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-{% endif %}
+        <div>
 
+            <h2>
+                Grupos de Combo
+            </h2>
 
+            <small>
 
-<div class="mb-4">
+                Total de grupos:
+                <strong>{{ grupos|length }}</strong>
 
-    <h2>
-        Grupos de Combo
-    </h2>
+            </small>
 
+        </div>
 
-    <small>
 
-        Total de grupos:
-        <strong>{{ grupos|length }}</strong>
+        <div>
 
-    </small>
+            <a
+                href="{% url 'produtocombogrupo:novo' %}"
+                class="btn btn-success btn-cancel btn-backgroundcolor"
+            >
 
+                <i class="fa-solid fa-plus"></i>
+                &nbsp;Novo Grupo
 
-</div>
+            </a>
 
+        </div>
 
+    </div>
 
-<div class="mb-3">
 
 
-    <a href="{% url 'produtocombogrupo:novo' %}"
-       class="btn btn-success btn-cancel btn-backgroundcolor btn-padrao">
+    <!-- =====================================================
+         TABELA
+         ===================================================== -->
 
+    <div class="card">
 
-        <i class="fa-solid fa-plus"></i>
+        <div class="table-responsive">
 
-        Novo Grupo
+            <table class="table table-hover align-middle mb-0">
 
+                <thead>
 
-    </a>
+                    <tr>
 
+                        <th width="90">
+                            Ordem
+                        </th>
 
-</div>
+                        <th>
+                            Nome
+                        </th>
 
+                        <th>
+                            Descrição
+                        </th>
 
+                        <th width="120">
+                            Status
+                        </th>
 
+                        <th width="220">
+                            Ações
+                        </th>
 
+                    </tr>
 
-<div class="table-responsive">
+                </thead>
 
 
-<table class="table table-hover align-middle mb-0">
+                <tbody>
 
 
-<thead>
+                    {% for grupo in grupos %}
 
-<tr>
+                        <tr class="tr-list">
 
 
-<th width="90">
-    Ordem
-</th>
+                            <!-- ORDEM -->
 
+                            <td>
 
-<th>
-    Nome
-</th>
+                                {{ grupo.ordem }}
 
+                            </td>
 
-<th>
-    Descrição
-</th>
 
 
-<th width="120">
-    Status
-</th>
+                            <!-- NOME -->
 
+                            <td>
 
-<th width="180">
-    Ações
-</th>
+                                <strong>
+                                    {{ grupo.nome }}
+                                </strong>
 
+                            </td>
 
-</tr>
 
 
-</thead>
+                            <!-- DESCRIÇÃO -->
 
+                            <td>
 
+                                {% if grupo.descricao %}
 
-<tbody>
+                                    {{ grupo.descricao }}
 
+                                {% else %}
 
-{% for grupo in grupos %}
+                                    <span class="text-muted">
+                                        -
+                                    </span>
 
+                                {% endif %}
 
-<tr class="tr-list">
+                            </td>
 
 
-<td>
 
-{{ grupo.ordem }}
+                            <!-- STATUS -->
 
-</td>
+                            <td>
 
+                                {% if grupo.ativo %}
 
+                                    <span class="badge bg-success">
+                                        Ativo
+                                    </span>
 
-<td>
+                                {% else %}
 
-<strong>
-{{ grupo.nome }}
-</strong>
+                                    <span class="badge bg-secondary">
+                                        Inativo
+                                    </span>
 
-</td>
+                                {% endif %}
 
+                            </td>
 
 
-<td>
 
-{{ grupo.descricao|default:"-" }}
+                            <!-- AÇÕES -->
 
-</td>
+                            <td class="div-flex height-full tr-list">
 
 
+                                <a
+                                    href="{% url 'produtocombogrupoitem:listar' grupo.id %}"
+                                    class="btn btn-info btn-sm btn-icon"
+                                    title="Itens do grupo"
+                                >
 
+                                    <i class="fa-solid fa-list"></i>
+                                    
 
-<td>
+                                </a>
 
 
-{% if grupo.ativo %}
 
+                                <a
+                                    href="{% url 'produtocombogrupo:editar' grupo.id %}"
+                                    class="btn btn-warning btn-sm btn-icon"
+                                    title="Editar"
+                                >
 
-<span class="badge bg-success">
+                                    <i class="fa-solid fa-pen"></i>
 
-Ativo
+                                </a>
 
-</span>
 
 
-{% else %}
+                                <a
+                                    href="{% url 'produtocombogrupo:excluir' grupo.id %}"
+                                    class="btn btn-danger btn-sm btn-icon"
+                                    title="Excluir"
+                                    onclick="return confirm('Deseja excluir este grupo?')"
+                                >
 
+                                    <i class="fa-solid fa-trash"></i>
 
-<span class="badge bg-secondary">
+                                </a>
 
-Inativo
 
-</span>
+                            </td>
 
 
-{% endif %}
+                        </tr>
 
 
+                    {% empty %}
 
-</td>
 
+                        <tr>
 
+                            <td
+                                colspan="5"
+                                class="text-center"
+                            >
 
+                                Nenhum grupo encontrado.
 
-<td class="div-flex height-full tr-list">
+                            </td>
 
+                        </tr>
 
-<a href="{% url 'produtocombogrupo:editar' grupo.id %}"
-   class="btn btn-sm btn-warning btn-icon"
-   title="Editar">
 
+                    {% endfor %}
 
-<i class="fa-solid fa-pen"></i>
 
+                </tbody>
 
-</a>
+            </table>
 
+        </div>
 
-
-<a href="{% url 'produtocombogrupoitem:listar' grupo.id %}"
-   class="btn btn-sm btn-info btn-icon"
-   title="Itens">
-
-
-<i class="fa-solid fa-list"></i>
-
-
-</a>
-
-
-
-<a href="{% url 'produtocombogrupo:excluir' grupo.id %}"
-   class="btn btn-sm btn-danger btn-icon"
-   title="Excluir"
-   onclick="return confirm('Deseja excluir este grupo?')">
-
-
-<i class="fa-solid fa-trash"></i>
-
-
-</a>
-
-
-
-</td>
-
-
-
-</tr>
-
-
-
-{% empty %}
-
-
-<tr>
-
-
-<td colspan="5" class="text-center">
-
-Nenhum grupo cadastrado.
-
-</td>
-
-
-</tr>
-
-
-
-{% endfor %}
-
-
-
-</tbody>
-
-
-</table>
+    </div>
 
 
 </div>
-
-
 
 {% endblock %}
+

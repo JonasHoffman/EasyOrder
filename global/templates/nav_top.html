@@ -1,14 +1,26 @@
 {% load static %}
 
-<ul class="nav-top">
-    {% for item in nav %}
-        <li class="nav-topic">
-            <a href="/cardapio/{{ item.url }}" >
+{% for item in nav %}
+
+    <li class="nav-topic">
+
+        {% if item.url == "cardapio" %}
+
+            <a href="/cardapio/cardapio_cliente/{{ request.user.perfil.loja.slug }}/">
                 {{ item.nome }}
             </a>
-        </li>
-    {% endfor %}
-</ul>
+
+        {% else %}
+
+            <a href="/cardapio/{{ item.url }}/">
+                {{ item.nome }}
+            </a>
+
+        {% endif %}
+
+    </li>
+
+{% endfor %}
 
 <div class="search-wrapper">
     <form action="{% url 'buscas:buscar_sugestoes' %}" method="GET" class="search-form display-flex" id="searchForm">
@@ -66,7 +78,7 @@
         class="dropdown-menu dropdown-menu-end p-3 shadow"
         aria-labelledby="carrinhoDropdown"
         data-bs-auto-close="outside"
-        style="width: 360px; max-height: 500px; overflow-y: auto;"
+        style="width: 600px; max-height: 500px; overflow-y: auto;"
     >
 
         <!-- ===================================================== -->

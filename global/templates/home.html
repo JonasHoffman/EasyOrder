@@ -1,0 +1,112 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="home-diagrama">
+
+    <img
+        src="{% static 'img/inicial.png' %}"
+        alt="Diagrama EasyOrder"
+        class="diagrama-imagem"
+    >
+
+    <!-- CARDÁPIO -->
+    <a
+        href="{% url 'categorias:listar' %}"
+        class="area-clique area-categorias"
+        title="Categorias"
+    ></a> 
+
+    <!-- PEDIDOS -->
+    <a
+        href="{% url 'pedidos:kanban' %}"
+        class="area-clique area-pedidos"
+        title="Pedidos"
+    ></a>
+
+    <a
+        href="{% url 'pedidos:kanban' %}"
+        class="area-clique area-item-pedido"
+        title="item-pedido"
+    ></a>
+
+    <a
+        href="{% url 'pedidos:kanban' %}"
+        class="area-clique area-pedidos"
+        title="Pedidos"
+    ></a>
+
+    <a
+        href="{% url 'pedidos:kanban' %}"
+        class="area-clique area-pagamento"
+        title="Pedidos"
+    ></a>
+
+    <a
+        href="{% url 'pedidos:kanban' %}"
+        class="area-clique area-pedido-status"
+        title="Pedidos"
+    ></a>
+    <a
+        href="{% url 'combos:listar' %}"
+        class="area-clique area-combos"
+        title="Pedidos"
+    ></a>
+
+    <a
+        href="{% url 'produtos:listar' %}"
+        class="area-clique area-produtos"
+        title="Pedidos"
+    ></a>
+
+    <a
+        href="{% url 'produtocombogrupo:listar' %}"
+        class="area-clique area-grupo-do-combo"
+        title="Pedidos"
+    ></a>
+
+    <a
+        href="{% url 'produtocombogrupo:itens' %}"
+        class="area-clique area-combo-itens"
+        title="Pedidos"
+    ></a>
+     <a
+        href="{% url 'produtos:listar' %}"
+        class="area-clique area-produtos-2"
+        title="Pedidos"
+    ></a>
+    <a
+        href="{% url 'promocoes:listar' %}"
+        class="area-clique area-promocao"
+        title="Pedidos"
+    ></a>
+    <a
+        href="{% url 'produtogruposabor:listar' %}"
+        class="area-clique area-grupo-de-sabores"
+        title="Pedidos"
+    ></a>
+    <a
+        href="{% url 'sabor:listar' %}"
+        class="area-clique area-sabor"
+        title="Pedidos"
+    ></a>
+    <a
+        href="{% url 'ingredientes:listar' %}"
+        class="area-clique area-ingredientes"
+        title="Pedidos"
+    ></a>
+    <a
+        href="{% url 'grupoadicional:listar' %}"
+        class="area-clique area-grupo-adicional"
+        title="Pedidos"
+    ></a>
+    <a
+        href="{% url 'item_adicional:listar' %}"
+        class="area-clique area-adicional"
+        title="Pedidos"
+    ></a>
+
+</div>
+
+{% endblock %}

@@ -1,26 +1,37 @@
 <div class="mb-5">
 
+    <div class="card shadow-sm">
 
-<div class="card shadow-sm">
+        <div class="card-body">
 
+            {% if secao.imagem %}
 
-<div class="card-body text-center">
+                <div class="banner-container">
 
+                    <img
+                        src="{{ secao.imagem.url }}"
+                        alt="Banner do cardápio"
+                        class="banner-imagem"
+                    >
 
-<h2>
-Banner
-</h2>
+                </div>
 
+            {% else %}
 
-<p>
-Área destinada aos banners do cardápio.
-</p>
+                <div class="text-center py-5">
 
+                    <h2>Banner</h2>
 
-</div>
+                    <p class="text-muted mb-0">
+                        Nenhum banner cadastrado.
+                    </p>
 
+                </div>
 
-</div>
+            {% endif %}
 
+        </div>
+
+    </div>
 
 </div>

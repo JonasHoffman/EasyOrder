@@ -1018,5 +1018,8 @@
 <!-- ========================================================= -->
 
 <script src="{% static 'javascript/personalizar.js' %}"></script>
+<script>
+    const urlCardapio = "{% url 'cardapio_cliente:cliente' loja.slug %}";
+</script>
 
 {% endblock %}

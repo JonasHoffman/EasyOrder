@@ -7,7 +7,11 @@ app_name = "saboringrediente"
 
 
 urlpatterns = [
-
+    path(
+        "",
+        views_saboringrediente.selecionar_sabor_ingredientes,
+        name="selecionar"
+    ),
     path("<int:sabor_id>/", views_saboringrediente.listar_ingredientes_sabor, name="listar"),
     path("novo/<int:sabor_id>/", views_saboringrediente.adicionar_ingrediente_sabor, name="novo"),
     path("editar/<int:id>/", views_saboringrediente.editar_ingrediente_sabor, name="editar"),

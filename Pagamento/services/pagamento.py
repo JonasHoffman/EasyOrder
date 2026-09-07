@@ -53,12 +53,7 @@ def confirmar_pagamento(pagamento):
     )
     comanda = gerar_comanda_cozinha(pedido)
 
-    print("\n")
-    print("================================")
-    print("COMANDA DA COZINHA")
-    print("================================")
-    print(comanda)
-    print("================================")
+    
     return pagamento
 
 

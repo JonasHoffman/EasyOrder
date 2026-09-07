@@ -1961,11 +1961,11 @@ function enviarDadosParaCarrinho(
         }
 
 
+        if (data.sucesso) {
         atualizarWidgetCarrinho();
 
-
-        window.location.href =
-            "/cardapio/cardapio_cliente/";
+        window.location.href = urlCardapio;
+    }
 
     })
     .catch(function (erro) {

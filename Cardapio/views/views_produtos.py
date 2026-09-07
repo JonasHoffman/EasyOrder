@@ -3,7 +3,7 @@ from django.shortcuts import (
     get_object_or_404,
     redirect,
 )
-
+from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -28,6 +28,7 @@ from Cardapio.forms.produtos_form import ProdutoForm
 def listar_produtos(request):
 
     status = request.GET.get("status", "todos")
+    busca = request.GET.get("q", "").strip()
 
     produtos = (
         Produto.objects
@@ -47,17 +48,37 @@ def listar_produtos(request):
         )
     )
 
+    # ============================
+    # BUSCA
+    # ============================
+
+    if busca:
+        produtos = produtos.filter(
+            Q(nome__icontains=busca)
+        )
+
+    # ============================
+    # STATUS
+    # ============================
+
     if status == "disponiveis":
+
         produtos = produtos.filter(
             disponivel=True
         )
 
     elif status == "indisponiveis":
+
         produtos = produtos.filter(
             disponivel=False
         )
 
+    # ============================
+    # SABORES / INGREDIENTES
+    # ============================
+
     for produto in produtos:
+
         produto.tem_ingredientes = (
             produto.ingredientes.exists()
         )
@@ -72,6 +93,7 @@ def listar_produtos(request):
         {
             "produtos": produtos,
             "status": status,
+            "busca": busca,
         }
     )
 
@@ -106,7 +128,7 @@ def novo_produto(request):
                 )
 
                 return redirect(
-                    "produtosabor:novo_produto",
+                    "produtogruposabor:listar",
                     produto.id
                 )
 
@@ -281,6 +303,7 @@ def personalizar_produto(request, slug):
         loja=request.user.perfil.loja,
         disponivel=True,
     )
+    loja = produto.loja
 
     # ============================================================
     # POST
@@ -544,6 +567,7 @@ def personalizar_produto(request, slug):
             {
                 "produto": produto,
                 "dados_produto": dados_produto,
+                "loja": loja,
             }
         )
 
@@ -632,5 +656,6 @@ def personalizar_produto(request, slug):
         {
             "produto": produto,
             "dados_combo": dados_combo,
+            "loja":loja,
         }
     )

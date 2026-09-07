@@ -1,0 +1,207 @@
+{% extends "templates/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>
+                Itens dos Grupos
+            </h2>
+
+            <small class="text-muted">
+                Visualização dos itens pertencentes a cada grupo de combo.
+            </small>
+
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'produtocombogrupo:listar' %}"
+                class="btn btn-success btn-cancel btn-padrao"
+            >
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                &nbsp;Voltar
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% for grupo in grupos %}
+
+        <div class="card shadow-sm mb-4">
+
+            <!-- CABEÇALHO DO GRUPO -->
+
+            <div class="card-header">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h5 class="mb-1">
+                            {{ grupo.nome }}
+                        </h5>
+
+                        <small class="text-muted">
+
+                            Combo:
+
+                            <strong>
+                                {{ grupo.combo.nome }}
+                            </strong>
+
+                        </small>
+
+                    </div>
+
+                    <span class="badge bg-secondary">
+
+                        {{ grupo.itens.all|length }}
+
+                        item{{ grupo.itens.all|length|pluralize }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ITENS -->
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th width="90">
+                                    Ordem
+                                </th>
+
+                                <th>
+                                    Produto
+                                </th>
+
+                                <th width="150">
+                                    Quantidade
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for item in grupo.itens.all %}
+
+                                <tr class="tr-list">
+
+                                    <td>
+                                        {{ item.ordem }}
+                                    </td>
+
+                                    <td>
+
+                                        {{ item.produto.nome }}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ item.quantidade }}
+
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="3"
+                                        class="text-center text-muted"
+                                    >
+
+                                        Nenhum item cadastrado neste grupo.
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- RODAPÉ -->
+
+            <div class="card-footer text-end">
+
+                <a
+                    href="{% url 'produtocombogrupoitem:listar' grupo.id %}"
+                    class="btn btn-sm btn-primary btn-carrinho"
+                >
+
+                    <i class="fa-solid fa-list"></i>
+
+                    Gerenciar itens
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <i class="fa-solid fa-layer-group fa-2x mb-3"></i>
+
+                <h5>
+                    Nenhum grupo cadastrado.
+                </h5>
+
+                <p class="text-muted mb-0">
+
+                    Não existem grupos de combo cadastrados
+                    para esta loja.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -26,7 +26,6 @@
 
         </div>
 
-
         <a
             href="javascript:history.back()"
             class="btn btn-secondary btn-cancel btn-padrao"
@@ -225,7 +224,9 @@
                                                         <div class="ms-2 mt-1">
 
 
+                                                            <!-- ========================= -->
                                                             <!-- PRODUTO -->
+                                                            <!-- ========================= -->
 
                                                             <div>
 
@@ -234,9 +235,7 @@
                                                                 {% if detalhe.quantidade > 1 %}
 
                                                                     <span class="text-muted">
-
                                                                         x{{ detalhe.quantidade }}
-
                                                                     </span>
 
                                                                 {% endif %}
@@ -269,27 +268,19 @@
 
                                                                             {% for sabor in personalizacao.sabores %}
 
-                                                                                <span>
+                                                                                <div class="ms-2">
 
                                                                                     {{ sabor.nome }}
 
                                                                                     {% if sabor.valor_adicional %}
 
                                                                                         <span class="text-success">
-
-                                                                                            (+ R$
-                                                                                            {{ sabor.valor_adicional|floatformat:2 }})
-
+                                                                                            (+ R$ {{ sabor.valor_adicional|floatformat:2 }})
                                                                                         </span>
 
                                                                                     {% endif %}
 
-                                                                                </span>
-
-
-                                                                                {% if not forloop.last %}
-                                                                                    ,
-                                                                                {% endif %}
+                                                                                </div>
 
                                                                             {% endfor %}
 
@@ -412,27 +403,20 @@
 
                                                 {% for sabor in item.sabores %}
 
-                                                    <span>
+                                                    <div>
 
                                                         {{ sabor.nome }}
 
                                                         {% if sabor.valor_adicional %}
 
                                                             <span class="text-success">
-
                                                                 (+ R$
                                                                 {{ sabor.valor_adicional|floatformat:2 }})
-
                                                             </span>
 
                                                         {% endif %}
 
-                                                    </span>
-
-
-                                                    {% if not forloop.last %}
-                                                        ,
-                                                    {% endif %}
+                                                    </div>
 
                                                 {% endfor %}
 
@@ -587,6 +571,7 @@
 
                         </div>
 
+
                     </div>
 
 
@@ -679,6 +664,7 @@
 
     {% endif %}
 
+
 </div>
 
 
@@ -733,9 +719,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             encodeURIComponent(chave)
                     }
                 )
+
                 .then(function (response) {
                     return response.json();
                 })
+
                 .then(function (data) {
 
 
@@ -817,9 +805,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             quantidade
                     }
                 )
+
                 .then(function (response) {
                     return response.json();
                 })
+
                 .then(function (data) {
 
 

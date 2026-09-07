@@ -623,10 +623,21 @@ class EstruturaCardapio(models.Model):
         max_length=30,
         choices=TIPOS
     )
-
+    imagem = models.ImageField(
+        upload_to="cardapio/banners/",
+        blank=True,
+        null=True
+    )
     ordem = models.PositiveIntegerField(default=0)
 
     ativo = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["ordem"]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["loja", "tipo"],
+                name="unique_estrutura_cardapio_loja_tipo"
+            )
+        ]

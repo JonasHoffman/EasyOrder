@@ -148,11 +148,10 @@ def excluir_item_grupo(request, pk):
     item = get_object_or_404(
         ProdutoComboGrupoItem.objects.select_related(
             "grupo",
-            "grupo__produto"
+            "produto"
         ),
         pk=pk,
-        grupo__produto__loja=loja,
-        grupo__produto__tipo="COMBO"
+        grupo__loja=loja
     )
 
     grupo_id = item.grupo.id

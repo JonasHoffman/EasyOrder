@@ -1,17 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect,get_object_or_404
 
 from Cardapio.models import (
     EstruturaCardapio,
     Categoria,
     Produto,
-    Promocao
+    Promocao,
 )
+from Lojas.models import Loja
 
 
-def cardapio_cliente(request):
+def cardapio_cliente(request,slug):
 
-    loja = request.user.perfil.loja
-
+    loja = get_object_or_404(
+        Loja,
+        slug=slug,
+        ativa=True
+    )
 
     secoes = EstruturaCardapio.objects.filter(
         loja=loja,
@@ -20,11 +24,12 @@ def cardapio_cliente(request):
         "ordem"
     )
 
-
     for secao in secoes:
 
+        # =========================================================
+        # CATEGORIAS
+        # =========================================================
 
-        # Categorias
         if secao.tipo == "categorias":
 
             secao.dados = Categoria.objects.filter(
@@ -36,7 +41,10 @@ def cardapio_cliente(request):
             )
 
 
-        # Promoções
+        # =========================================================
+        # PROMOÇÕES
+        # =========================================================
+
         elif secao.tipo == "promocoes":
 
             secao.dados = Promocao.objects.filter(
@@ -45,69 +53,78 @@ def cardapio_cliente(request):
                 destaque=True
             ).order_by(
                 "-data_inicio"
-            )
+            )[:9]
 
 
-        # Mais vendidos
+        # =========================================================
+        # MAIS VENDIDOS
+        # =========================================================
+
         elif secao.tipo == "mais_vendidos":
 
-            QUAL = secao.dados = Produto.objects.filter(
+            secao.dados = Produto.objects.filter(
                 loja=loja,
                 disponivel=True,
                 destaque=True
             ).order_by(
                 "ordem",
                 "nome"
-            )
-            
+            )[:9]
 
 
+        # =========================================================
+        # COMBOS
+        # =========================================================
 
-
-        # Combos
         elif secao.tipo == "combos":
 
-            combo = secao.dados = Produto.objects.filter(
+            secao.dados = Produto.objects.filter(
                 loja=loja,
                 tipo="COMBO",
                 disponivel=True
             ).order_by(
                 "ordem",
                 "nome"
-            )
-            print(combo)
+            )[:9]
 
-        # Novidades
+
+        # =========================================================
+        # NOVIDADES
+        # =========================================================
+
         elif secao.tipo == "novidades":
 
-            quel = secao.dados = Produto.objects.filter(
+            secao.dados = Produto.objects.filter(
                 loja=loja,
                 disponivel=True
             ).order_by(
                 "-created_at"
-            )[:10]
-            
+            )[:9]
 
 
-        # Recomendados
+        # =========================================================
+        # RECOMENDADOS
+        # =========================================================
+
         elif secao.tipo == "recomendados":
 
-            quil = secao.dados = Produto.objects.filter(
+            secao.dados = Produto.objects.filter(
                 loja=loja,
                 disponivel=True,
                 destaque=True
             ).order_by(
                 "ordem",
                 "nome"
-            )
-            
+            )[:9]
 
 
-        # Banner (vamos criar o model depois)
+        # =========================================================
+        # BANNER
+        # =========================================================
+
         elif secao.tipo == "banner":
 
             secao.dados = None
-
 
 
     return render(
@@ -115,5 +132,120 @@ def cardapio_cliente(request):
         "cardapiocliente/cardapiocliente.html",
         {
             "secoes": secoes
+        }
+    )
+
+
+def ver_todos(request, tipo):
+
+    loja = request.user.perfil.loja
+
+
+    # =========================================================
+    # PROMOÇÕES
+    # =========================================================
+
+    if tipo == "promocoes":
+
+        itens = Promocao.objects.filter(
+            loja=loja,
+            ativa=True,
+            destaque=True
+        ).order_by(
+            "-data_inicio"
+        )
+
+        titulo = "Promoções"
+
+
+    # =========================================================
+    # MAIS VENDIDOS
+    # =========================================================
+
+    elif tipo == "mais_vendidos":
+
+        itens = Produto.objects.filter(
+            loja=loja,
+            disponivel=True,
+            destaque=True
+        ).order_by(
+            "ordem",
+            "nome"
+        )
+
+        titulo = "Mais vendidos"
+
+
+    # =========================================================
+    # COMBOS
+    # =========================================================
+
+    elif tipo == "combos":
+
+        itens = Produto.objects.filter(
+            loja=loja,
+            tipo="COMBO",
+            disponivel=True
+        ).order_by(
+            "ordem",
+            "nome"
+        )
+
+        titulo = "Combos"
+
+
+    # =========================================================
+    # NOVIDADES
+    # =========================================================
+
+    elif tipo == "novidades":
+
+        itens = Produto.objects.filter(
+            loja=loja,
+            disponivel=True
+        ).order_by(
+            "-created_at"
+        )
+
+        titulo = "Novidades"
+
+
+    # =========================================================
+    # RECOMENDADOS
+    # =========================================================
+
+    elif tipo == "recomendados":
+
+        itens = Produto.objects.filter(
+            loja=loja,
+            disponivel=True,
+            destaque=True
+        ).order_by(
+            "ordem",
+            "nome"
+        )
+
+        titulo = "Recomendados"
+
+
+    # =========================================================
+    # TIPO INVÁLIDO
+    # =========================================================
+
+    else:
+
+        return redirect(
+            "cardapio_cliente:cliente"
+        )
+
+
+    return render(
+        request,
+        "cardapiocliente/vertodos.html",
+        {
+            "tipo": tipo,
+            "titulo": titulo,
+            "itens": itens,
+            "loja": loja,
         }
     )

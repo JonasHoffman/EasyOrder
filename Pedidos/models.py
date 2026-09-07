@@ -51,6 +51,9 @@ class PedidoStatus(models.Model):
     cancelamento = models.BooleanField(
         default=False
     )
+    sistema = models.BooleanField(
+        default=False
+    )
 
     criado_em = models.DateTimeField(
         auto_now_add=True

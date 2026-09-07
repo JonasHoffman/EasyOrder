@@ -1,0 +1,209 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Ingredientes por Sabor</h2>
+
+            <small>
+                Total de sabores:
+                <strong>{{ sabores|length }}</strong>
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-5">
+
+                    <label for="busca" class="form-label">
+                        Buscar
+                    </label>
+
+                    <input
+                        type="text"
+                        id="busca"
+                        name="busca"
+                        class="form-control"
+                        placeholder="Nome do sabor"
+                        value="{{ busca }}">
+
+                </div>
+
+
+                <div class="col-md-auto">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Buscar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th width="70">
+                            Imagem
+                        </th>
+
+                        <th>
+                            Nome
+                        </th>
+
+                        <th>
+                            Grupo
+                        </th>
+
+                        <th width="120">
+                            Status
+                        </th>
+
+                        <th width="120">
+                            Ações
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for sabor in sabores %}
+
+                        <tr class="tr-list">
+
+
+                            <td>
+
+                                {% if sabor.imagem %}
+
+                                    <img
+                                        src="{{ sabor.imagem.url }}"
+                                        width="50"
+                                        height="50"
+                                        class="rounded object-fit-cover">
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ sabor.nome }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ sabor.grupo.nome }}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if sabor.ativo %}
+
+                                    <span class="badge bg-success">
+                                        Ativo
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Inativo
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="div-flex height-full tr-list">
+
+                                <a
+                                    href="{% url 'saboringrediente:listar' sabor.id %}"
+                                    class="btn btn-sm btn-info btn-icon"
+                                    title="Editar ingredientes">
+
+                                    <i class="fa-solid fa-list-check"></i>
+
+                                </a>
+
+                            </td>
+
+
+                        </tr>
+
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="text-center">
+
+                                Nenhum sabor encontrado.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

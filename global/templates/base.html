@@ -8,7 +8,29 @@
     <div class="content">
         <div class="content-all">
           <div class="nav-content">
-                <img src="" alt="nada">
+                <div class="navbar-logo-container">
+
+                    <a href="{% url 'interface:home' %}">
+
+                        {% if request.user.perfil.loja.logo %}
+
+                            <img 
+                                src="{{ request.user.perfil.loja.logo.url }}" 
+                                alt="{{ request.user.perfil.loja.nome }}"
+                                class="navbar-logo"
+                            >
+
+                        {% else %}
+
+                            <span class="navbar-logo">
+                                {{ request.user.perfil.loja.nome }}
+                            </span>
+
+                        {% endif %}
+
+                    </a>
+
+                </div>
                 {% include "templates/nav_left.html" %}
             </div> 
             <div class="content-content">

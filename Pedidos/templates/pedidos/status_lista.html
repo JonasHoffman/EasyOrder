@@ -1,0 +1,411 @@
+{% extends "templates/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/status_kanban.css' %}"
+>
+
+
+<div class="status-config-page">
+
+
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
+
+    <div class="status-config-header">
+
+        <div>
+
+            <div class="status-config-title">
+
+                <div class="status-config-icon">
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        Configuração do Kanban
+                    </h2>
+
+                    <p>
+                        Personalize as etapas utilizadas
+                        para controlar seus pedidos.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{% url 'pedidos:status_criar' %}"
+            class="status-btn status-btn-primary"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+
+            Novo status
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         MENSAGENS
+         ===================================================== -->
+
+    {% if messages %}
+
+        <div class="status-messages">
+
+            {% for message in messages %}
+
+                <div class="status-message {{ message.tags }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         EXPLICAÇÃO
+         ===================================================== -->
+
+    <div class="status-info-box">
+
+        <i class="fa-solid fa-circle-info"></i>
+
+        <div>
+
+            <strong>
+                Status do sistema
+            </strong>
+
+            <p>
+                Alguns status são necessários para o funcionamento
+                do EasyOrder. Eles podem ter o nome alterado,
+                mas suas funções principais são protegidas.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LISTA
+         ===================================================== -->
+
+    <div class="status-list">
+
+
+        {% for item in status %}
+
+
+            <div class="status-card">
+
+
+                <!-- =========================================
+                     CABEÇALHO
+                     ========================================= -->
+
+                <div class="status-card-header">
+
+
+                    <div class="status-card-name">
+
+
+                        <span class="status-drag">
+
+                            <i class="fa-solid fa-grip-vertical"></i>
+
+                        </span>
+
+
+                        <div>
+
+                            <h3>
+                                {{ item.nome }}
+                            </h3>
+
+
+                            {% if item.sistema %}
+
+                                <span class="status-system-badge">
+
+                                    <i class="fa-solid fa-shield-halved"></i>
+
+                                    Status do sistema
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-custom-badge">
+
+                                    Personalizado
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="status-card-actions">
+
+
+                        <a
+                            href="{% url 'pedidos:status_editar' item.id %}"
+                            class="status-action-edit"
+                        >
+
+                            <i class="fa-solid fa-pen"></i>
+
+                            Editar
+
+                        </a>
+
+
+                        {% if not item.sistema and not item.total_pedidos %}
+
+                            <form
+                                method="post"
+                                action="{% url 'pedidos:status_excluir' item.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="status-action-delete"
+                                    onclick="return confirm('Deseja realmente excluir este status?')"
+                                >
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                    Excluir
+
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =========================================
+                     INFORMAÇÕES
+                     ========================================= -->
+
+                <div class="status-card-content">
+
+
+                    <div class="status-property">
+
+
+                        <span class="status-property-label">
+
+                            Situação
+
+                        </span>
+
+
+                        {% if item.ativo %}
+
+                            <span class="status-pill active">
+
+                                <span></span>
+
+                                Ativo
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-pill inactive">
+
+                                <span></span>
+
+                                Inativo
+
+                            </span>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <div class="status-property">
+
+
+                        <span class="status-property-label">
+
+                            Kanban
+
+                        </span>
+
+
+                        {% if item.aparece_kanban %}
+
+                            <span class="status-pill active">
+
+                                <span></span>
+
+                                Aparece no Kanban
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-pill neutral">
+
+                                Não aparece
+
+                            </span>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    {% if item.finalizador %}
+
+                        <div class="status-property">
+
+                            <span class="status-property-label">
+
+                                Função
+
+                            </span>
+
+                            <span class="status-function finalizador">
+
+                                <i class="fa-solid fa-flag-checkered"></i>
+
+                                Finalizador
+
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if item.cancelamento %}
+
+                        <div class="status-property">
+
+                            <span class="status-property-label">
+
+                                Função
+
+                            </span>
+
+                            <span class="status-function cancelamento">
+
+                                <i class="fa-solid fa-ban"></i>
+
+                                Cancelamento
+
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="status-property">
+
+                        <span class="status-property-label">
+
+                            Pedidos
+
+                        </span>
+
+                        <strong class="status-total">
+
+                            {{ item.total_pedidos }}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="status-property">
+
+                        <span class="status-property-label">
+
+                            Ordem
+
+                        </span>
+
+                        <strong class="status-order">
+
+                            {{ item.ordem }}
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        {% empty %}
+
+
+            <div class="status-empty">
+
+                <i class="fa-solid fa-layer-group"></i>
+
+                <h3>
+                    Nenhum status configurado
+                </h3>
+
+                <p>
+                    Crie o primeiro status para começar
+                    a configurar seu fluxo de pedidos.
+                </p>
+
+            </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

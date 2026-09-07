@@ -13,15 +13,10 @@ from django.shortcuts import (
 from Pagamento.services.impressao import (
     gerar_etiqueta_expedicao,
 )
-
-from Cardapio.models import (
-    Produto,
-    Sabor,
-    ProdutoComboGrupo,
-)
-
+from django.db.models import Count
+from Pedidos.forms import PedidoStatusForm
+from Pedidos.models import PedidoStatus
 from Cardapio.carrinho import Cart
-
 from Pedidos.models import (
     Pedido,
     PedidoItem,
@@ -31,24 +26,22 @@ from Pedidos.models import (
     PedidoItemCombo,
     PedidoStatus,
     PedidoStatusHistorico,
+    Produto,
+    Sabor,
+    ProdutoComboGrupo
 )
+from django.conf import settings
 
 from Pagamento.models import Pagamento
 
 
 def finalizar_pedido(request):
 
-    print("\n")
-    print("=" * 80)
-    print("INICIO FINALIZAR PEDIDO")
-    print("=" * 80)
+    
 
     cart = Cart(request)
 
-    print("METHOD:", request.method)
-    print("CARRINHO:", cart.carrinho)
-    print("TOTAL CARRINHO:", cart.get_total())
-    print("QUANTIDADE ITENS:", len(cart))
+    
 
     # ==============================
     # CARRINHO VAZIO
@@ -75,8 +68,7 @@ def finalizar_pedido(request):
 
     except Exception as erro:
 
-        print("ERRO AO OBTER LOJA:", repr(erro))
-
+        
         raise
 
     # ==============================
@@ -447,10 +439,7 @@ def finalizar_pedido(request):
                 total=total,
             )
 
-            print(
-                "PEDIDO CRIADO:",
-                pedido.id
-            )
+            
 
             # ==============================
             # HISTÓRICO
@@ -540,54 +529,38 @@ def finalizar_pedido(request):
                 # SABORES
                 # ==============================
 
-                sabores_ids = item.get(
+                # ==============================
+                # SABORES
+                # ==============================
+
+                sabores = item.get(
                     "sabores",
                     []
                 )
 
-                if sabores_ids:
+                for ordem_sabor, sabor in enumerate(
+                    sabores,
+                    start=1
+                ):
 
-                    sabores = (
-                        Sabor.objects.filter(
-                            id__in=sabores_ids
-                        )
+                    if not isinstance(sabor, Sabor):
+                        continue
+
+                    PedidoItemSabor.objects.create(
+
+                        item=pedido_item,
+
+                        sabor=sabor,
+
+                        nome_sabor=sabor.nome,
+
+                        valor_adicional=(
+                            sabor.valor_adicional
+                            or Decimal("0.00")
+                        ),
+
+                        ordem=ordem_sabor,
                     )
-
-                    sabores_dict = {
-                        sabor.id: sabor
-                        for sabor in sabores
-                    }
-
-                    for ordem_sabor, sabor_id in enumerate(
-                        sabores_ids,
-                        start=1
-                    ):
-
-                        sabor = (
-                            sabores_dict.get(
-                                int(sabor_id)
-                            )
-                        )
-
-                        if not sabor:
-                            continue
-
-                        PedidoItemSabor.objects.create(
-
-                            item=pedido_item,
-
-                            sabor=sabor,
-
-                            nome_sabor=sabor.nome,
-
-                            valor_adicional=(
-                                sabor.valor_adicional
-                                or Decimal("0.00")
-                            ),
-
-                            ordem=ordem_sabor,
-                        )
-
                 # ==============================
                 # INGREDIENTES
                 # ==============================
@@ -668,78 +641,99 @@ def finalizar_pedido(request):
 
                     ordem_combo = 1
 
-                    for grupo_id, produtos_ids in combo.items():
+                    itens_combo = combo.get(
+                        "itens",
+                        {}
+                    )
+
+                    for item_combo_id, quantidade_combo in itens_combo.items():
 
                         try:
 
-                            grupo = (
-                                ProdutoComboGrupo.objects.get(
-                                    id=grupo_id
+                            item_combo_id = int(
+                                item_combo_id
+                            )
+
+                            quantidade_combo = Decimal(
+                                str(
+                                    quantidade_combo
                                 )
                             )
 
                         except (
-                            ProdutoComboGrupo.DoesNotExist
+                            TypeError,
+                            ValueError
                         ):
 
                             continue
 
-                        for produto_id in produtos_ids:
+                        try:
 
-                            try:
-
-                                produto_combo = (
-                                    Produto.objects.get(
-                                        id=produto_id
-                                    )
+                            item_combo = (
+                                ProdutoComboGrupo.objects
+                                .get(
+                                    itens__id=item_combo_id
                                 )
+                                .itens
+                                .get(
+                                    id=item_combo_id
+                                )
+                            )
 
-                            except (
-                                Produto.DoesNotExist
-                            ):
+                        except (
+                            ProdutoComboGrupo.DoesNotExist,
+                            Produto.DoesNotExist,
+                            TypeError,
+                            ValueError
+                        ):
 
-                                continue
+                            continue
+
+                        grupo = (
+                            ProdutoComboGrupo.objects
+                            .get(
+                                itens__id=item_combo_id
+                            )
+                        )
+
+                        produto_combo = item_combo.produto
+
+                        if quantidade_combo <= 0:
 
                             quantidade_combo = Decimal(
                                 "1.00"
                             )
 
-                            preco_combo = (
-                                produto_combo.preco
-                                or Decimal("0.00")
-                            )
+                        preco_combo = (
+                            produto_combo.preco
+                            or Decimal("0.00")
+                        )
 
-                            PedidoItemCombo.objects.create(
+                        PedidoItemCombo.objects.create(
 
-                                item=pedido_item,
+                            item=pedido_item,
 
-                                grupo=grupo,
+                            grupo=grupo,
 
-                                produto=produto_combo,
+                            produto=produto_combo,
 
-                                nome_grupo=grupo.nome,
+                            nome_grupo=grupo.nome,
 
-                                nome_produto=(
-                                    produto_combo.nome
-                                ),
+                            nome_produto=produto_combo.nome,
 
-                                quantidade=(
-                                    quantidade_combo
-                                ),
+                            quantidade=quantidade_combo,
 
-                                preco_unitario=(
-                                    preco_combo
-                                ),
+                            preco_unitario=preco_combo,
 
-                                subtotal=(
-                                    preco_combo
-                                    * quantidade_combo
-                                ),
+                            subtotal=(
+                                preco_combo
+                                * quantidade_combo
+                            ),
 
-                                ordem=ordem_combo,
-                            )
+                            ordem=ordem_combo,
+                        )
 
-                            ordem_combo += 1
+                        ordem_combo += 1
 
             # ==============================
             # PAGAMENTO
@@ -758,11 +752,9 @@ def finalizar_pedido(request):
                 valor=pedido.total,
 
             )
+            
 
-            print(
-                "PAGAMENTO CRIADO:",
-                pagamento.id
-            )
+            
 
             # ==============================
             # LIMPAR CARRINHO
@@ -770,14 +762,23 @@ def finalizar_pedido(request):
 
             cart.limpar()
 
+            if settings.PAGAMENTO_DEMO:
+                from Pagamento.services.pagamento import confirmar_pagamento
+
+                confirmar_pagamento(pagamento)
+
+                cart.limpar()
+
+                return redirect(
+                    "pedidos:pedido_sucesso",
+                    pedido_id=pedido.id
+                )
+
         # ==================================================
         # TRANSACTION FINALIZADA
         # ==================================================
 
-        print(
-            "PEDIDO CRIADO COM SUCESSO:",
-            pedido.id
-        )
+        
 
         # ==================================================
         # PIX
@@ -822,23 +823,7 @@ def finalizar_pedido(request):
 
     except Exception as erro:
 
-        print("\n")
-        print("=" * 80)
-        print("ERRO AO FINALIZAR PEDIDO")
-        print("=" * 80)
-
-        print(
-            "TIPO:",
-            type(erro).__name__
-        )
-
-        print(
-            "ERRO:",
-            repr(erro)
-        )
-
-        print("=" * 80)
-
+        
         raise
 
 
@@ -859,7 +844,8 @@ def pedido_sucesso(
         request,
         "pedidos/pedido_sucesso.html",
         {
-            "pedido": pedido
+            "pedido": pedido,
+            "loja":loja
         }
     )
 
@@ -868,6 +854,10 @@ def pedido_sucesso(
 def kanban_pedidos(request):
 
     loja = request.user.perfil.loja
+
+    # =========================================================
+    # STATUS QUE APARECEM NO KANBAN
+    # =========================================================
 
     status = (
         PedidoStatus.objects
@@ -878,6 +868,10 @@ def kanban_pedidos(request):
         )
         .order_by("ordem")
     )
+
+    # =========================================================
+    # PEDIDOS DA LOJA
+    # =========================================================
 
     pedidos = (
         Pedido.objects
@@ -891,6 +885,10 @@ def kanban_pedidos(request):
             "-id"
         )
     )
+
+    # =========================================================
+    # MONTAR COLUNAS
+    # =========================================================
 
     colunas = []
 
@@ -926,16 +924,32 @@ def kanban_pedidos(request):
 
     # =========================================================
     # STATUS DE FINALIZAÇÃO
+    #
+    # IMPORTANTE:
+    # Usa o código e não o nome.
+    #
+    # Assim o usuário pode alterar:
+    #
+    # Entregue
+    # Finalizados
+    # Concluídos
+    #
+    # sem quebrar a lógica do sistema.
     # =========================================================
 
     status_entregue = (
         PedidoStatus.objects
         .filter(
             loja=loja,
-            nome__iexact="ENTREGUE"
+            codigo="entregue",
+            ativo=True
         )
         .first()
     )
+
+    # =========================================================
+    # CONTEXTO
+    # =========================================================
 
     return render(
         request,
@@ -949,6 +963,7 @@ def kanban_pedidos(request):
 
 
 @require_POST
+@login_required
 def alterar_status(request):
 
     pedido_id = request.POST.get(
@@ -959,20 +974,11 @@ def alterar_status(request):
         "status_id"
     )
 
-    print("\n")
-    print("=" * 80)
-    print("ALTERANDO STATUS DO PEDIDO")
-    print("=" * 80)
+    
 
-    print(
-        "PEDIDO ID:",
-        pedido_id
-    )
-
-    print(
-        "STATUS ID:",
-        status_id
-    )
+    # =========================================================
+    # VALIDAÇÕES
+    # =========================================================
 
     if not pedido_id:
 
@@ -994,9 +1000,9 @@ def alterar_status(request):
             status=400
         )
 
-    # ==============================
+    # =========================================================
     # LOJA
-    # ==============================
+    # =========================================================
 
     try:
 
@@ -1004,10 +1010,7 @@ def alterar_status(request):
 
     except Exception as erro:
 
-        print(
-            "ERRO AO OBTER LOJA:",
-            repr(erro)
-        )
+        
 
         return JsonResponse(
             {
@@ -1017,9 +1020,9 @@ def alterar_status(request):
             status=400
         )
 
-    # ==============================
+    # =========================================================
     # PEDIDO
-    # ==============================
+    # =========================================================
 
     pedido = get_object_or_404(
         Pedido,
@@ -1027,9 +1030,9 @@ def alterar_status(request):
         loja=loja
     )
 
-    # ==============================
+    # =========================================================
     # NOVO STATUS
-    # ==============================
+    # =========================================================
 
     novo_status = get_object_or_404(
         PedidoStatus,
@@ -1038,24 +1041,47 @@ def alterar_status(request):
         ativo=True
     )
 
-    # ==============================
+    # =========================================================
     # MESMO STATUS
-    # ==============================
+    # =========================================================
 
     if pedido.status_id == novo_status.id:
 
         return JsonResponse(
             {
                 "sucesso": True,
-                "mensagem": "Pedido já está neste status."
+
+                "mensagem": (
+                    "Pedido já está neste status."
+                ),
+
+                "pedido_id": pedido.id,
+
+                "status_id": novo_status.id,
+
+                "status_nome": novo_status.nome,
+
+                "finalizador": novo_status.finalizador,
             }
         )
 
+    # =========================================================
+    # STATUS ANTERIOR
+    # =========================================================
+
     status_anterior = pedido.status
 
-    # ==============================
-    # ATUALIZA PEDIDO
-    # ==============================
+    # =========================================================
+    # VERIFICAR SE É FINALIZADOR
+    # =========================================================
+
+    finalizando = novo_status.finalizador
+
+    
+
+    # =========================================================
+    # ATUALIZAR PEDIDO
+    # =========================================================
 
     pedido.status = novo_status
 
@@ -1065,9 +1091,9 @@ def alterar_status(request):
         ]
     )
 
-    # ==============================
+    # =========================================================
     # HISTÓRICO
-    # ==============================
+    # =========================================================
 
     PedidoStatusHistorico.objects.create(
 
@@ -1083,22 +1109,28 @@ def alterar_status(request):
             else None
         ),
 
-        observacao="Status alterado pelo Kanban."
-
+        observacao=(
+            "Pedido finalizado."
+            if finalizando
+            else "Status alterado pelo Kanban."
+        )
     )
+
+    # =========================================================
+    # ETIQUETA
+    # =========================================================
+
     if novo_status.codigo == "pronto":
 
         etiqueta = gerar_etiqueta_expedicao(
             pedido
         )
 
-        print("\n")
-        print("=" * 80)
-        print("ETIQUETA DE EXPEDIÇÃO")
-        print("=" * 80)
-        print(etiqueta)
-        print("=" * 80)
+        
 
+    # =========================================================
+    # RESPOSTA
+    # =========================================================
 
     return JsonResponse(
         {
@@ -1108,7 +1140,288 @@ def alterar_status(request):
 
             "status_id": novo_status.id,
 
-            "status_nome": novo_status.nome
+            "status_nome": novo_status.nome,
+
+            "finalizador": finalizando,
         }
     )
 
+
+
+
+
+
+@login_required
+def status_lista(request):
+
+    loja = request.user.perfil.loja
+
+    status = (
+        PedidoStatus.objects
+        .filter(loja=loja)
+        .annotate(
+            total_pedidos=Count("pedidos")
+        )
+        .order_by("ordem", "nome")
+    )
+
+    return render(
+        request,
+        "Pedidos/status_lista.html",
+        {
+            "status": status,
+        }
+    )
+
+
+@login_required
+def status_criar(request):
+
+    loja = request.user.perfil.loja
+
+    if request.method == "POST":
+
+        form = PedidoStatusForm(
+            request.POST,
+            loja=loja
+        )
+
+        if form.is_valid():
+
+            status = form.save(
+                commit=False
+            )
+
+            status.loja = loja
+
+            # Status criado pelo usuário
+            status.sistema = False
+
+            # Gera código automaticamente
+            # somente na criação.
+            status.codigo = (
+                status.nome
+                .strip()
+                .lower()
+                .replace(" ", "-")
+            )
+
+            # -------------------------------------------------
+            # Evitar código duplicado
+            # -------------------------------------------------
+
+            codigo_base = status.codigo
+            codigo = codigo_base
+            contador = 2
+
+            while PedidoStatus.objects.filter(
+                loja=loja,
+                codigo=codigo
+            ).exists():
+
+                codigo = (
+                    f"{codigo_base}-{contador}"
+                )
+
+                contador += 1
+
+            status.codigo = codigo
+
+            status.save()
+
+            messages.success(
+                request,
+                "Status criado com sucesso."
+            )
+
+            return redirect(
+                "pedidos:status_lista"
+            )
+
+    else:
+
+        form = PedidoStatusForm(
+            loja=loja
+        )
+
+    return render(
+        request,
+        "Pedidos/status_form.html",
+        {
+            "form": form,
+            "titulo": "Novo status",
+        }
+    )
+
+def aplicar_regras_status_sistema(status):
+    """
+    Garante que os status padrão do sistema
+    mantenham suas regras obrigatórias.
+    """
+
+    if not status.sistema:
+        return
+
+    regras = {
+
+        "recebido": {
+            "ativo": True,
+            "aparece_kanban": True,
+            "finalizador": False,
+            "cancelamento": False,
+        },
+
+        "em-preparo": {
+            "ativo": True,
+            "aparece_kanban": True,
+            "finalizador": False,
+            "cancelamento": False,
+        },
+
+        "pronto": {
+            "ativo": True,
+            "aparece_kanban": True,
+            "finalizador": False,
+            "cancelamento": False,
+        },
+
+        "entregue": {
+        "ativo": True,
+        "finalizador": True,
+        "cancelamento": False,
+    },
+
+        "cancelado": {
+            "ativo": True,
+            "aparece_kanban": False,
+            "finalizador": False,
+            "cancelamento": True,
+        },
+    }
+
+    regra = regras.get(status.codigo)
+
+    if not regra:
+        return
+
+    for campo, valor in regra.items():
+        setattr(status, campo, valor)
+
+@login_required
+def status_editar(request, pk):
+
+    loja = request.user.perfil.loja
+
+    status = get_object_or_404(
+        PedidoStatus,
+        pk=pk,
+        loja=loja
+    )
+
+    if request.method == "POST":
+
+        form = PedidoStatusForm(
+            request.POST,
+            instance=status,
+            loja=loja
+        )
+
+        if form.is_valid():
+
+            status = form.save(
+                commit=False
+            )
+
+            # =================================================
+            # GARANTIR REGRAS DO SISTEMA
+            # =================================================
+
+            aplicar_regras_status_sistema(
+                status
+            )
+
+            status.save()
+
+            messages.success(
+                request,
+                "Status atualizado com sucesso."
+            )
+
+            return redirect(
+                "pedidos:status_lista"
+            )
+
+    else:
+
+        form = PedidoStatusForm(
+            instance=status,
+            loja=loja
+        )
+
+    return render(
+        request,
+        "Pedidos/status_form.html",
+        {
+            "form": form,
+            "status": status,
+            "titulo": "Editar status",
+        }
+    )
+
+@login_required
+def status_excluir(request, pk):
+
+    loja = request.user.perfil.loja
+
+    status = get_object_or_404(
+        PedidoStatus,
+        pk=pk,
+        loja=loja
+    )
+
+    # =========================================================
+    # STATUS DO SISTEMA
+    # =========================================================
+
+    if status.sistema:
+
+        messages.error(
+            request,
+            "Este status faz parte do sistema e não pode ser excluído."
+        )
+
+        return redirect(
+            "pedidos:status_lista"
+        )
+
+    # =========================================================
+    # STATUS COM PEDIDOS
+    # =========================================================
+
+    if status.pedidos.exists():
+
+        messages.error(
+            request,
+            "Este status possui pedidos vinculados e não pode ser excluído."
+        )
+
+        return redirect(
+            "pedidos:status_lista"
+        )
+
+    # =========================================================
+    # EXCLUSÃO
+    # =========================================================
+
+    if request.method == "POST":
+
+        status.delete()
+
+        messages.success(
+            request,
+            "Status excluído com sucesso."
+        )
+
+    return redirect(
+        "pedidos:status_lista"
+    )

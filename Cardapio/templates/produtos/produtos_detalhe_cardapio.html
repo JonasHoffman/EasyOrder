@@ -174,7 +174,7 @@
 
                             <a
                                 href="{% url 'produtos:personalizar_produto' produto.slug %}"
-                                class="btn btn-primary btn-lg w-100"
+                                class="btn btn-primary btn-lg w-100 btn-carrinho"
                             >
 
                                 Adicionar ao carrinho
@@ -196,125 +196,135 @@
 
 
     <!-- ===================================================== -->
-    <!-- RELACIONADOS -->
-    <!-- ===================================================== -->
+<!-- RELACIONADOS -->
+<!-- ===================================================== -->
 
-    {% if relacionados %}
+{% if relacionados %}
 
-        <div class="mt-5">
+    <div class="mt-5">
 
-            <!-- CABEÇALHO -->
+        <!-- CABEÇALHO -->
 
-            <div class="mb-4">
+        <div class="mb-4">
 
-                <h3 class="mb-1">
+            <h3 class="mb-1">
+                Você também pode gostar
+            </h3>
 
-                    Você também pode gostar
+            <p class="text-muted">
+                Confira outros produtos.
+            </p>
 
-                </h3>
-
-
-                <p class="text-muted">
-
-                    Confira outros produtos.
-
-                </p>
-
-            </div>
+        </div>
 
 
-            <!-- PRODUTOS -->
+        <!-- PRODUTOS -->
 
-            <div class="row g-3">
+        <div class="row g-3">
 
-                {% for item in relacionados %}
+            {% for item in relacionados %}
 
-                    <div class="col-6 col-md-3">
+                <div class="col-6 col-md-3">
 
-                        <a
-                            href="{% url 'produtos:produto_detalhe' item.slug %}"
+                    <a
+                        href="{% url 'produtos:produto_detalhe' item.slug %}"
+                        class="text-decoration-none text-dark"
+                    >
+
+                        <div
                             class="
-                                text-decoration-none
-                                text-dark
+                                card
+                                h-100
+                                shadow-sm
+                                border-0
                             "
                         >
 
-                            <div
-                                class="
-                                    card
-                                    h-100
-                                    shadow-sm
-                                    border-0
-                                "
-                            >
+                            <!-- IMAGEM -->
 
-                                <!-- IMAGEM -->
+                            {% if item.imagem %}
 
-                                {% if item.imagem %}
+                                <img
+                                    src="{{ item.imagem.url }}"
+                                    alt="{{ item.nome }}"
+                                    class="card-img-top"
+                                    style="
+                                        height: 180px;
+                                        object-fit: cover;
+                                    "
+                                >
 
-                                    <img
-                                        src="{{ item.imagem.url }}"
-                                        alt="{{ item.nome }}"
-                                        class="card-img-top"
-                                        style="
-                                            height: 180px;
-                                            object-fit: cover;
+                            {% else %}
+
+                                <div
+                                    class="
+                                        card-img-top
+                                        bg-light
+                                        d-flex
+                                        align-items-center
+                                        justify-content-center
+                                        text-muted
+                                    "
+                                    style="
+                                        height: 180px;
+                                    "
+                                >
+
+                                    Sem imagem
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- INFORMAÇÕES -->
+
+                            <div class="card-body">
+
+                                <h6 class="mb-2">
+                                    {{ item.nome }}
+                                </h6>
+
+
+                                {% if item.descricao %}
+
+                                    <p
+                                        class="
+                                            text-muted
+                                            small
+                                            mb-2
                                         "
                                     >
+
+                                        {{ item.descricao|truncatechars:70 }}
+
+                                    </p>
 
                                 {% endif %}
 
 
-                                <!-- INFORMAÇÕES -->
+                                <strong class="text-success">
 
-                                <div class="card-body">
+                                    R$
+                                    {{ item.preco|floatformat:2 }}
 
-                                    <h6 class="mb-2">
-
-                                        {{ item.nome }}
-
-                                    </h6>
-
-
-                                    {% if item.descricao %}
-
-                                        <p
-                                            class="
-                                                text-muted
-                                                small
-                                                mb-2
-                                            "
-                                        >
-
-                                            {{ item.descricao|truncatechars:70 }}
-
-                                        </p>
-
-                                    {% endif %}
-
-
-                                    <strong class="text-success">
-
-                                        R$
-                                        {{ item.preco|floatformat:2 }}
-
-                                    </strong>
-
-                                </div>
+                                </strong>
 
                             </div>
 
-                        </a>
+                        </div>
 
-                    </div>
+                    </a>
 
-                {% endfor %}
+                </div>
 
-            </div>
+            {% endfor %}
 
         </div>
 
-    {% endif %}
+    </div>
+
+{% endif %}
 
 </div>
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from Interface.models import MenuItem,NavTop,SubMenuItem
+from Interface.models import MenuItem,NavTop,SubMenuItem,SubSubMenuItem
 from django import forms
 # Register your models here.
 ICONES = [
@@ -36,4 +36,8 @@ class NavTopAdmin(admin.ModelAdmin):
 
 @admin.register(SubMenuItem)
 class SubMenuAdmin(admin.ModelAdmin):
+    ...
+
+@admin.register(SubSubMenuItem)
+class SubSubMenuAdmin(admin.ModelAdmin):
     ...

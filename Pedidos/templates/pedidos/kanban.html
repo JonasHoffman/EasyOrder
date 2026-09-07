@@ -1,407 +1,668 @@
-```html
 {% extends "templates/base.html" %}
 {% load static %}
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-
-    <div>
-
-        <h2 class="mb-1">
-            Pedidos
-        </h2>
-
-        <span class="text-muted">
-            Acompanhe os pedidos da loja
-        </span>
-
-    </div>
-
-</div>
+<link rel="stylesheet" href="{% static 'css/kanban.css' %}">
 
 
-<div
-    class="kanban-container"
-    style="
-        display: flex;
-        gap: 20px;
-        overflow-x: auto;
-        align-items: flex-start;
-        padding-bottom: 20px;
-    "
->
 
-{% for coluna in colunas %}
-
-    <div
-        class="kanban-coluna"
-        data-status-id="{{ coluna.status.id }}"
-        style="
-            min-width: 300px;
-            width: 300px;
-            background: #f5f5f5;
-            border-radius: 10px;
-            padding: 15px;
-        "
-    >
-
-        <!-- CABEÇALHO -->
-
-        <div
-            class="d-flex justify-content-between align-items-center mb-3"
-        >
-
-            <h5 class="mb-0">
-
-                {{ coluna.status.nome }}
-
-            </h5>
+<div class="kanban-page">
 
 
-            <span class="badge bg-secondary kanban-count">
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
 
-                {{ coluna.pedidos|length }}
+    <div class="kanban-header">
 
-            </span>
+        <div>
+
+            <div class="kanban-title">
+
+                <span class="kanban-title-icon">
+                    <i class="fa-solid fa-list-check"></i>
+                </span>
+
+                <div>
+
+                    <h2>
+                        Pedidos
+                    </h2>
+
+                    <span>
+                        Acompanhe os pedidos da loja
+                    </span>
+
+                </div>
+
+            </div>
 
         </div>
 
+    </div>
 
-        <!-- ÁREA DOS PEDIDOS -->
 
-        <div
-            class="kanban-dropzone"
-            data-status-id="{{ coluna.status.id }}"
-        >
+    <!-- =====================================================
+         KANBAN
+         ===================================================== -->
 
-            {% for pedido in coluna.pedidos %}
+    <div class="kanban-container">
+
+
+        {% for coluna in colunas %}
+
+
+            <!-- =================================================
+                 COLUNA
+                 ================================================= -->
+
+            <div
+                class="kanban-coluna"
+                data-status-id="{{ coluna.status.id }}"
+            >
+
+
+                <!-- =============================================
+                     CABEÇALHO DA COLUNA
+                     ============================================= -->
+
+                <div class="kanban-coluna-header">
+
+
+                    <div class="kanban-status">
+
+                        <span class="kanban-status-dot"></span>
+
+                        <h5>
+                            {{ coluna.status.nome }}
+                        </h5>
+
+                    </div>
+
+
+                    <span class="kanban-count">
+
+                        {{ coluna.pedidos|length }}
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- =============================================
+                     ÁREA DOS PEDIDOS
+                     ============================================= -->
 
                 <div
-                    class="card shadow-sm border-0 mb-3 kanban-card"
-                    draggable="true"
-                    data-pedido-id="{{ pedido.id }}"
+                    class="kanban-dropzone"
+                    data-status-id="{{ coluna.status.id }}"
                 >
 
-                    <div class="card-body">
 
-                        <!-- CABEÇALHO -->
-
-                        <div
-                            class="d-flex justify-content-between align-items-center mb-2"
-                        >
-
-                            <strong>
-                                #{{ pedido.numero }}
-                            </strong>
-
-                            <small class="text-muted">
-
-                                {{ pedido.criado_em|date:"H:i" }}
-
-                            </small>
-
-                        </div>
+                    {% for pedido in coluna.pedidos %}
 
 
-                        <!-- CLIENTE -->
-
-                        <div class="mb-2">
-
-                            <strong>
-                                {{ pedido.nome_cliente }}
-                            </strong>
-
-                        </div>
-
-
-                        <!-- TIPO -->
-
-                        <div class="small text-muted mb-2">
-
-                            {{ pedido.get_tipo_entrega_display }}
-
-                        </div>
-
-
-                        <hr>
-
-
-                        <!-- TOTAL -->
+                        <!-- =====================================
+                             CARD
+                             ===================================== -->
 
                         <div
-                            class="d-flex justify-content-between align-items-center"
+                            class="kanban-card"
+                            draggable="true"
+                            data-pedido-id="{{ pedido.id }}"
                         >
 
-                            <span class="text-muted">
-                                Total
-                            </span>
 
-                            <strong>
-                                R$ {{ pedido.total|floatformat:2 }}
-                            </strong>
+                            <!-- =================================
+                                 TOPO
+                                 ================================= -->
 
-                        </div>
+                            <div class="kanban-card-header">
 
 
-                        <!-- ========================= -->
-                        <!-- BOTÃO DE IMPRESSÃO -->
-                        <!-- ========================= -->
+                                <strong class="kanban-pedido-numero">
 
-                        {% if pedido.status.codigo == "recebido" %}
+                                    #{{ pedido.numero }}
 
-                            <div class="mt-3">
+                                </strong>
 
-                                <a
-                                    href="{% url 'pagamento:imprimir_pedido' pedido.id %}"
-                                    target="_blank"
-                                    class="btn btn-dark btn-sm w-100"
-                                >
-                                    🖨️ Imprimir comanda
-                                </a>
+
+                                <small class="kanban-hora">
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    {{ pedido.criado_em|date:"H:i" }}
+
+                                </small>
+
 
                             </div>
 
-                        {% elif pedido.status.codigo == "pronto" %}
 
-                            <div class="mt-3">
+                            <!-- =================================
+                                 CLIENTE
+                                 ================================= -->
 
-                                <a
-                                    href="{% url 'pagamento:imprimir_pedido' pedido.id %}"
-                                    target="_blank"
-                                    class="btn btn-dark btn-sm w-100"
-                                >
-                                    🖨️ Imprimir etiqueta
-                                </a>
-
-                            </div>
-
-                        {% endif %}
+                            <div class="kanban-cliente">
 
 
-                        <!-- ========================= -->
-                        <!-- INFORMAÇÕES EXPANDIDAS -->
-                        <!-- ========================= -->
+                                <div class="kanban-icon cliente">
 
-                        <div class="kanban-card-extra">
+                                    <i class="fa-solid fa-user"></i>
 
-                            <hr>
+                                </div>
 
 
-                            <!-- TELEFONE -->
+                                <div>
 
-                            {% if pedido.telefone_cliente %}
-
-                                <div class="mb-3">
-
-                                    <small class="text-muted d-block">
-                                        Telefone
-                                    </small>
+                                    <span class="kanban-label">
+                                        Cliente
+                                    </span>
 
                                     <strong>
-                                        {{ pedido.telefone_cliente }}
+                                        {{ pedido.nome_cliente }}
                                     </strong>
 
                                 </div>
 
+
+                            </div>
+
+
+                            <!-- =================================
+                                 TIPO DE ENTREGA
+                                 ================================= -->
+
+                            <div class="kanban-tipo">
+
+                                {% if pedido.tipo_entrega == "ENTREGA" %}
+
+                                    <i class="fa-solid fa-motorcycle"></i>
+
+                                {% else %}
+
+                                    <i class="fa-solid fa-store"></i>
+
+                                {% endif %}
+
+
+                                <span>
+
+                                    {{ pedido.get_tipo_entrega_display }}
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 TOTAL
+                                 ================================= -->
+
+                            <div class="kanban-total">
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+
+                                    R$ {{ pedido.total|floatformat:2 }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 BOTÕES DE IMPRESSÃO
+                                 ================================= -->
+
+
+                            {% if pedido.status.codigo == "recebido" %}
+
+
+                                <div class="kanban-action">
+
+                                    <a
+                                        href="{% url 'pagamento:imprimir_pedido' pedido.id %}"
+                                        target="_blank"
+                                        class="kanban-print-button"
+                                    >
+
+                                        <i class="fa-solid fa-print"></i>
+
+                                        Imprimir comanda
+
+                                    </a>
+
+                                </div>
+
+
+                            {% elif pedido.status.codigo == "pronto" %}
+
+
+                                <div class="kanban-action">
+
+                                    <a
+                                        href="{% url 'pagamento:imprimir_pedido' pedido.id %}"
+                                        target="_blank"
+                                        class="kanban-print-button"
+                                    >
+
+                                        <i class="fa-solid fa-tag"></i>
+
+                                        Imprimir etiqueta
+
+                                    </a>
+
+                                </div>
+
+
                             {% endif %}
 
 
-                            <!-- ENDEREÇO -->
+                            <!-- =================================
+                                 INFORMAÇÕES EXPANDIDAS
+                                 ================================= -->
 
-                            {% if pedido.tipo_entrega == "ENTREGA" %}
+                            <div class="kanban-card-extra">
 
-                                <div class="mb-3">
 
-                                    <small class="text-muted d-block">
-                                        Endereço
-                                    </small>
+                                <div class="kanban-extra-divider"></div>
 
-                                    <div>
 
-                                        {{ pedido.endereco }},
+                                <!-- TELEFONE -->
 
-                                        {{ pedido.numero_endereco }}
+                                {% if pedido.telefone_cliente %}
+
+                                    <div class="kanban-info">
+
+                                        <div class="kanban-info-icon">
+
+                                            <i class="fa-solid fa-phone"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <small>
+                                                Telefone
+                                            </small>
+
+                                            <strong>
+
+                                                {{ pedido.telefone_cliente }}
+
+                                            </strong>
+
+                                        </div>
 
                                     </div>
 
-
-                                    {% if pedido.complemento %}
-
-                                        <div class="small text-muted">
-
-                                            {{ pedido.complemento }}
-
-                                        </div>
-
-                                    {% endif %}
+                                {% endif %}
 
 
-                                    {% if pedido.bairro %}
+                                <!-- ENDEREÇO -->
 
-                                        <div class="small text-muted">
+                                {% if pedido.tipo_entrega == "ENTREGA" %}
 
-                                            {{ pedido.bairro }}
+
+                                    <div class="kanban-info">
+
+
+                                        <div class="kanban-info-icon">
+
+                                            <i class="fa-solid fa-location-dot"></i>
 
                                         </div>
 
-                                    {% endif %}
+
+                                        <div>
+
+                                            <small>
+                                                Endereço
+                                            </small>
 
 
-                                    {% if pedido.cidade %}
+                                            <div class="kanban-info-text">
 
-                                        <div class="small text-muted">
+                                                {{ pedido.endereco }},
 
-                                            {{ pedido.cidade }}
+                                                {{ pedido.numero_endereco }}
 
-                                            {% if pedido.estado %}
+                                            </div>
 
-                                                - {{ pedido.estado }}
+
+                                            {% if pedido.complemento %}
+
+                                                <div class="kanban-muted">
+
+                                                    {{ pedido.complemento }}
+
+                                                </div>
+
+                                            {% endif %}
+
+
+                                            {% if pedido.bairro %}
+
+                                                <div class="kanban-muted">
+
+                                                    {{ pedido.bairro }}
+
+                                                </div>
+
+                                            {% endif %}
+
+
+                                            {% if pedido.cidade %}
+
+                                                <div class="kanban-muted">
+
+                                                    {{ pedido.cidade }}
+
+                                                    {% if pedido.estado %}
+
+                                                        - {{ pedido.estado }}
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                            {% endif %}
+
+
+                                            {% if pedido.cep %}
+
+                                                <div class="kanban-muted">
+
+                                                    CEP: {{ pedido.cep }}
+
+                                                </div>
 
                                             {% endif %}
 
                                         </div>
 
-                                    {% endif %}
+                                    </div>
 
 
-                                    {% if pedido.cep %}
+                                {% endif %}
 
-                                        <div class="small text-muted">
 
-                                            CEP: {{ pedido.cep }}
+                                <!-- REFERÊNCIA -->
+
+                                {% if pedido.referencia %}
+
+
+                                    <div class="kanban-info">
+
+                                        <div class="kanban-info-icon">
+
+                                            <i class="fa-solid fa-map-pin"></i>
 
                                         </div>
 
-                                    {% endif %}
-
-                                </div>
-
-                            {% endif %}
-
-
-                            <!-- REFERÊNCIA -->
-
-                            {% if pedido.referencia %}
-
-                                <div class="mb-3">
-
-                                    <small class="text-muted d-block">
-                                        Ponto de referência
-                                    </small>
-
-                                    {{ pedido.referencia }}
-
-                                </div>
-
-                            {% endif %}
-
-
-                            <!-- OBSERVAÇÃO -->
-
-                            {% if pedido.observacao %}
-
-                                <div class="mb-3">
-
-                                    <small class="text-muted d-block">
-                                        Observação
-                                    </small>
-
-                                    <div>
-
-                                        {{ pedido.observacao }}
-
-                                    </div>
-
-                                </div>
-
-                            {% endif %}
-
-
-                            <!-- PAGAMENTO -->
-
-                            {% if pedido.pagamentos.all %}
-
-                                <div class="mb-3">
-
-                                    <small class="text-muted d-block">
-                                        Pagamento
-                                    </small>
-
-                                    {% for pagamento in pedido.pagamentos.all %}
 
                                         <div>
 
-                                            {{ pagamento.forma_pagamento }}
+                                            <small>
+                                                Ponto de referência
+                                            </small>
 
-                                            -
+                                            <div class="kanban-info-text">
 
-                                            R$
+                                                {{ pedido.referencia }}
 
-                                            {{ pagamento.valor|floatformat:2 }}
+                                            </div>
 
                                         </div>
 
-                                    {% endfor %}
+                                    </div>
+
+
+                                {% endif %}
+
+
+                                <!-- OBSERVAÇÃO -->
+
+                                {% if pedido.observacao %}
+
+
+                                    <div class="kanban-observacao">
+
+                                        <div class="kanban-observacao-title">
+
+                                            <i class="fa-solid fa-comment"></i>
+
+                                            Observação
+
+                                        </div>
+
+
+                                        <div>
+
+                                            {{ pedido.observacao }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                {% endif %}
+
+
+                                <!-- PAGAMENTO -->
+
+                                {% if pedido.pagamentos.all %}
+
+
+                                    <div class="kanban-info">
+
+                                        <div class="kanban-info-icon">
+
+                                            <i class="fa-solid fa-credit-card"></i>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <small>
+                                                Pagamento
+                                            </small>
+
+
+                                            {% for pagamento in pedido.pagamentos.all %}
+
+                                                <div class="kanban-pagamento">
+
+                                                    <span>
+
+                                                        {{ pagamento.forma_pagamento }}
+
+                                                    </span>
+
+                                                    <strong>
+
+                                                        R$
+
+                                                        {{ pagamento.valor|floatformat:2 }}
+
+                                                    </strong>
+
+                                                </div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+                                    </div>
+
+
+                                {% endif %}
+
+
+                                <!-- DATA COMPLETA -->
+
+                                <div class="kanban-data">
+
+                                    <i class="fa-regular fa-calendar"></i>
+
+                                    <span>
+
+                                        Pedido criado em:
+
+                                        {{ pedido.criado_em|date:"d/m/Y H:i" }}
+
+                                    </span>
 
                                 </div>
 
-                            {% endif %}
-
-
-                            <!-- DATA COMPLETA -->
-
-                            <div class="small text-muted">
-
-                                Pedido criado em:
-
-                                {{ pedido.criado_em|date:"d/m/Y H:i" }}
 
                             </div>
 
+
                         </div>
+
+
+                    {% endfor %}
+
+
+                    <!-- =========================================
+                         COLUNA VAZIA
+                         ========================================= -->
+
+                    {% if not coluna.pedidos %}
+
+
+                        <div class="kanban-empty">
+
+                            <i class="fa-regular fa-folder-open"></i>
+
+                            <span>
+                                Nenhum pedido
+                            </span>
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+        {% empty %}
+
+
+            <div class="kanban-empty-status">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <span>
+                    Nenhum status de pedido foi configurado.
+                </span>
+
+            </div>
+
+
+        {% endfor %}
+
+
+        <!-- =====================================================
+             FINALIZAR PEDIDO
+             
+             IMPORTANTE:
+             Isto NÃO é um status do Kanban.
+             É apenas a área visual para onde o usuário
+             arrasta o pedido.
+             ===================================================== -->
+
+        {% if status_entregue %}
+
+            <div
+                class="kanban-coluna kanban-finalizar"
+                data-status-id="{{ status_entregue.id }}"
+            >
+
+
+                <!-- =============================================
+                     CABEÇALHO
+                     ============================================= -->
+
+                <div class="kanban-coluna-header">
+
+
+                    <div class="kanban-status">
+
+                        <span class="kanban-status-dot"></span>
+
+                        <h5>
+                            Finalizar
+                        </h5>
 
                     </div>
 
-                </div>
 
-            {% endfor %}
+                    <span class="kanban-count">
 
+                        <i class="fa-solid fa-check"></i>
 
-            <!-- COLUNA VAZIA -->
+                    </span>
 
-            {% if not coluna.pedidos %}
-
-                <div class="kanban-empty text-center text-muted py-4">
-
-                    Nenhum pedido
 
                 </div>
 
-            {% endif %}
 
-        </div>
+                <!-- =============================================
+                     ÁREA DE FINALIZAÇÃO
+                     
+                     NÃO colocar kanban-dropzone aqui.
+                     O JavaScript trata .kanban-finalizar
+                     separadamente.
+                     ============================================= -->
+
+                <div class="kanban-finalizar-area">
+
+
+                    <div class="kanban-finalizar-content">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <span>
+                            Arraste o pedido aqui
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        {% endif %}
+
 
     </div>
 
-{% empty %}
-
-    <div class="alert alert-warning">
-
-        Nenhum status de pedido foi configurado.
-
-    </div>
-
-{% endfor %}
 
 </div>
 
 
 <script src="{% static 'javascript/kanban.js' %}"></script>
 
+
 {% comment %}
 <script src="{% static 'javascript/kanban_drag.js' %}"></script>
 {% endcomment %}
 
+
 {% endblock %}
-```

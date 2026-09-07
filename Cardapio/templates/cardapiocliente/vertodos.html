@@ -1,0 +1,139 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- ===================================================== -->
+    <!-- CABEÇALHO -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                {{ titulo }}
+            </h2>
+
+            <span class="text-muted">
+                Todos os itens
+            </span>
+        </div>
+
+        <a
+            href="{% url 'cardapio_cliente:cliente' loja.slug %}"
+            class="btn btn-outline-secondary btn-carrinho"
+        >
+            Voltar
+        </a>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- ITENS -->
+    <!-- ===================================================== -->
+
+    {% if itens %}
+
+        <div class="row g-4">
+
+            {% for item in itens %}
+
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+
+                    <a
+                        href="{% url 'produtos:produto_detalhe' item.slug %}"
+                        class="text-decoration-none text-dark"
+                    >
+
+                        <div class="card h-100">
+
+                            <!-- ================================================= -->
+                            <!-- IMAGEM -->
+                            <!-- ================================================= -->
+
+                            {% if item.imagem %}
+
+                                <img
+                                    src="{{ item.imagem.url }}"
+                                    class="card-img-top"
+                                    alt="{{ item.nome }}"
+                                    style="height: 200px; object-fit: cover;"
+                                >
+
+                            {% else %}
+
+                                <div
+                                    class="card-img-top d-flex align-items-center justify-content-center text-muted"
+                                    style="height: 200px;"
+                                >
+                                    Sem imagem
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- ================================================= -->
+                            <!-- INFORMAÇÕES -->
+                            <!-- ================================================= -->
+
+                            <div class="card-body d-flex flex-column">
+
+                                <h5 class="card-title">
+                                    {{ item.nome }}
+                                </h5>
+
+
+                                {% if item.descricao %}
+
+                                    <p class="card-text text-muted">
+                                        {{ item.descricao }}
+                                    </p>
+
+                                {% endif %}
+
+
+                                <div class="mt-auto">
+
+                                    {% if item.preco %}
+
+                                        <strong>
+                                            R$ {{ item.preco }}
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="text-center py-5">
+
+            <h5>
+                Nenhum item encontrado
+            </h5>
+
+            <p class="text-muted">
+                Não existem itens disponíveis nesta seção.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

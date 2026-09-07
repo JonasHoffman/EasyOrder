@@ -9,6 +9,8 @@ from Pagamento.services.pagamento import processar_webhook_pix,processar_webhook
 from Pagamento.services.efi import (
     criar_link_pagamento_cartao,
 )
+from django.conf import settings
+from .services.demo import aprovar_pagamento_demo
 
 
 @csrf_exempt
@@ -280,4 +282,21 @@ def imprimir_pedido(request, pedido_id):
             )
         },
         status=400,
+    )
+
+def pagamento_demo_aprovar(request, pagamento_id):
+
+    if not settings.PAGAMENTO_DEMO:
+        return redirect("cardapio:home")
+
+    pagamento = get_object_or_404(
+        Pagamento,
+        id=pagamento_id
+    )
+
+    aprovar_pagamento_demo(pagamento)
+
+    return redirect(
+        "pagamento:sucesso",
+        pedido_id=pagamento.pedido.id
     )

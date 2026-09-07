@@ -18,5 +18,10 @@ urlpatterns = [
         views_estruturacardapio.salvar_ordem,
         name="salvar"
     ),
+    path(
+    "banner/<int:id>/alterar/",
+    views_estruturacardapio.alterar_banner,
+    name="alterar_banner"
+),
 
 ]
